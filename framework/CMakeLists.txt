@@ -1,10 +1,14 @@
 
 set(FRAMEWORK_HEADERS
-#	"include/framework/view.h"
+	"include/framework/view.h"
+#	"include/framework/viewmanager.h"
+	"include/framework/elapsedtimer.h"
 )
 
 set(FRAMEWORK_SOURCES
+	"src/view.cpp"
 	"src/viewmanager.cpp"
+	"src/elapsedtimer.cpp"
 )
 
 include_directories("include")
