@@ -239,10 +239,10 @@ template<> EIGEN_STRONG_INLINE Packet4f pandnot<Packet4f>(const Packet4f& a, con
 template<> EIGEN_STRONG_INLINE Packet4i pandnot<Packet4i>(const Packet4i& a, const Packet4i& b) { return vbicq_s32(a,b); }
 
 template<> EIGEN_STRONG_INLINE Packet4f pload<Packet4f>(const float* from) { EIGEN_DEBUG_ALIGNED_LOAD return vld1q_f32(from); }
-template<> EIGEN_STRONG_INLINE Packet4i pload<Packet4i>(const int*   from) { EIGEN_DEBUG_ALIGNED_LOAD return vld1q_s32(from); }
+template<> EIGEN_STRONG_INLINE Packet4i pload<Packet4i>(const int*   from) { EIGEN_DEBUG_ALIGNED_LOAD return vld1q_s32((const int32_t*)from); }
 
 template<> EIGEN_STRONG_INLINE Packet4f ploadu<Packet4f>(const float* from) { EIGEN_DEBUG_UNALIGNED_LOAD return vld1q_f32(from); }
-template<> EIGEN_STRONG_INLINE Packet4i ploadu<Packet4i>(const int* from)   { EIGEN_DEBUG_UNALIGNED_LOAD return vld1q_s32(from); }
+template<> EIGEN_STRONG_INLINE Packet4i ploadu<Packet4i>(const int* from)   { EIGEN_DEBUG_UNALIGNED_LOAD return vld1q_s32((const int32_t*)from); }
 
 template<> EIGEN_STRONG_INLINE Packet4f ploaddup<Packet4f>(const float*   from)
 {
@@ -253,17 +253,18 @@ template<> EIGEN_STRONG_INLINE Packet4f ploaddup<Packet4f>(const float*   from)
 }
 template<> EIGEN_STRONG_INLINE Packet4i ploaddup<Packet4i>(const int*     from)
 {
+  const int32_t* from_cast = (const int32_t*)from;
   int32x2_t lo, hi;
-  lo = vld1_dup_s32(from);
-  hi = vld1_dup_s32(from+1);
+  lo = vld1_dup_s32(from_cast);
+  hi = vld1_dup_s32(from_cast+1);
   return vcombine_s32(lo, hi);
 }
 
 template<> EIGEN_STRONG_INLINE void pstore<float>(float*   to, const Packet4f& from) { EIGEN_DEBUG_ALIGNED_STORE vst1q_f32(to, from); }
-template<> EIGEN_STRONG_INLINE void pstore<int>(int*       to, const Packet4i& from) { EIGEN_DEBUG_ALIGNED_STORE vst1q_s32(to, from); }
+template<> EIGEN_STRONG_INLINE void pstore<int>(int*       to, const Packet4i& from) { EIGEN_DEBUG_ALIGNED_STORE vst1q_s32((int32_t*)to, from); }
 
 template<> EIGEN_STRONG_INLINE void pstoreu<float>(float*  to, const Packet4f& from) { EIGEN_DEBUG_UNALIGNED_STORE vst1q_f32(to, from); }
-template<> EIGEN_STRONG_INLINE void pstoreu<int>(int*      to, const Packet4i& from) { EIGEN_DEBUG_UNALIGNED_STORE vst1q_s32(to, from); }
+template<> EIGEN_STRONG_INLINE void pstoreu<int>(int*      to, const Packet4i& from) { EIGEN_DEBUG_UNALIGNED_STORE vst1q_s32((int32_t*)to, from); }
 
 template<> EIGEN_DEVICE_FUNC inline Packet4f pgather<float, Packet4f>(const float* from, Index stride)
 {
@@ -304,7 +305,7 @@ template<> EIGEN_STRONG_INLINE void prefetch<int>(const int*     addr) { EIGEN_A
 
 // FIXME only store the 2 first elements ?
 template<> EIGEN_STRONG_INLINE float  pfirst<Packet4f>(const Packet4f& a) { float EIGEN_ALIGN16 x[4]; vst1q_f32(x, a); return x[0]; }
-template<> EIGEN_STRONG_INLINE int    pfirst<Packet4i>(const Packet4i& a) { int   EIGEN_ALIGN16 x[4]; vst1q_s32(x, a); return x[0]; }
+template<> EIGEN_STRONG_INLINE int    pfirst<Packet4i>(const Packet4i& a) { int   EIGEN_ALIGN16 x[4]; vst1q_s32((int32_t *)x, a); return x[0]; }
 
 template<> EIGEN_STRONG_INLINE Packet4f preverse(const Packet4f& a) {
   float32x2_t a_lo, a_hi;
