@@ -9,5 +9,6 @@ project(installer)
 
 add_definitions(-Wl,-q -Wall -Werror -pedantic -Os)
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
 
 add_subdirectory(framework)
