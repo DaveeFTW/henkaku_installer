@@ -10,7 +10,11 @@
 #ifndef VIEW_H
 #define VIEW_H
 
+#include <memory>
 #include <Eigen/Dense>
+
+class Task;
+using TaskPtr = std::shared_ptr<Task>;
 
 class View
 {
@@ -22,6 +26,9 @@ public:
 
 	Eigen::Matrix4f model(void);
 
+	virtual TaskPtr simulationTask(double dt) = 0;
+	virtual TaskPtr renderingTask(void) = 0;
+	
 	virtual void setOpacity(float opacity) = 0;
 	virtual float opacity(void) = 0;
 

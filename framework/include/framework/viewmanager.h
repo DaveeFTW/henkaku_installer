@@ -33,18 +33,22 @@ class View;
 using ViewPtr = std::shared_ptr<View>;
 using ViewList = std::vector<ViewPtr>;
 
+class TaskScheduler;
+
 class ViewManager
 {
 public:
-    ViewManager(void);
+	ViewManager(void);
+	~ViewManager(void);
 
-    void addView(ViewPtr view);
-    void removeView(ViewPtr view);
-    
-    void exec(void);
+	void addView(ViewPtr view);
+	void removeView(ViewPtr view);
+
+	void exec(void);
 
 private:
-    ViewList m_views;
+	ViewList m_views;
+	std::unique_ptr<TaskScheduler> m_taskScheduler;
 };
 
 #endif // VIEWMANAGER_H

@@ -9,6 +9,8 @@ set(FRAMEWORK_SOURCES
 	"src/view.cpp"
 	"src/viewmanager.cpp"
 	"src/elapsedtimer.cpp"
+	"src/task.cpp"
+	"src/taskscheduler.cpp"
 )
 
 include_directories("include")

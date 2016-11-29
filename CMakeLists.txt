@@ -23,14 +23,14 @@ add_executable(installer.elf ${INSTALLER_SOURCES})
 
 target_link_libraries(installer.elf -Wl,-q
 	framework
-	pthread
 	SceDisplay_stub
+	-Wl,--whole-archive pthread -Wl,--no-whole-archive
 )
 
 add_custom_target(installer.fself ALL
 	COMMAND vita-elf-create installer.elf installer.velf
 	COMMAND vita-make-fself installer.velf installer.fself
+	DEPENDS installer.elf
 )
 
-add_dependencies(installer.fself installer.elf)
 add_dependencies(installer.elf framework)
