@@ -69,7 +69,7 @@ void VitaInput::readButtonInput(void)
 	auto buttons = 0;
 
 	// we shouldn't be lagged behind, but if we are we will combine samples
-	for (auto i = 0u; i < m_buttonData.samples; ++i)
+	for (auto i = 0; i < samples; ++i)
 	{
 		buttons |= m_buttonData.data[i].buttons;
 	}
