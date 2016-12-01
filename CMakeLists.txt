@@ -8,8 +8,7 @@ set(CMAKE_CXX_COMPILER "arm-vita-eabi-g++")
 project(installer)
 
 add_definitions(-Wl,-q -Wall -Werror -pedantic -Os)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti -fno-exceptions")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fno-rtti -fno-exceptions")
 
 add_subdirectory(framework)
 
@@ -24,6 +23,8 @@ add_executable(installer.elf ${INSTALLER_SOURCES})
 target_link_libraries(installer.elf -Wl,-q
 	framework
 	SceDisplay_stub
+	SceCtrl_stub
+	SceTouch_stub
 	-Wl,--whole-archive pthread -Wl,--no-whole-archive
 )
 

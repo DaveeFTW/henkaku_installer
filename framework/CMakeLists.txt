@@ -11,6 +11,8 @@ set(FRAMEWORK_SOURCES
 	"src/elapsedtimer.cpp"
 	"src/task.cpp"
 	"src/taskscheduler.cpp"
+	"src/guiapplication.cpp"
+	"src/vitainput.cpp"
 )
 
 include_directories("include")
