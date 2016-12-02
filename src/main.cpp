@@ -1,4 +1,3 @@
-#include <framework/viewmanager.h>
 
 #include <psp2/kernel/threadmgr.h>
 
@@ -20,6 +19,4 @@ extern "C"
 
 int main(int argc, char *argv[])
 {
-	ViewManager manager;
-	manager.exec();
 }
