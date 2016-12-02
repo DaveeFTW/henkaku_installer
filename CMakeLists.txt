@@ -25,6 +25,7 @@ target_link_libraries(installer.elf -Wl,-q
 	SceDisplay_stub
 	SceCtrl_stub
 	SceTouch_stub
+	SceGxm_stub
 	-Wl,--whole-archive pthread -Wl,--no-whole-archive
 )
 
