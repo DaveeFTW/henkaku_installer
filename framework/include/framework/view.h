@@ -33,7 +33,7 @@ public:
 	//virtual float opacity(void) = 0;
 	void show(void);
 	
-	virtual void render(void) = 0;
+	virtual void render(void *buf) = 0;
 protected:
 	//virtual void update(double dt) = 0;
 	//virtual void render(void) = 0;
