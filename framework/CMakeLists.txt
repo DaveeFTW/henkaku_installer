@@ -7,7 +7,6 @@ set(FRAMEWORK_HEADERS
 
 set(FRAMEWORK_SOURCES
 	"src/view.cpp"
-	"src/viewmanager.cpp"
 	"src/elapsedtimer.cpp"
 	"src/task.cpp"
 	"src/taskscheduler.cpp"
