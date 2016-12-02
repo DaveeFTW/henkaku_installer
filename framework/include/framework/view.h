@@ -19,25 +19,27 @@ using TaskPtr = std::shared_ptr<Task>;
 class View
 {
 	friend class ViewManager;
+	friend class Screen;
 
 public:
 	View(void);
 	virtual ~View(void) = default;
 
-	Eigen::Matrix4f model(void);
 
 	virtual TaskPtr simulationTask(double dt) = 0;
-	virtual TaskPtr renderingTask(void) = 0;
+	//virtual TaskPtr renderingTask(void) = 0;
 	
-	virtual void setOpacity(float opacity) = 0;
-	virtual float opacity(void) = 0;
-
-protected:
-	virtual void update(double dt) = 0;
+	//virtual void setOpacity(float opacity) = 0;
+	//virtual float opacity(void) = 0;
+	void show(void);
+	
 	virtual void render(void) = 0;
-
+protected:
+	//virtual void update(double dt) = 0;
+	//virtual void render(void) = 0;
+	
 private:
-	Eigen::Matrix4f m_matrix;
+	//http://eigen.tuxfamily.org/dox-devel/group__TopicUnalignedArrayAssert.htm
 };
 
 #endif // VIEW_H

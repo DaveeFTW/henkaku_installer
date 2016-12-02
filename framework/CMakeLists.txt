@@ -13,6 +13,7 @@ set(FRAMEWORK_SOURCES
 	"src/taskscheduler.cpp"
 	"src/guiapplication.cpp"
 	"src/vitainput.cpp"
+	"src/vitascreen.cpp"
 )
 
 include_directories("include")

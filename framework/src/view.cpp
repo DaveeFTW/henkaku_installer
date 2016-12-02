@@ -10,11 +10,11 @@
 #include <framework/view.h>
 
 View::View(void)
-	: m_matrix(Eigen::Matrix4f::Identity())
 {
 }
 
-Eigen::Matrix4f View::model(void)
+
+void View::show(void)
 {
-	return m_matrix;
+	
 }

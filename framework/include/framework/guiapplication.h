@@ -34,6 +34,7 @@ public:
 	static ViewPtr focusedView(void);
 	static ViewPtrList allViews(void);
 
+	static void addView(ViewPtr view);
 private:
 	static GuiApplication *self;
 
@@ -42,7 +43,7 @@ private:
 	Input *platform_input;
 	ViewPtr focused_view;
 	ViewPtrList view_list;
-	TaskPtr update_task;
+	TaskPtr update_task, draw_task;
 };
 
 #endif // GUIAPPLICATION_H

@@ -12,7 +12,8 @@
 #include <framework/view.h>
 #include <framework/task.h>
 #include <framework/vitainput.h>
-//#include <framework/vitascreen.h>
+#include <framework/elapsedtimer.h>
+#include <framework/vitascreen.h>
 
 #include <iostream>
 
@@ -35,14 +36,25 @@ GuiApplication::GuiApplication(int argc, char **argv)
 
 	// create a screen for the platform
 	// in this case we only have the vita as a platform
-	//platform_screen = new VitaScreen();
+	platform_screen = new VitaScreen();
 
 	// create an input source
 	platform_input = new VitaInput();
 
 	update_task = std::make_shared<Task>();
 
-	//update_task.
+	for (auto& task : platform_input->tasks())
+	{
+		update_task->insertDependant(task);
+	}
+	
+	
+	draw_task = std::make_shared<Task>();
+	//draw_task->set([this](void)
+	//{
+		//this->platform_screen->draw();
+	//});
+	draw_task->set(std::bind(&Screen::draw, platform_screen));
 }
 
 GuiApplication::~GuiApplication(void)
@@ -69,21 +81,47 @@ int GuiApplication::exec(void)
 		return -1;
 	}
 
+	std::mutex mutex;
+	std::condition_variable cv;
+	
 	TaskScheduler scheduler;
-
+	ElapsedTimer timer;
+	timer.start();
+	bool complete = false;
+	
+	auto resume_task = std::make_shared<Task>();
+	resume_task->set([&complete, &mutex, &cv](void)
+	{
+		// sync this to vblank
+		sceDisplayWaitVblankStart();
+		
+		{
+			std::unique_lock<std::mutex> lock(mutex);
+			complete = true;
+		}
+		
+		cv.notify_one();
+	});
+	
 	while (true)
 	{
+		complete = false;
+		
 		// all registered event sources will be called to send events (if desired)
 		scheduler.add(self->update_task);
 
 		// update simulation step for focused view
 		auto focused_view = GuiApplication::focusedView();
 
-		if (focused_view)
-			scheduler.add(focused_view->simulationTask(0.0));
+		for (auto& view : self->view_list)
+			scheduler.add(view->simulationTask(timer.restart()));
 
-		// sync this to vblank
-		sceDisplayWaitVblankStart();
+		scheduler.add(self->draw_task);
+		scheduler.add(resume_task);
+
+		// we wait until ready
+		std::unique_lock<std::mutex> lock(mutex);
+		cv.wait(lock, [&complete]{ return complete; });
 	}
 
 	return 0;
@@ -109,4 +147,16 @@ ViewPtrList GuiApplication::allViews(void)
 	}
 
 	return self->view_list;
+}
+
+void GuiApplication::addView(ViewPtr view)
+{
+	if (!self)
+	{
+		std::cerr << __func__ << ": Application object not instantiated." << std::endl;
+		return;
+	}
+
+	self->view_list.push_back(view);
+	//screen->onViewAdded(view);
 }
