@@ -41,9 +41,10 @@ function(CompileShaderTargets)
 
 		add_custom_target(
 			${resourceName}.c ALL
-			COMMAND runshacc --${type} ${CMAKE_CURRENT_SOURCE_DIR}/${shader} ${FRAMEWORK_SHADER_OUTPUT_DIR}/${resourceName}
-			COMMAND xxd -i ${FRAMEWORK_SHADER_OUTPUT_DIR}/${resourceName} ${resourceName}.c
+			COMMAND runshacc --${type} ${CMAKE_CURRENT_SOURCE_DIR}/${shader} ${resourceName}
+			COMMAND xxd -i ${resourceName} ${CMAKE_CURRENT_BINARY_DIR}/${resourceName}.c
 			COMMENT "Compiling ${type} shader ${resourceName}"
+			WORKING_DIRECTORY ${FRAMEWORK_SHADER_OUTPUT_DIR}
 		)
 
 		add_dependencies(framework ${resourceName}.c)
