@@ -8,7 +8,7 @@ set(CMAKE_CXX_COMPILER "arm-vita-eabi-g++")
 project(installer)
 
 add_definitions(-Wl,-q -Wall -Werror -pedantic -Os)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -fno-rtti -fno-exceptions")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z")
 
 add_subdirectory(framework)
 
