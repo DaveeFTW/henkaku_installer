@@ -13,6 +13,7 @@ set(FRAMEWORK_SOURCES
 	"src/guiapplication.cpp"
 	"src/vitainput.cpp"
 	"src/vitascreen.cpp"
+	"src/gxmshaderpatcher.cpp"
 )
 
 set(FRAMEWORK_SHADERS
