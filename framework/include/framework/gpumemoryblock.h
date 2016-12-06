@@ -35,6 +35,34 @@ public:
 	}
 };
 
+class VertexUsseMemoryBlock : public MemoryBlock<char>
+{
+public:
+	VertexUsseMemoryBlock(std::size_t size, SceKernelMemBlockType type = SCE_KERNEL_MEMBLOCK_TYPE_USER_RW_UNCACHE)
+		: MemoryBlock<char>(size, type)
+	{
+		auto res = sceGxmMapVertexUsseMemory(MemoryBlock<char>::address(), MemoryBlock<char>::size(), &m_offset);
+
+		if (res < 0)
+		{
+			// TODO: handle this error
+		}
+	}
+
+	~VertexUsseMemoryBlock(void)
+	{
+		sceGxmUnmapVertexUsseMemory(MemoryBlock<char>::address());
+	}
+	
+	unsigned int offset(void) const
+	{
+		return m_offset;
+	}
+
+private:
+	unsigned int m_offset;
+};
+
 class FragmentUsseMemoryBlock : public MemoryBlock<char>
 {
 public:
