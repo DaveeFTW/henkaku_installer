@@ -13,6 +13,7 @@
 #include <string>
 
 struct SceGxmProgramParameter;
+struct SceGxmProgram;
 
 class GxmShader
 {
@@ -21,7 +22,9 @@ public:
 	
 public:
 	GxmShader(void) = default;
-	virtual ~GxmShader(void) = default;
+	virtual ~GxmShader(void);
+	
+	bool loadFromBuffer(const char *data, std::size_t size);
 	
 	void setUniformBuffer(void *buffer);
 	
@@ -36,11 +39,15 @@ public:
 		setUniform(index, 0, count, values);
 	}
 
+protected:
+	virtual bool analyseShader(const char *shader);
+
 private:
 	void setUniform(UniformIndex index, unsigned int offset, unsigned int count, const float *data);
 
 private:
 	void *m_uniformBuffer{nullptr};
+	SceGxmProgram *m_shaderProgram{nullptr};
 };
 
 #endif // GXMSHADER_H
