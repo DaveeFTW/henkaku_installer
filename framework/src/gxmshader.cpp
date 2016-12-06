@@ -52,7 +52,7 @@ void GxmShader::setUniformBuffer(void *buffer)
 
 GxmShader::UniformIndex GxmShader::uniformIndex(const char *name)
 {
-	auto parameter = sceGxmProgramFindParameterByName(nullptr, name);
+	auto parameter = sceGxmProgramFindParameterByName(m_shaderProgram, name);
 
 	if (!isUniform(parameter))
 		return nullptr;
