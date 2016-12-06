@@ -21,7 +21,6 @@ public:
 	using UniformIndex = const SceGxmProgramParameter *;
 	
 public:
-	GxmShader(void) = default;
 	virtual ~GxmShader(void);
 	
 	bool loadFromBuffer(const char *data, std::size_t size);
@@ -40,6 +39,7 @@ public:
 	}
 
 protected:
+	GxmShader(void) = default;
 	virtual bool analyseShader(const char *shader);
 
 private:

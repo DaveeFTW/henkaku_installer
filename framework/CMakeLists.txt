@@ -15,6 +15,8 @@ set(FRAMEWORK_SOURCES
 	"src/vitascreen.cpp"
 	"src/gxmshaderpatcher.cpp"
 	"src/gxmshader.cpp"
+	"src/gxmvertexshader.cpp"
+	"src/gxmfragmentshader.cpp"
 )
 
 set(FRAMEWORK_SHADERS
