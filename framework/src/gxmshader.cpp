@@ -19,6 +19,16 @@ namespace
 	{
 		return (param && sceGxmProgramParameterGetCategory(param) == SCE_GXM_PARAMETER_CATEGORY_UNIFORM);
 	}
+
+	bool isVertexShader(const SceGxmProgram *program)
+	{
+		return (sceGxmProgramGetType(program) == SCE_GXM_VERTEX_PROGRAM);
+	}
+
+	bool isFragmentShader(const SceGxmProgram *program)
+	{
+		return (sceGxmProgramGetType(program) == SCE_GXM_FRAGMENT_PROGRAM);
+	}
 }
 
 GxmShader::~GxmShader(void)
@@ -43,6 +53,19 @@ bool GxmShader::loadFromBuffer(const unsigned char *shader, std::size_t size)
 
 	m_shaderProgram = reinterpret_cast<SceGxmProgram *>(program);
 	return true;
+}
+
+GxmShader::Type GxmShader::type(void) const
+{
+	if (!m_valid)
+		return GxmShader::Invalid;
+
+	if (isVertexShader(m_shaderProgram))
+		return GxmShader::Vertex;
+	else if (isFragmentShader(m_shaderProgram))
+		return GxmShader::Fragment;
+
+	return GxmShader::Invalid;
 }
 
 void GxmShader::setUniformBuffer(void *buffer)

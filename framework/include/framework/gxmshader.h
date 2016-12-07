@@ -20,11 +20,20 @@ class GxmShader
 public:
 	using UniformIndex = const SceGxmProgramParameter *;
 	
+	enum Type
+	{
+		Invalid,
+		Vertex,
+		Fragment
+	};
+
 public:
 	virtual ~GxmShader(void);
 	
 	bool loadFromBuffer(const unsigned char *data, std::size_t size);
 	
+	Type type(void) const;
+
 	void setUniformBuffer(void *buffer);
 	
 	UniformIndex uniformIndex(const char *name);
