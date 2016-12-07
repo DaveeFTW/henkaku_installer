@@ -37,7 +37,7 @@ private:
 	static void onSwapQueue(const void *data);
 	
 private:
-	static constexpr int DISPLAY_QUEUE_MAX_PENDING = 2;
+	static constexpr int DISPLAY_QUEUE_MAX_PENDING = 3;
 	
 	using RgbaPixel = union alignas(4)
 	{
