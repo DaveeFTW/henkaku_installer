@@ -17,6 +17,7 @@ set(FRAMEWORK_SOURCES
 	"src/gxmshader.cpp"
 	"src/gxmvertexshader.cpp"
 	"src/gxmfragmentshader.cpp"
+	"src/gxmshaderprogram.cpp"
 )
 
 include_directories(include)
