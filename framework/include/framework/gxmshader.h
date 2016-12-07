@@ -23,7 +23,7 @@ public:
 public:
 	virtual ~GxmShader(void);
 	
-	bool loadFromBuffer(const char *data, std::size_t size);
+	bool loadFromBuffer(const unsigned char *data, std::size_t size);
 	
 	void setUniformBuffer(void *buffer);
 	
@@ -40,7 +40,7 @@ public:
 
 protected:
 	GxmShader(void) = default;
-	virtual bool analyseShader(const char *shader);
+	virtual bool analyseShader(const unsigned char *shader);
 
 private:
 	void setUniform(UniformIndex index, unsigned int offset, unsigned int count, const float *data);

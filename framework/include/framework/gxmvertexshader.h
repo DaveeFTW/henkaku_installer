@@ -19,7 +19,7 @@ public:
 	virtual ~GxmVertexShader(void) = default;
 
 protected:
-	bool analyseShader(const char *shader) override;
+	bool analyseShader(const unsigned char *shader) override;
 };
 
 #endif // GXMVERTEXSHADER_H

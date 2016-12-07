@@ -10,7 +10,7 @@
 #include <framework/gxmvertexshader.h>
 #include <psp2/gxm.h>
 
-bool GxmVertexShader::analyseShader(const char *shader)
+bool GxmVertexShader::analyseShader(const unsigned char *shader)
 {
 	if (!GxmShader::analyseShader(shader))
 		return false;
