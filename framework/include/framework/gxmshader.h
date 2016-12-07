@@ -34,6 +34,8 @@ public:
 	
 	Type type(void) const;
 
+	const SceGxmProgram *program(void) const;
+
 	void setUniformBuffer(void *buffer);
 	
 	UniformIndex uniformIndex(const char *name);

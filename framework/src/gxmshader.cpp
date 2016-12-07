@@ -68,6 +68,11 @@ GxmShader::Type GxmShader::type(void) const
 	return GxmShader::Invalid;
 }
 
+const SceGxmProgram *GxmShader::program(void) const
+{
+	return m_shaderProgram;
+}
+
 void GxmShader::setUniformBuffer(void *buffer)
 {
 	m_uniformBuffer = buffer;
