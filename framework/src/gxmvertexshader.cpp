@@ -10,6 +10,29 @@
 #include <framework/gxmvertexshader.h>
 #include <psp2/gxm.h>
 
+namespace
+{
+	bool isAttribute(const SceGxmProgramParameter *param)
+	{
+		return (param && sceGxmProgramParameterGetCategory(param) == SCE_GXM_PARAMETER_CATEGORY_ATTRIBUTE);
+	}
+} // anonymous namespace
+
+GxmVertexShader::AttributeIndex GxmVertexShader::attributeIndex(const char *name)
+{
+	auto parameter = sceGxmProgramFindParameterByName(program(), name);
+
+	if (!isAttribute(parameter))
+		return nullptr;
+
+	return parameter;
+}
+
+GxmVertexShader::AttributeIndex GxmVertexShader::attributeIndex(const std::string& name)
+{
+	return attributeIndex(name.c_str());
+}
+
 bool GxmVertexShader::analyseShader(const unsigned char *shader)
 {
 	if (!GxmShader::analyseShader(shader))

@@ -15,8 +15,14 @@
 class GxmVertexShader : public GxmShader
 {
 public:
+	using AttributeIndex = const SceGxmProgramParameter *;
+
+public:
 	GxmVertexShader(void) = default;
 	virtual ~GxmVertexShader(void) = default;
+
+	AttributeIndex attributeIndex(const char *name);
+	AttributeIndex attributeIndex(const std::string& name);
 
 protected:
 	bool analyseShader(const unsigned char *shader) override;
