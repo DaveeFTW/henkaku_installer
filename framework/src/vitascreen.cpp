@@ -212,7 +212,7 @@ void VitaScreen::draw(void)
 	
 	for (auto view : views)
 	{
-		view->render(m_fb[m_nextRenderBufferIndex]->address());
+		view->render(m_context);
 	}
 	
 	sceGxmEndScene(m_context, nullptr, nullptr);
