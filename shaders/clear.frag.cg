@@ -1,0 +1,44 @@
+
+float drawOrb(float2 p, float radius)
+{
+    return radius/length(p);
+}
+
+float4 main(
+	  float2 vVertex: TEXCOORD0
+	, uniform float time
+)
+{
+   //float2 fragCoord = float2(960, 544)*((vVertex+float2(1.0, 1.0))/2.0);
+   //float2 iResolution = float2(960, 544);
+   
+    // get normalised co-ordinates
+    //float2 q = fragCoord.xy / iResolution.xy;
+
+    // center
+    //float2 p = -1.0 + 2.0 * q;
+
+    // isotropic
+    //float iso = iResolution.x / iResolution.y;
+	float2 p = vVertex;
+    p.x    *= 1.7647058823529411764705882352941;
+
+
+    float2 orb1 = float2(1.7*sin(time), -0.40);
+    float2 orb2 = float2(0.25,0.8*sin(time));
+    float2 orb3 = float2(0.15, 0.25);
+    float2 orb4 = float2(1.2*sin(2.*time), 0.7*cos(2.0*time));
+    float2 orb5 = float2(0.2+1.2*sin(2.7*time), 0.8*cos(5.0*time));
+    float2 orb6 = float2(.1+1.2*sin(2.4*time), 0.7*cos(1.4*time));
+
+    float3 combi = float3(0.0);
+
+	combi.r += drawOrb(p-orb1, 0.09);
+	combi.g += drawOrb(p-orb2, 0.09);
+	combi.b += drawOrb(p-orb3, 0.09);
+	combi.rgb += drawOrb(p-orb4, 0.09);
+	combi.rg += drawOrb(p-orb5, 0.09);
+	combi.b += drawOrb(p-orb6, 0.09);
+
+    return float4(combi, 1.0);
+}
