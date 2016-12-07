@@ -12,6 +12,8 @@
 #include <framework/view.h>
 #include <framework/gpumemoryblock.h>
 
+#include <easyloggingpp/easylogging++.h>
+
 #include <psp2/gxm.h>
 #include <psp2/display.h>
 
@@ -103,22 +105,7 @@ void VitaScreen::onSwapQueue(const void *data)
 }
 
 VitaScreen::VitaScreen(void)
-	: m_vdmRingBuffer(std::make_unique<RingBuffer>(
-		SCE_GXM_DEFAULT_VDM_RING_BUFFER_SIZE, 
-		SCE_GXM_MEMORY_ATTRIB_READ
-	))
-	, m_vertexRingBuffer(std::make_unique<RingBuffer>(
-		SCE_GXM_DEFAULT_VERTEX_RING_BUFFER_SIZE, 
-		SCE_GXM_MEMORY_ATTRIB_READ
-	))
-	, m_fragmentRingBuffer(std::make_unique<RingBuffer>(
-		SCE_GXM_DEFAULT_VERTEX_RING_BUFFER_SIZE, 
-		SCE_GXM_MEMORY_ATTRIB_READ
-	))
-	, m_fragmentUsseRingBuffer(std::make_unique<FragmentUsseMemoryBlock>(
-		SCE_GXM_DEFAULT_FRAGMENT_RING_BUFFER_SIZE
-	))
-	, m_hostMemory(SCE_GXM_MINIMUM_CONTEXT_HOST_MEM_SIZE)
+	: m_hostMemory(SCE_GXM_MINIMUM_CONTEXT_HOST_MEM_SIZE)
 	, m_depthStencilSurface(new SceGxmDepthStencilSurface)
 {
 	SceGxmInitializeParams initParams;
@@ -130,25 +117,53 @@ VitaScreen::VitaScreen(void)
 	initParams.parameterBufferSize = SCE_GXM_DEFAULT_PARAMETER_BUFFER_SIZE;
 
 	// initialize gxm
-	sceGxmInitialize(&initParams);
-	
+	auto res = sceGxmInitialize(&initParams);
+	LOG(INFO) << "sceGxmInitialize res: " << res;
+
+	// allocate memory
+	m_vdmRingBuffer = std::make_unique<RingBuffer>(
+		SCE_GXM_DEFAULT_VDM_RING_BUFFER_SIZE, 
+		SCE_GXM_MEMORY_ATTRIB_READ
+	);
+
+	m_vertexRingBuffer = std::make_unique<RingBuffer>(
+		SCE_GXM_DEFAULT_VERTEX_RING_BUFFER_SIZE, 
+		SCE_GXM_MEMORY_ATTRIB_READ
+	);
+
+	m_fragmentRingBuffer = std::make_unique<RingBuffer>(
+		SCE_GXM_DEFAULT_VERTEX_RING_BUFFER_SIZE, 
+		SCE_GXM_MEMORY_ATTRIB_READ
+	);
+
+	m_fragmentUsseRingBuffer = std::make_unique<FragmentUsseMemoryBlock>(
+		SCE_GXM_DEFAULT_FRAGMENT_RING_BUFFER_SIZE
+	);
+
 	SceGxmContextParams contextParams;
 	
 	// create our context params
 	contextParams.hostMem = m_hostMemory.data();
+	LOG(INFO) << "contextParams.hostMem: " << (unsigned int)m_hostMemory.data();
 	contextParams.hostMemSize = m_hostMemory.size();
 	contextParams.vdmRingBufferMem = m_vdmRingBuffer->address();
+	LOG(INFO) << "contextParams.vdmRingBufferMem: " << (unsigned int)m_vdmRingBuffer->address();
 	contextParams.vdmRingBufferMemSize = m_vdmRingBuffer->size();
 	contextParams.vertexRingBufferMem = m_vertexRingBuffer->address();
+	LOG(INFO) << "contextParams.vertexRingBufferMem: " << (unsigned int)m_vertexRingBuffer->address();
 	contextParams.vertexRingBufferMemSize = m_vertexRingBuffer->size();
 	contextParams.fragmentRingBufferMem = m_fragmentRingBuffer->address();
+	LOG(INFO) << "contextParams.fragmentRingBufferMem: " << (unsigned int)m_fragmentRingBuffer->address();
 	contextParams.fragmentRingBufferMemSize = m_fragmentRingBuffer->size();
 	contextParams.fragmentUsseRingBufferMem = m_fragmentUsseRingBuffer->address();
+	LOG(INFO) << "contextParams.fragmentUsseRingBufferMem: " << (unsigned int)m_fragmentUsseRingBuffer->address();
 	contextParams.fragmentUsseRingBufferMemSize = m_fragmentUsseRingBuffer->size();
 	contextParams.fragmentUsseRingBufferOffset = m_fragmentUsseRingBuffer->offset();
+	LOG(INFO) << "contextParams.fragmentUsseRingBufferOffset: " << (unsigned int)m_fragmentUsseRingBuffer->offset();
 	
 	// create our main context
-	sceGxmCreateContext(&contextParams, &m_context);
+	res = sceGxmCreateContext(&contextParams, &m_context);
+	LOG(INFO) << "sceGxmCreateContext res: " << res;
 	
 	// next we create a render target, in this case for screen
 	SceGxmRenderTargetParams renderTargetParams;
