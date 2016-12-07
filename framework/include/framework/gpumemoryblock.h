@@ -60,7 +60,7 @@ public:
 	}
 
 private:
-	unsigned int m_offset;
+	unsigned int m_offset{0};
 };
 
 class FragmentUsseMemoryBlock : public MemoryBlock<char>
@@ -88,7 +88,7 @@ public:
 	}
 
 private:
-	unsigned int m_offset;
+	unsigned int m_offset{0};
 };
 
 #endif // GPUMEMORYBLOCK_H
