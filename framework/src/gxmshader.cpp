@@ -52,7 +52,13 @@ bool GxmShader::loadFromBuffer(const unsigned char *shader, std::size_t size)
 		delete[] reinterpret_cast<unsigned char *>(m_shaderProgram);
 
 	m_shaderProgram = reinterpret_cast<SceGxmProgram *>(program);
+	m_valid = true;
 	return true;
+}
+
+bool GxmShader::valid(void) const
+{
+	return m_valid;
 }
 
 GxmShader::Type GxmShader::type(void) const

@@ -32,6 +32,7 @@ public:
 	
 	bool loadFromBuffer(const unsigned char *data, std::size_t size);
 	
+	bool valid(void) const;
 	Type type(void) const;
 
 	const SceGxmProgram *program(void) const;
@@ -59,6 +60,7 @@ private:
 private:
 	void *m_uniformBuffer{nullptr};
 	SceGxmProgram *m_shaderProgram{nullptr};
+	bool m_valid{false};
 };
 
 #endif // GXMSHADER_H
