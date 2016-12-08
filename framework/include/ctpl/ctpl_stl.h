@@ -169,32 +169,16 @@ namespace ctpl {
             this->flags.clear();
         }
 
-        template<typename F, typename... Rest>
-        auto push(F && f, Rest&&... rest) ->std::future<decltype(f(0, rest...))> {
-            auto pck = std::make_shared<std::packaged_task<decltype(f(0, rest...))(int)>>(
-                std::bind(std::forward<F>(f), std::placeholders::_1, std::forward<Rest>(rest)...)
-                );
-            auto _f = new std::function<void(int id)>([pck](int id) {
-                (*pck)(id);
-            });
-            this->q.push(_f);
-            std::unique_lock<std::mutex> lock(this->mutex);
-            this->cv.notify_one();
-            return pck->get_future();
-        }
-
         // run the user's function that excepts argument int - id of the running thread. returned value is templatized
         // operator returns std::future, where the user can get the result and rethrow the catched exceptins
         template<typename F>
-        auto push(F && f) ->std::future<decltype(f(0))> {
-            auto pck = std::make_shared<std::packaged_task<decltype(f(0))(int)>>(std::forward<F>(f));
-            auto _f = new std::function<void(int id)>([pck](int id) {
-                (*pck)(id);
+        void push(F && f) {
+            auto _f = new std::function<void(int id)>([f{std::move(f)}](int id) {
+                (f)(id);
             });
             this->q.push(_f);
             std::unique_lock<std::mutex> lock(this->mutex);
             this->cv.notify_one();
-            return pck->get_future();
         }
 
 
