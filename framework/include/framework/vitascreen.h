@@ -38,20 +38,7 @@ private:
 	
 private:
 	static constexpr int DISPLAY_QUEUE_MAX_PENDING = 3;
-	
-	using RgbaPixel = union alignas(4)
-	{
-		std::uint32_t rgba;
-		
-		struct 
-		{
-			std::uint8_t r;
-			std::uint8_t g;
-			std::uint8_t b;
-			std::uint8_t a;
-		} components;
-	};
-	
+
 	class Framebuffer;
 	using RingBuffer = GpuMemoryBlock<char>;
 	using DepthBuffer = GpuMemoryBlock<char>;
@@ -60,7 +47,7 @@ private:
 	std::unique_ptr<RingBuffer> m_vdmRingBuffer, m_vertexRingBuffer, m_fragmentRingBuffer;
 	std::unique_ptr<FragmentUsseMemoryBlock> m_fragmentUsseRingBuffer;
 	std::unique_ptr<DepthBuffer> m_depthBuffer;
-	
+
 	std::vector<char> m_hostMemory;
 	SceGxmContext *m_context{nullptr};
 	SceGxmRenderTarget *m_renderTarget{nullptr};

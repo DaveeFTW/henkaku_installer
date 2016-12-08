@@ -11,6 +11,7 @@
 #include <framework/guiapplication.h>
 #include <framework/view.h>
 #include <framework/gpumemoryblock.h>
+#include <framework/pixeltypes.h>
 
 #include <easyloggingpp/easylogging++.h>
 
@@ -70,7 +71,7 @@ public:
 		sceGxmSyncObjectDestroy(m_syncObject);
 	}
 	
-	RgbaPixel *address(void) const
+	framework::R8G8B8A8 *address(void) const
 	{
 		return m_buffer->address();
 	}
@@ -91,7 +92,7 @@ public:
 	}
 	
 private:
-	using FramebufferMemory = GpuMemoryBlock<RgbaPixel>;
+	using FramebufferMemory = GpuMemoryBlock<framework::R8G8B8A8>;
 	std::unique_ptr<FramebufferMemory> m_buffer;
 	SceGxmSyncObject *m_syncObject;
 	SceGxmColorSurface m_colorSurface;
