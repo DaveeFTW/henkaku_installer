@@ -18,6 +18,7 @@ set(FRAMEWORK_SOURCES
 	"src/gxmvertexshader.cpp"
 	"src/gxmfragmentshader.cpp"
 	"src/gxmshaderprogram.cpp"
+	"src/gxmtexture.cpp"
 )
 
 include_directories(include)
