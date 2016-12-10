@@ -12,6 +12,8 @@
 
 #include <string>
 
+#include <glm/mat4x4.hpp>
+
 struct SceGxmProgramParameter;
 struct SceGxmProgram;
 
@@ -49,6 +51,8 @@ public:
 		float values[count] = { args... };
 		setUniform(index, 0, count, values);
 	}
+	
+	void setUniformValue(UniformIndex index, glm::mat4 mat4);
 
 protected:
 	GxmShader(void) = default;

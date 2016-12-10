@@ -11,6 +11,7 @@
 
 #include <cstring>
 
+#include <glm/gtc/type_ptr.hpp>
 #include <psp2/gxm.h>
 
 namespace
@@ -97,6 +98,11 @@ GxmShader::UniformIndex GxmShader::uniformIndex(const char *name)
 GxmShader::UniformIndex GxmShader::uniformIndex(const std::string& name)
 {
 	return uniformIndex(name.c_str());
+}
+
+void GxmShader::setUniformValue(UniformIndex index, glm::mat4 mat4)
+{
+	setUniform(index, 0, 16, glm::value_ptr(mat4));
 }
 
 void GxmShader::setUniform(GxmShader::UniformIndex index, unsigned int offset, unsigned int count, const float *data)
