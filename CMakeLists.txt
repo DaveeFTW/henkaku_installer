@@ -15,6 +15,7 @@ add_subdirectory(framework)
 set(INSTALLER_SOURCES
 	"src/main.cpp"
 	"src/installerview.cpp"
+	"src/camera.cpp"
 )
 set(INSTALLER_SHADERS
 	"shaders/clear.vert.cg"
