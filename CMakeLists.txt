@@ -16,10 +16,13 @@ set(INSTALLER_SOURCES
 	"src/main.cpp"
 	"src/installerview.cpp"
 	"src/camera.cpp"
+	"src/animatedbackground.cpp"
 )
 set(INSTALLER_SHADERS
 	"shaders/clear.vert.cg"
 	"shaders/clear.frag.cg"
+	"shaders/animbg.vert.cg"
+	"shaders/animbg.frag.cg"
 )
 
 set(INSTALLER_SHADER_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/shaders)
