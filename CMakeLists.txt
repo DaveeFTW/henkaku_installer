@@ -17,6 +17,7 @@ set(INSTALLER_SOURCES
 	"src/installerview.cpp"
 	"src/camera.cpp"
 	"src/animatedbackground.cpp"
+	"src/sysmodule.cpp"
 )
 set(INSTALLER_SHADERS
 	"shaders/clear.vert.cg"
@@ -88,6 +89,7 @@ target_link_libraries(installer.elf -Wl,-q
 	SceCtrl_stub
 	SceTouch_stub
 	SceGxm_stub
+	SceSysmodule_stub
 	-Wl,--whole-archive pthread -Wl,--no-whole-archive
 )
 
