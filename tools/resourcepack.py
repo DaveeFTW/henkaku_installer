@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import sys, re, json, os
+import sys, re, json, os, errno
 
 def clean(s):
 	# Remove invalid characters
