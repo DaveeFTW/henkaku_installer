@@ -9,19 +9,14 @@
 
 #include "animatedbackground.h"
 #include "camera.h"
+#include "resource.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/color_space.hpp>
 
-#include <psp2/gxm.h>
+#include <easyloggingpp/easylogging++.h>
 
-extern "C"
-{
-	extern unsigned char animbg_vert_gxp[];
-	extern unsigned int animbg_vert_gxp_len;
-	extern unsigned char animbg_frag_gxp[];
-	extern unsigned int animbg_frag_gxp_len;
-}
+#include <psp2/gxm.h>
 
 AnimatedBackground::AnimatedBackground(GxmShaderPatcher *patcher)
 	: m_program(patcher)
@@ -42,8 +37,13 @@ AnimatedBackground::AnimatedBackground(GxmShaderPatcher *patcher)
 	))
 	, m_animateColours(false)
 {
-	m_vertex.loadFromBuffer(animbg_vert_gxp, animbg_vert_gxp_len);
-	m_fragment.loadFromBuffer(animbg_frag_gxp, animbg_frag_gxp_len);
+	auto animbg_vert = Resource::read("rsc:/animbg.vert.cg.gxp");
+	LOG(INFO) << "read resource \"rsc:/animbg.vert.cg.gxp\": " << animbg_vert.good << " size: " << animbg_vert.data.size();
+	m_vertex.loadFromBuffer(animbg_vert.data.data(), animbg_vert.data.size());
+
+	auto animbg_frag = Resource::read("rsc:/animbg.frag.cg.gxp");
+	LOG(INFO) << "read resource \"rsc:/animbg.frag.cg.gxp\": " << animbg_frag.good << " size: " << animbg_frag.data.size();
+	m_fragment.loadFromBuffer(animbg_frag.data.data(), animbg_frag.data.size());
 
 	m_program.addShader(&m_vertex);
 	m_program.addShader(&m_fragment);

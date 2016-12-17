@@ -19,7 +19,7 @@ public:
 	virtual ~GxmFragmentShader(void) = default;
 
 protected:
-	bool analyseShader(const unsigned char *shader) override;
+	bool analyseShader(const char *shader) override;
 };
 
 #endif // GXMFRAGMENTSHADER_H

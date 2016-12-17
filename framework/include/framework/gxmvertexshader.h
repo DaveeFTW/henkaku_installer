@@ -25,7 +25,7 @@ public:
 	AttributeIndex attributeIndex(const std::string& name);
 
 protected:
-	bool analyseShader(const unsigned char *shader) override;
+	bool analyseShader(const char *shader) override;
 };
 
 #endif // GXMVERTEXSHADER_H

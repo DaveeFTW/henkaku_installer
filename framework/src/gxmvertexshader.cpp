@@ -33,7 +33,7 @@ GxmVertexShader::AttributeIndex GxmVertexShader::attributeIndex(const std::strin
 	return attributeIndex(name.c_str());
 }
 
-bool GxmVertexShader::analyseShader(const unsigned char *shader)
+bool GxmVertexShader::analyseShader(const char *shader)
 {
 	if (!GxmShader::analyseShader(shader))
 		return false;

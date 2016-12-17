@@ -38,9 +38,9 @@ GxmShader::~GxmShader(void)
 		delete[] reinterpret_cast<unsigned char *>(m_shaderProgram);
 }
 
-bool GxmShader::loadFromBuffer(const unsigned char *shader, std::size_t size)
+bool GxmShader::loadFromBuffer(const char *shader, std::size_t size)
 {
-	auto program = new unsigned char[size];
+	auto program = new char[size];
 	std::memcpy(program, shader, size);
 	
 	if (!analyseShader(program))
@@ -50,7 +50,7 @@ bool GxmShader::loadFromBuffer(const unsigned char *shader, std::size_t size)
 	}
 	
 	if (m_shaderProgram)
-		delete[] reinterpret_cast<unsigned char *>(m_shaderProgram);
+		delete[] reinterpret_cast<char *>(m_shaderProgram);
 
 	m_shaderProgram = reinterpret_cast<SceGxmProgram *>(program);
 	m_valid = true;
@@ -110,7 +110,7 @@ void GxmShader::setUniform(GxmShader::UniformIndex index, unsigned int offset, u
 	sceGxmSetUniformDataF(m_uniformBuffer, index, offset, count, data);
 }
 
-bool GxmShader::analyseShader(const unsigned char *shader)
+bool GxmShader::analyseShader(const char *shader)
 {
 	auto program = reinterpret_cast<const SceGxmProgram *>(shader);
 	

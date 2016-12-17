@@ -10,7 +10,7 @@
 #include <framework/gxmfragmentshader.h>
 #include <psp2/gxm.h>
 
-bool GxmFragmentShader::analyseShader(const unsigned char *shader)
+bool GxmFragmentShader::analyseShader(const char *shader)
 {
 	if (!GxmShader::analyseShader(shader))
 		return false;

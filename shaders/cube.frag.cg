@@ -1,5 +1,5 @@
 /*
- * clear.vert.cg - draw a solid black colour
+ * cube.frag.cg - cube fragment shader
  *
  * Copyright (C) 2016 David "Davee" Morgan
  *
@@ -8,8 +8,9 @@
  */
 
 float4 main(
-	float3 in position
-) : POSITION
+	float3 vVertex: TEXCOORD0, 
+	float3 vColor : TEXCOORD1
+)
 {
-	return float4(position, 1.0f);
+	return float4(vColor, 1.0);
 }

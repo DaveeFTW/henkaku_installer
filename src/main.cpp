@@ -24,11 +24,6 @@ extern "C"
 	}
 
 	void __sinit(struct _reent *);
-
-	extern unsigned char clear_vert_gxp[];
-	extern unsigned int clear_vert_gxp_len;
-	extern unsigned char clear_frag_gxp[];
-	extern unsigned int clear_frag_gxp_len;
 }
 
 __attribute__((constructor(101)))
