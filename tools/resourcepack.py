@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import sys, re, json
+import sys, re, json, os
 
 def clean(s):
 	# Remove invalid characters
@@ -26,5 +26,12 @@ if __name__ == "__main__":
 		resource_path = "rsc:/"+res
 		cdata[resource_path] = resource_c;
 	
+	if not os.path.exists(os.path.dirname(sys.argv[1])):
+		try:
+			os.makedirs(os.path.dirname(sys.argv[1]))
+		except OSError as exc: # Guard against race condition
+			if exc.errno != errno.EEXIST:
+				raise
+
 	with open(sys.argv[1], 'w') as f:
 		f.write(json.dumps(cdata))
