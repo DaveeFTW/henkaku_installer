@@ -10,6 +10,7 @@ project(installer)
 add_definitions(-Wl,-q -Wall -Werror -pedantic -Os)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z")
 
+add_subdirectory(3rdparty)
 add_subdirectory(framework)
 add_subdirectory(shaders)
 
@@ -24,6 +25,7 @@ set(INSTALLER_SOURCES
 
 include_directories(framework/include)
 include_directories(${CMAKE_BINARY_DIR}/auto)
+include_directories(${ZLIB_INCLUDE_DIR} ${FREETYPE_INCLUDE_DIR})
 
 add_executable(installer.elf ${INSTALLER_SOURCES} auto/generatedresources.cpp)
 
@@ -35,7 +37,12 @@ target_link_libraries(installer.elf -Wl,-q
 	SceGxm_stub
 	SceSysmodule_stub
 	-Wl,--whole-archive pthread -Wl,--no-whole-archive
+	${ZLIB_LIBRARIES}
+	${FREETYPE_LIBRARIES}
 )
+
+add_dependencies(installer.elf libpng)
+add_dependencies(installer.elf freetype)
 
 add_custom_command(
 	OUTPUT auto/generatedresources.cpp
