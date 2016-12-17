@@ -108,22 +108,24 @@ if __name__ == "__main__":
 	resource_cpp = generate_cpp(sys.argv[1], sys.argv[2], cdata)
 	resource_hpp = generate_hpp(sys.argv[2])
 
-	if not os.path.exists(os.path.dirname(sys.argv[1])):
-		try:
-			os.makedirs(os.path.dirname(sys.argv[1]))
-		except OSError as exc: # Guard against race condition
-			if exc.errno != errno.EEXIST:
-				raise
+	if os.path.dirname(sys.argv[1]) != "":
+		if not os.path.exists(os.path.dirname(sys.argv[1])):
+			try:
+				os.makedirs(os.path.dirname(sys.argv[1]))
+			except OSError as exc: # Guard against race condition
+				if exc.errno != errno.EEXIST:
+					raise
 
 	with open(sys.argv[1], "w") as f:
 		f.write(resource_cpp)
 	
-	if not os.path.exists(os.path.dirname(sys.argv[2])):
-		try:
-			os.makedirs(os.path.dirname(sys.argv[2]))
-		except OSError as exc: # Guard against race condition
-			if exc.errno != errno.EEXIST:
-				raise
+	if os.path.dirname(sys.argv[2]) != "":
+		if not os.path.exists(os.path.dirname(sys.argv[2])):
+			try:
+				os.makedirs(os.path.dirname(sys.argv[2]))
+			except OSError as exc: # Guard against race condition
+				if exc.errno != errno.EEXIST:
+					raise
 
 	with open(sys.argv[2], "w") as f:
 		f.write(resource_hpp)
