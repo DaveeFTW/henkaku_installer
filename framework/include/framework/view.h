@@ -11,7 +11,6 @@
 #define VIEW_H
 
 #include <memory>
-#include <Eigen/Dense>
 
 class Task;
 using TaskPtr = std::shared_ptr<Task>;
