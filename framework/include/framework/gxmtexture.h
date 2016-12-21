@@ -10,14 +10,13 @@
 #ifndef GXMTEXTURE_H
 #define GXMTEXTURE_H
 
+#include <framework/gpumemoryblock.h>
+
 #include <memory>
 #include <cstdint>
 
 struct SceGxmTexture;
 struct SceGxmContext;
-
-template <typename T>
-class GpuMemoryBlock;
 
 class GxmTexture
 {
@@ -54,7 +53,8 @@ public:
 
 	enum TextureFormat
 	{
-		ARGB8
+		ARGB8,
+		U8_R111 // set U8 as alpha channel and BGR to 111
 	};
 
 public:

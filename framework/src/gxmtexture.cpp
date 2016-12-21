@@ -71,6 +71,8 @@ namespace
 		default:
 		case GxmTexture::ARGB8:
 			return SCE_GXM_TEXTURE_FORMAT_A8R8G8B8;
+		case GxmTexture::U8_R111:
+			return SCE_GXM_TEXTURE_FORMAT_U8_R111;
 		}
 	}
 
@@ -81,6 +83,8 @@ namespace
 		default:
 		case GxmTexture::ARGB8:
 			return 4;
+		case GxmTexture::U8_R111:
+			return 1;
 		}
 	}
 } // anonymous namespace
