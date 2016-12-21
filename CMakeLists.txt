@@ -36,9 +36,6 @@ target_link_libraries(installer.elf -Wl,-q
 	${FREETYPE_LIBRARIES}
 )
 
-add_dependencies(installer.elf libpng)
-add_dependencies(installer.elf freetype)
-
 add_custom_command(
 	OUTPUT auto/generatedresources.cpp
 	DEPENDS ${CMAKE_SOURCE_DIR}/tools/resource2cpp.py shaders ${CMAKE_BINARY_DIR}/shaders/shaders.rsc
