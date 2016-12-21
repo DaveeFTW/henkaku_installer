@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 2.8)
 
 project(installer)
 
+find_package(Freetype REQUIRED)
+find_package(ZLIB REQUIRED)
+find_package(PNG REQUIRED)
+include_directories(${FREETYPE_INCLUDE_DIRS})
+
 add_definitions(-Wl,-q -Wall -Werror -pedantic -Os)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z")
 
@@ -20,7 +25,6 @@ set(INSTALLER_SOURCES
 include_directories(3rdparty/include)
 include_directories(framework/include)
 include_directories(${CMAKE_BINARY_DIR}/auto)
-include_directories(${ZLIB_INCLUDE_DIR} ${FREETYPE_INCLUDE_DIR})
 
 add_executable(installer.elf ${INSTALLER_SOURCES} auto/generatedresources.cpp)
 
@@ -32,8 +36,9 @@ target_link_libraries(installer.elf -Wl,-q
 	SceGxm_stub
 	SceSysmodule_stub
 	-Wl,--whole-archive pthread -Wl,--no-whole-archive
-	${ZLIB_LIBRARIES}
 	${FREETYPE_LIBRARIES}
+	${ZLIB_LIBRARIES}
+	${PNG_LIBRARIES}
 )
 
 add_custom_command(
