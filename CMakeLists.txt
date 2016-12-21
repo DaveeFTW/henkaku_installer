@@ -1,10 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 
-# TODO: replace with toolchain file
-set(CMAKE_SYSTEM_NAME "Generic")
-set(CMAKE_C_COMPILER "arm-vita-eabi-gcc")
-set(CMAKE_CXX_COMPILER "arm-vita-eabi-g++")
-
 project(installer)
 
 add_definitions(-Wl,-q -Wall -Werror -pedantic -Os)
