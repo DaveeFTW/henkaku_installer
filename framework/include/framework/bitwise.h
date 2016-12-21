@@ -10,6 +10,8 @@
 #ifndef BITWISE_H
 #define BITWISE_H
 
+#include <cstddef>
+
 template <typename T>
 constexpr T clz(T val)
 {
