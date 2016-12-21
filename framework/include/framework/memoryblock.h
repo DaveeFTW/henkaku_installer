@@ -41,6 +41,7 @@ public:
 		}
 		
 		auto size = elements * sizeof(T);
+		m_count = elements;
 		
 		// align our allocation size appropriately
 		m_size = alignMultiple(size, type);
@@ -81,6 +82,11 @@ public:
 	std::size_t size(void) const
 	{
 		return m_size;
+	}
+	
+	std::size_t count(void) const
+	{
+		return m_count;
 	}
 	
 private:
@@ -148,7 +154,7 @@ private:
 private:
 	SceUID m_uid{-1};
 	T *m_address{nullptr};
-	std::size_t m_size{0};
+	std::size_t m_size{0}, m_count{0};
 };
 
 #endif // MEMORYBLOCK_H
