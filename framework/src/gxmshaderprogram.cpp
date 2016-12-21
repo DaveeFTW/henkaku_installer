@@ -95,6 +95,11 @@ bool GxmShaderProgram::addShader(GxmShader *shader)
 	return true;
 }
 
+void GxmShaderProgram::setBlendInfo(SceGxmBlendInfo *info)
+{
+	m_blendInfo = info;
+}
+
 void GxmShaderProgram::setVertexStreamFormat(SceGxmVertexStream *stream, unsigned int count)
 {
 	m_vertexStreams = stream;
@@ -136,7 +141,7 @@ bool GxmShaderProgram::link(void)
 		, m_fragmentShaderId
 		, SCE_GXM_OUTPUT_REGISTER_FORMAT_UCHAR4
 		, SCE_GXM_MULTISAMPLE_NONE
-		, nullptr
+		, m_blendInfo
 		, sceGxmShaderPatcherGetProgramFromId(m_vertexShaderId)
 		, &m_fragmentProgram
 	);

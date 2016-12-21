@@ -16,6 +16,7 @@ struct SceGxmVertexProgram;
 struct SceGxmFragmentProgram;
 struct SceGxmVertexStream;
 struct SceGxmVertexAttribute;
+struct SceGxmBlendInfo;
 
 class GxmShader;
 class GxmShaderPatcher;
@@ -27,6 +28,8 @@ public:
 	~GxmShaderProgram(void);
 
 	bool addShader(GxmShader *shader);
+
+	void setBlendInfo(SceGxmBlendInfo *info);
 
 	void setVertexStreamFormat(SceGxmVertexStream *stream, unsigned int count);
 	void setVertexAttributeFormat(SceGxmVertexAttribute *attributes, unsigned int count);
@@ -46,6 +49,7 @@ private:
 	SceGxmVertexProgram *m_vertexProgram{nullptr};
 	SceGxmFragmentProgram *m_fragmentProgram{nullptr};
 	bool m_linked{false};
+	SceGxmBlendInfo *m_blendInfo{nullptr};
 };
 
 #endif // GXMSHADERPROGRAM_H
