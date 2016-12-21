@@ -24,6 +24,18 @@ public:
 	float aspectRatio(void) const;
 	void setAspectRatio(float aspectRatio);
 
+	float left(void) const;
+	void setLeft(float left);
+
+	float right(void) const;
+	void setRight(float right);
+
+	float bottom(void) const;
+	void setBottom(float bottom);
+
+	float top(void) const;
+	void setTop(float top);
+
 	float near(void) const;
 	void setNear(float near);
 
@@ -40,6 +52,7 @@ public:
 	void setViewCenter(const glm::vec3& viewCenter);
 
 	void setPerspectiveProjection(float fov, float aspectRatio, float near, float far);
+	void setOrthographicProjection(float left, float right, float bottom, float top, float near, float far);
 
 	glm::mat4 projectionMatrix(void) const;
 	glm::mat4 viewMatrix(void) const;
@@ -48,6 +61,7 @@ private:
 	enum ProjectionTypes
 	{
 		PerspectiveProjection,
+		OrthographicProjection,
 	};
 	
 	void updateProjectionMatrix(void);
@@ -61,6 +75,10 @@ private:
 	glm::mat4 m_viewMatrix;
 	float m_fov;
 	float m_aspectRatio;
+	float m_left;
+	float m_right;
+	float m_bottom;
+	float m_top;
 	float m_near;
 	float m_far;
 	ProjectionTypes m_projectionType;

@@ -16,6 +16,10 @@ Camera::Camera(void)
 	, m_viewCenter(0, 0, 0)
 	, m_fov(45.f)
 	, m_aspectRatio(1.f)
+	, m_left(-1.f)
+	, m_right(1.f)
+	, m_bottom(-1.f)
+	, m_top(1.f)
 	, m_near(0.f)
 	, m_far(1.f)
 	, m_projectionType(PerspectiveProjection)
@@ -45,6 +49,46 @@ void Camera::setAspectRatio(float aspectRatio)
 {
 	m_aspectRatio = aspectRatio;
 	updateProjectionMatrix();
+}
+
+float Camera::left(void) const
+{
+	return m_left;
+}
+
+void Camera::setLeft(float left)
+{
+	m_left = left;
+}
+
+float Camera::right(void) const
+{
+	return m_right;
+}
+
+void Camera::setRight(float right)
+{
+	m_right = right;
+}
+
+float Camera::bottom(void) const
+{
+	return m_bottom;
+}
+
+void Camera::setBottom(float bottom)
+{
+	m_bottom = bottom;
+}
+
+float Camera::top(void) const
+{
+	return m_top;
+}
+
+void Camera::setTop(float top)
+{
+	m_top = top;
 }
 
 float Camera::near(void) const
@@ -112,6 +156,18 @@ void Camera::setPerspectiveProjection(float fov, float aspectRatio, float near, 
 	updateProjectionMatrix();
 }
 
+void Camera::setOrthographicProjection(float left, float right, float bottom, float top, float near, float far)
+{
+	m_left = left;
+	m_right = right;
+	m_bottom = bottom;
+	m_top = top;
+	m_near = near;
+	m_far = far;
+	m_projectionType = OrthographicProjection;
+	updateProjectionMatrix();
+}
+
 glm::mat4 Camera::projectionMatrix(void) const
 {
 	return m_projection;
@@ -128,6 +184,9 @@ void Camera::updateProjectionMatrix(void)
 	{
 	case PerspectiveProjection:
 		m_projection = glm::perspective(m_fov, m_aspectRatio, m_near, m_far);
+		break;
+	case OrthographicProjection:
+		m_projection = glm::ortho(m_left, m_right, m_bottom, m_top, m_near, m_far);
 		break;
 	}
 }
