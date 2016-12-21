@@ -12,6 +12,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z")
 
 add_subdirectory(framework)
 add_subdirectory(shaders)
+add_subdirectory(assets)
 
 set(INSTALLER_SOURCES
 	"src/main.cpp"
@@ -47,8 +48,8 @@ target_link_libraries(installer.elf -Wl,-q
 
 add_custom_command(
 	OUTPUT auto/generatedresources.cpp
-	DEPENDS ${CMAKE_SOURCE_DIR}/tools/resource2cpp.py shaders ${CMAKE_BINARY_DIR}/shaders/shaders.rsc
-	COMMAND python ${CMAKE_SOURCE_DIR}/tools/resource2cpp.py auto/generatedresources.cpp auto/generatedresources.h shaders/shaders.rsc
+	DEPENDS ${CMAKE_SOURCE_DIR}/tools/resource2cpp.py shaders ${CMAKE_BINARY_DIR}/shaders/shaders.rsc assets ${CMAKE_BINARY_DIR}/assets/assets.rsc
+	COMMAND python ${CMAKE_SOURCE_DIR}/tools/resource2cpp.py auto/generatedresources.cpp auto/generatedresources.h shaders/shaders.rsc assets/assets.rsc
 )
 
 add_custom_target(installer.fself ALL
