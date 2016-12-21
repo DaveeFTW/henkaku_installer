@@ -21,6 +21,7 @@ set(INSTALLER_SOURCES
 	"src/sysmodule.cpp"
 	"src/resource.cpp"
 	"src/textureatlas.cpp"
+	"src/characteratlas.cpp"
 )
 
 include_directories(3rdparty/include)
