@@ -127,8 +127,15 @@ void GxmTexture::setSize(std::size_t width, std::size_t height, std::size_t dept
 
 void GxmTexture::setData(const void *data)
 {
-	std::memcpy(m_storage->address(), data, m_width*m_height*m_depth*texturePixelSize(m_format));
-	
+	if (data == nullptr)
+	{
+		std::memset(m_storage->address(), 0, m_width*m_height*m_depth*texturePixelSize(m_format));
+	}
+	else
+	{
+		std::memcpy(m_storage->address(), data, m_width*m_height*m_depth*texturePixelSize(m_format));
+	}
+
 	auto res = sceGxmTextureInitLinear
 	(
 		m_texture.get(), 
@@ -140,6 +147,11 @@ void GxmTexture::setData(const void *data)
 	);
 
 	LOG(INFO) << "sceGxmTextureInitLinear: " << res;
+}
+
+void GxmTexture::setEmptyData(void)
+{
+	setData(nullptr);
 }
 
 void GxmTexture::setMinificationFilter(Filter filter)

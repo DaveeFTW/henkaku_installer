@@ -80,6 +80,8 @@ public:
 	void setFormat(TextureFormat format);
 
 	void setData(const void *data);
+	void setEmptyData(void);
+
 protected:
 	char *storage(void) const;
 
