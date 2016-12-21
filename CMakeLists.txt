@@ -23,6 +23,7 @@ set(INSTALLER_SOURCES
 	"src/textureatlas.cpp"
 	"src/characteratlas.cpp"
 	"src/font.cpp"
+	"src/textrenderer.cpp"
 )
 
 include_directories(3rdparty/include)
