@@ -44,7 +44,6 @@ public:
 		)
 	{
 		g_counter = m_buffer->size();
-		std::memset(&m_framebuf, 0, sizeof(m_framebuf));
 		
 		m_framebuf.size = sizeof(m_framebuf);
 		m_framebuf.base = m_buffer->address();
