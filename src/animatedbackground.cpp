@@ -13,6 +13,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/color_space.hpp>
+#include <glm/gtx/transform.hpp>
 
 #include <easyloggingpp/easylogging++.h>
 
@@ -213,7 +214,7 @@ void AnimatedBackground::update(const Camera *camera, float dt)
 		std::memcpy((char *)(&m_vertices->address()[3])+4*3, glm::value_ptr(interp), 4*3);
 	}
 
-	m_mvp = camera->projectionMatrix() * camera->viewMatrix() * glm::mat4(1);
+	m_mvp = camera->projectionMatrix() * camera->viewMatrix() * glm::rotate(glm::mat4(1.f), 45.f, glm::vec3(0.f, 0.f, 1.f));
 }
 
 void AnimatedBackground::draw(SceGxmContext *ctx)
