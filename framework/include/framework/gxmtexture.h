@@ -80,6 +80,8 @@ public:
 	void setFormat(TextureFormat format);
 
 	void setData(const void *data);
+protected:
+	char *storage(void) const;
 
 private:
 	std::unique_ptr<SceGxmTexture> m_texture;

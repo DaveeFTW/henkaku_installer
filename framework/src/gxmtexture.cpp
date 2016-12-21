@@ -180,3 +180,8 @@ void GxmTexture::setFormat(TextureFormat format)
 {
 	m_format = format;
 }
+
+char *GxmTexture::storage(void) const
+{
+	return m_storage->address();
+}
