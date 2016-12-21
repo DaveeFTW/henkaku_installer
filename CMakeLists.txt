@@ -17,6 +17,7 @@ set(INSTALLER_SOURCES
 	"src/resource.cpp"
 )
 
+include_directories(3rdparty/include)
 include_directories(framework/include)
 include_directories(${CMAKE_BINARY_DIR}/auto)
 include_directories(${ZLIB_INCLUDE_DIR} ${FREETYPE_INCLUDE_DIR})
