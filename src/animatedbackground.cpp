@@ -10,6 +10,7 @@
 #include "animatedbackground.h"
 #include "camera.h"
 #include "resource.h"
+#include "shaderutility.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/color_space.hpp>
@@ -38,24 +39,14 @@ AnimatedBackground::AnimatedBackground(GxmShaderPatcher *patcher)
 	))
 	, m_animateColours(false)
 {
-	auto animbg_vert = Resource::read("rsc:/animbg.vert.cg.gxp");
-	LOG(INFO) << "read resource \"rsc:/animbg.vert.cg.gxp\": " << animbg_vert.good << " size: " << animbg_vert.data.size();
-	m_vertex.loadFromBuffer(animbg_vert.data.data(), animbg_vert.data.size());
+	// read shaders
+	ShaderUtility::read("rsc:/animbg.vert.cg.gxp", &m_vertex);
+	ShaderUtility::read("rsc:/animbg.frag.cg.gxp", &m_fragment);
 
-	auto animbg_frag = Resource::read("rsc:/animbg.frag.cg.gxp");
-	LOG(INFO) << "read resource \"rsc:/animbg.frag.cg.gxp\": " << animbg_frag.good << " size: " << animbg_frag.data.size();
-	m_fragment.loadFromBuffer(animbg_frag.data.data(), animbg_frag.data.size());
-
+	// add programs
 	m_program.addShader(&m_vertex);
 	m_program.addShader(&m_fragment);
 
-	auto positionIndex = m_vertex.attributeIndex("position");
-	auto colorIndex = m_vertex.attributeIndex("color");
-	auto textureIndex1 = m_vertex.attributeIndex("texCoord1");
-	auto textureIndex2 = m_vertex.attributeIndex("texCoord2");
-	auto textureIndex3 = m_vertex.attributeIndex("texCoord3");
-	auto textureIndex4 = m_vertex.attributeIndex("texCoord4");
-	auto textureIndex5 = m_vertex.attributeIndex("texCoord5");
 	m_mvpIndex = m_vertex.uniformIndex("mvp");
 
 	SceGxmVertexAttribute attributes[7];
@@ -65,43 +56,44 @@ AnimatedBackground::AnimatedBackground(GxmShaderPatcher *patcher)
 	attributes[0].offset = 0;
 	attributes[0].format = SCE_GXM_ATTRIBUTE_FORMAT_F32;
 	attributes[0].componentCount = 3;
-	attributes[0].regIndex = sceGxmProgramParameterGetResourceIndex(positionIndex);
+	attributes[0].regIndex = sceGxmProgramParameterGetResourceIndex(m_vertex.attributeIndex("position"));
 
 	attributes[1].streamIndex = 0;
 	attributes[1].offset = 3*4;
 	attributes[1].format = SCE_GXM_ATTRIBUTE_FORMAT_F32;
 	attributes[1].componentCount = 3;
-	attributes[1].regIndex = sceGxmProgramParameterGetResourceIndex(colorIndex);
+	attributes[1].regIndex = sceGxmProgramParameterGetResourceIndex(m_vertex.attributeIndex("color"));
 
+	// TODO: texture array?
 	attributes[2].streamIndex = 1;
 	attributes[2].offset = 0;
 	attributes[2].format = SCE_GXM_ATTRIBUTE_FORMAT_F32;
 	attributes[2].componentCount = 2;
-	attributes[2].regIndex = sceGxmProgramParameterGetResourceIndex(textureIndex1);
+	attributes[2].regIndex = sceGxmProgramParameterGetResourceIndex(m_vertex.attributeIndex("texCoord1"));
 
 	attributes[3].streamIndex = 1;
 	attributes[3].offset = sizeof(TextureCoord);
 	attributes[3].format = SCE_GXM_ATTRIBUTE_FORMAT_F32;
 	attributes[3].componentCount = 2;
-	attributes[3].regIndex = sceGxmProgramParameterGetResourceIndex(textureIndex2);
+	attributes[3].regIndex = sceGxmProgramParameterGetResourceIndex(m_vertex.attributeIndex("texCoord2"));
 
 	attributes[4].streamIndex = 1;
 	attributes[4].offset = 2*sizeof(TextureCoord);
 	attributes[4].format = SCE_GXM_ATTRIBUTE_FORMAT_F32;
 	attributes[4].componentCount = 2;
-	attributes[4].regIndex = sceGxmProgramParameterGetResourceIndex(textureIndex3);
+	attributes[4].regIndex = sceGxmProgramParameterGetResourceIndex(m_vertex.attributeIndex("texCoord3"));
 
 	attributes[5].streamIndex = 1;
 	attributes[5].offset = 3*sizeof(TextureCoord);
 	attributes[5].format = SCE_GXM_ATTRIBUTE_FORMAT_F32;
 	attributes[5].componentCount = 2;
-	attributes[5].regIndex = sceGxmProgramParameterGetResourceIndex(textureIndex4);
+	attributes[5].regIndex = sceGxmProgramParameterGetResourceIndex(m_vertex.attributeIndex("texCoord4"));
 
 	attributes[6].streamIndex = 1;
 	attributes[6].offset = 4*sizeof(TextureCoord);
 	attributes[6].format = SCE_GXM_ATTRIBUTE_FORMAT_F32;
 	attributes[6].componentCount = 2;
-	attributes[6].regIndex = sceGxmProgramParameterGetResourceIndex(textureIndex5);
+	attributes[6].regIndex = sceGxmProgramParameterGetResourceIndex(m_vertex.attributeIndex("texCoord5"));
 
 	streams[0].stride = Vertex::size();
 	streams[0].indexSource = SCE_GXM_INDEX_SOURCE_INDEX_16BIT;
