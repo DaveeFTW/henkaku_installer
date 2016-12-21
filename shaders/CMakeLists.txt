@@ -4,12 +4,14 @@ set(VERTEX_SHADERS
 	"cube.vert.cg"
 	"clear.vert.cg"
 	"animbg.vert.cg"
+	"text.vert.cg"
 )
 
 set(FRAGMENT_SHADERS
 	"cube.frag.cg"
 	"clear.frag.cg"
 	"animbg.frag.cg"
+	"text.frag.cg"
 )
 
 function(CompileShaderResource shader output type)
