@@ -44,8 +44,6 @@
 #include <limits>
 #include <cstring>
 
-#include <easyloggingpp/easylogging++.h>
-
 TextureAtlas::TextureAtlas(void)
 {
 	
@@ -71,7 +69,6 @@ void TextureAtlas::create(GxmTexture::Filter minFilter, GxmTexture::Filter magFi
 	allocateStorage();
 	setEmptyData();
 	setMinMagFilter(minFilter, magFilter);
-	LOG(INFO) << "texture atlas create: w: " << width() << " h: " << height();
 	m_nodes.push_back(glm::ivec3(1, 1, width()-2));
 }
 
@@ -86,9 +83,6 @@ void TextureAtlas::setRegion(AtlasRegion region, const char *data, std::size_t s
 	{
 		std::memcpy(storage() + ((y+i)*this->width() + x), data + (i*stride), width);
 	}
-
-	std::ofstream output("ux0:/data/test.bin", std::ofstream::out | std::ofstream::binary);
-	output.write(storage(), this->width() * this->height());
 }
 
 TextureAtlas::AtlasRegion TextureAtlas::region(std::size_t width, std::size_t height)
@@ -101,9 +95,7 @@ TextureAtlas::AtlasRegion TextureAtlas::region(std::size_t width, std::size_t he
 	
 	for (auto it = m_nodes.begin(); it != m_nodes.end(); ++it)
 	{
-		LOG(INFO) << "calculating distance: " << std::distance(it, m_nodes.end());
 		auto y = fit(it, width, height);
-		LOG(INFO) << "calculating distance2: " << std::distance(it, m_nodes.end());
 		
 		if (y >= 0)
 		{
@@ -112,9 +104,6 @@ TextureAtlas::AtlasRegion TextureAtlas::region(std::size_t width, std::size_t he
 			if (((y + height) < best_height)
 				|| (((y + height) == best_height) && (node.z > 0 && static_cast<std::size_t>(node.z) < best_width)))
 			{
-				LOG(INFO) << "best height: " << y+height;
-				LOG(INFO) << "best width: " << node.z;
-
 				best_height = y + height;
 				best_width = node.z;
 				best_node = it;
@@ -123,8 +112,6 @@ TextureAtlas::AtlasRegion TextureAtlas::region(std::size_t width, std::size_t he
 			}
 		}
 	}
-	
-	LOG(INFO) << "region thing: " << __PRETTY_FUNCTION__;
 
 	if (best_node == m_nodes.end())
 	{
@@ -134,42 +121,22 @@ TextureAtlas::AtlasRegion TextureAtlas::region(std::size_t width, std::size_t he
 		region.w = 0;
 		return region;
 	}
-	
-	LOG(INFO) << "it: " << (int)std::distance(best_node, m_nodes.end());
 
 	m_nodes.insert(best_node, glm::ivec3(region.x, region.y + height, width));
 	for (auto it = best_node; it != m_nodes.end();)
 	{
-		LOG(INFO) << "it2: " << (int)std::distance(it, m_nodes.end());
-		LOG(INFO) << "push nodes: " << __PRETTY_FUNCTION__;
 		auto node = it;
-		LOG(INFO) << "step: 1";
 		auto prev = std::prev(it);
-		LOG(INFO) << "it3: " << (int)std::distance(prev, m_nodes.end());
-		LOG(INFO) << "step: 2";
 		
 		if (node->x < (prev->x + prev->z))
 		{
-		LOG(INFO) << "step: 3";
-			LOG(INFO) << "prev->x: " << prev->x;
-			LOG(INFO) << "prev->z: " << prev->z;
-			LOG(INFO) << "node->x: " << node->z;
 			int shrink = prev->x + prev->z - node->x;
-			LOG(INFO) << "shrink value: " << shrink;
 			node->x += shrink;
 			node->z -= shrink;
 			
 			if (node->z <= 0)
 			{
-		LOG(INFO) << "step: 4 - distance: " << std::distance(it, m_nodes.end());
-		LOG(INFO) << "step: 4 - node size: " << node->z;
 				it = m_nodes.erase(it);
-		LOG(INFO) << "step: 5";
-		LOG(INFO) << "step: 5";
-		LOG(INFO) << "step: 5";
-		LOG(INFO) << "step: 5";
-		LOG(INFO) << "step: 5";
-		LOG(INFO) << "step: 5";
 			}
 			else
 			{
@@ -182,13 +149,9 @@ TextureAtlas::AtlasRegion TextureAtlas::region(std::size_t width, std::size_t he
 			++it;
 			break;
 		}
-		LOG(INFO) << "step: 6";
 	}
 	
 	merge();
-	LOG(INFO) << "done merge: " << __PRETTY_FUNCTION__;
-	LOG(INFO) << "ALLOCATED REGION X: " << region.x;
-	LOG(INFO) << "ALLOCATED REGION Y: " << region.y;
 	return region;
 }
 
@@ -221,14 +184,11 @@ int TextureAtlas::fit(NodeList::iterator it, std::size_t width, std::size_t heig
 
 	if ((x + width) > (this->width()-1))
 	{
-		LOG(INFO) << "width fail(" << (x + width) << ") > " << "(" << (this->width()-1) << ")";
 		return -1;
 	}
 
 	while (width_left > 0)
 	{
-		LOG(INFO) << "width left: " << width_left;
-		
 		node = *it;
 		
 		if (node.y > y)
@@ -238,22 +198,18 @@ int TextureAtlas::fit(NodeList::iterator it, std::size_t width, std::size_t heig
 		
 		if ((y + height) > this->height()-1)
 		{
-			LOG(INFO) << "height fail (" << (y + height) << ") > " << "(" << this->height()-1 << ")";
 			return -1;
 		}
-		
-		LOG(INFO) << "node.z size: " << node.z;
+
 		width_left -= node.z;
 		++it;
 	}
 
-	LOG(INFO) << "fit res: " << y;
 	return y;
 }
 
 void TextureAtlas::merge(void)
 {
-	LOG(INFO) << "doing merge: " << __PRETTY_FUNCTION__;
 	for (auto it = m_nodes.begin(); it != m_nodes.end();)
 	{
 		auto node = it;
