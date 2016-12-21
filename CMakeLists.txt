@@ -20,6 +20,7 @@ set(INSTALLER_SOURCES
 	"src/animatedbackground.cpp"
 	"src/sysmodule.cpp"
 	"src/resource.cpp"
+	"src/textureatlas.cpp"
 )
 
 include_directories(3rdparty/include)
