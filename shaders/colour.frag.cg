@@ -8,8 +8,8 @@
  */
 
 float4 main(
-	float4 vColor: TEXCOORD0
+	float3 vColor: TEXCOORD0
 )
 {
-	return vColor;
+	return float4(vColor, 1.f);
 }
