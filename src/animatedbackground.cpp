@@ -16,6 +16,8 @@
 #include <glm/gtx/color_space.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <png++/png.hpp>
+
 #include <easyloggingpp/easylogging++.h>
 
 #include <psp2/gxm.h>
@@ -104,8 +106,10 @@ AnimatedBackground::AnimatedBackground(GxmShaderPatcher *patcher)
 	m_program.setVertexStreamFormat(streams, 2);
 	m_program.link();
 
-	auto bottomRightRgb = glm::vec3(69.f/255.f, 218.f/255.f, 255.f/255.f);
-	auto topLeftRgb = glm::vec3(70.f/255.f, 108.f/255.f, 191.f/255.f);
+	//auto bottomRightRgb = glm::vec3(69.f/255.f, 218.f/255.f, 255.f/255.f);
+	//auto topLeftRgb = glm::vec3(70.f/255.f, 108.f/255.f, 191.f/255.f);
+	auto bottomRightRgb = glm::vec3(172.f/255.f, 228.f/255.f, 234.f/255.f);
+	auto topLeftRgb = glm::vec3(255.f/255.f, 228.f/255.f, 234.f/255.f);
 	
 	m_colourTopLeft = glm::hsvColor(topLeftRgb);
 	m_colourBottomRight = glm::hsvColor(bottomRightRgb);
@@ -114,10 +118,10 @@ AnimatedBackground::AnimatedBackground(GxmShaderPatcher *patcher)
 	
 	Vertex vertices[4] =
 	{
-		{ glm::vec3(-128, -128, 50), interp },
-		{ glm::vec3(128, -128, 50), bottomRightRgb },
-		{ glm::vec3(-128, 128, 50), topLeftRgb },
-		{ glm::vec3(128, 128, 50), interp }
+		{ glm::vec3(-2048, -2048, -256), interp },
+		{ glm::vec3(2048, -2048, -256), bottomRightRgb },
+		{ glm::vec3(-2048, 2048, -256), topLeftRgb },
+		{ glm::vec3(2048, 2048, -256), interp }
 	};
 
 	for (auto i = 0; i < 4; ++i)
@@ -134,11 +138,11 @@ AnimatedBackground::AnimatedBackground(GxmShaderPatcher *patcher)
 	m_indices->address()[5] = 2;
 
 	// load textures
-	loadTexture(&m_textures[0].texture, "app0:base.data");
-	loadTexture(&m_textures[1].texture, "app0:spec1.data");
-	loadTexture(&m_textures[2].texture, "app0:spec2.data");
-	loadTexture(&m_textures[3].texture, "app0:spec3.data");
-	loadTexture(&m_textures[4].texture, "app0:spec4.data");
+	loadTexture(&m_textures[0].texture, "textures/bgbase.png");
+	loadTexture(&m_textures[1].texture, "textures/bgspec1.png");
+	loadTexture(&m_textures[2].texture, "textures/bgspec2.png");
+	loadTexture(&m_textures[3].texture, "textures/bgspec3.png");
+	loadTexture(&m_textures[4].texture, "textures/bgspec4.png");
 
 	// set movement rates etc
 	m_textures[0].position = glm::vec2(256.f, 256.f);
@@ -156,18 +160,34 @@ AnimatedBackground::AnimatedBackground(GxmShaderPatcher *patcher)
 
 void AnimatedBackground::loadTexture(GxmTexture *texture, const char *file)
 {
-	auto fp = fopen(file, "rb");
-	auto value = malloc(512*512*4);
-	fread(value, 1, 512*512*4, fp);
-	fclose(fp);
+	class VectorStream : public std::basic_streambuf<char, std::char_traits<char>>
+	{
+	public:
+		VectorStream(std::vector<char>& v)
+		{
+			setg(v.data(), v.data(), v.data()+v.size());
+		}
+	};
+	
+	std::string prefix = TEXTURE_SOURCE_PREFIX;
+	auto fileData = Resource::read(prefix + file);
+	
+	if (!fileData.good)
+	{
+		LOG(FATAL) << "could not load texture: " << prefix << file;
+	}
 
-	texture->setSize(512, 512);
+	VectorStream vstream(fileData.data);
+	std::istream stream(&vstream);
+	
+	png::image<png::rgba_pixel, png::solid_pixel_buffer<png::rgba_pixel>> image(stream);
+	
+	texture->setSize(image.get_width(), image.get_height());
 	texture->setFormat(GxmTexture::ARGB8);
 	texture->allocateStorage();
-	texture->setData(value);
+	texture->setData(image.get_pixbuf().get_bytes().data());
 	texture->setMinMagFilter(GxmTexture::Linear, GxmTexture::Linear);
 	texture->setWrapMode(GxmTexture::Repeat);
-	free(value);
 }
 
 void AnimatedBackground::update(const Camera *camera, float dt)
@@ -177,7 +197,7 @@ void AnimatedBackground::update(const Camera *camera, float dt)
 		auto tex = &m_textures[i];
 		tex->position = tex->position + tex->dispRate*dt;
 
-		float tileFrequency = 6;
+		float tileFrequency = 3;
 		
 		float dxl = tex->position.x/512.f-tileFrequency/2.f;
 		float dxu = tex->position.x/512.f+tileFrequency/2.f;
@@ -206,7 +226,7 @@ void AnimatedBackground::update(const Camera *camera, float dt)
 		std::memcpy((char *)(&m_vertices->address()[3])+4*3, glm::value_ptr(interp), 4*3);
 	}
 
-	m_mvp = camera->projectionMatrix() * camera->viewMatrix() * glm::rotate(glm::mat4(1.f), 45.f, glm::vec3(0.f, 0.f, 1.f));
+	m_mvp = camera->projectionMatrix() * camera->viewMatrix() * glm::rotate(glm::mat4(1.f), 0.f, glm::vec3(0.f, 0.f, 1.f));
 }
 
 void AnimatedBackground::draw(SceGxmContext *ctx)

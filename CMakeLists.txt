@@ -7,8 +7,16 @@ find_package(ZLIB REQUIRED)
 find_package(PNG REQUIRED)
 include_directories(${FREETYPE_INCLUDE_DIRS})
 
+option(USE_FILESYSTEM_TEXTURES "toggle whether to store textures within the executable or source from file system" ON)
+
 add_definitions(-Wl,-q -Wall -Werror -pedantic -Os)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z")
+
+if (${USE_FILESYSTEM_TEXTURES})
+	add_definitions(-DTEXTURE_SOURCE_PREFIX="app0:/")
+else()
+	add_definitions(-DTEXTURE_SOURCE_PREFIX="rsc:/")
+endif(${USE_FILESYSTEM_TEXTURES})
 
 add_subdirectory(framework)
 add_subdirectory(shaders)
