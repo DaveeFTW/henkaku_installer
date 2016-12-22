@@ -23,12 +23,13 @@ public:
 	Rectangle(void);
 	Rectangle(float x, float y, float z, float width, float height);
 
-	void setBottomLeft(Vertex&& vertex)
-	{
-		*m_topLeft = std::forward<Vertex>(vertex);
-	}
+	void setBottomLeft(const Vertex& vertex);
+	void setBottomRight(const Vertex& vertex);
+	void setTopLeft(const Vertex& vertex);
+	void setTopRight(const Vertex& vertex);
 
-	void draw(SceGxmContext *ctx) const override;
+private:
+	void doDraw(SceGxmContext *ctx) const override;
 
 private:
 	std::unique_ptr<GpuMemoryBlock<Vertex>> m_vertices;
@@ -79,7 +80,31 @@ Rectangle<Vertex>::Rectangle(float x, float y, float z, float width, float heigh
 }
 
 template <typename Vertex>
-void Rectangle<Vertex>::draw(SceGxmContext *ctx) const
+void Rectangle<Vertex>::setBottomLeft(const Vertex& vertex)
+{
+	*m_bottomLeft = vertex;
+}
+
+template <typename Vertex>
+void Rectangle<Vertex>::setBottomRight(const Vertex& vertex)
+{
+	*m_bottomRight = vertex;
+}
+
+template <typename Vertex>
+void Rectangle<Vertex>::setTopLeft(const Vertex& vertex)
+{
+	*m_topLeft = vertex;
+}
+
+template <typename Vertex>
+void Rectangle<Vertex>::setTopRight(const Vertex& vertex)
+{
+	*m_topRight = vertex;
+}
+
+template <typename Vertex>
+void Rectangle<Vertex>::doDraw(SceGxmContext *ctx) const
 {
 	sceGxmSetVertexStream(ctx, 0, m_vertices->address());
 	sceGxmDraw(ctx, SCE_GXM_PRIMITIVE_TRIANGLES, SCE_GXM_INDEX_FORMAT_U16, m_indices->address(), m_indices->count());
