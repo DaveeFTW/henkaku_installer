@@ -35,6 +35,7 @@ set(INSTALLER_SOURCES
 	"src/textrenderer.cpp"
 	"src/geometryrenderer.cpp"
 	"src/text.cpp"
+	"src/fpscounter.cpp"
 )
 
 include_directories(3rdparty/include)

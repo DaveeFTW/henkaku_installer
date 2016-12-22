@@ -14,6 +14,7 @@
 
 class AnimatedBackground;
 class Camera;
+class FpsCounter;
 
 class InstallerView : public View
 {
@@ -31,6 +32,7 @@ private:
 	TaskPtr m_simulationTasks;
 	GxmShaderPatcher m_patcher;
 	AnimatedBackground *m_animatedBackground;
+	FpsCounter *m_fpsCounter;
 	Camera *m_camera;
 	float m_dt;
 };

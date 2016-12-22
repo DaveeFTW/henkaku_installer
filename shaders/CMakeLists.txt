@@ -6,6 +6,7 @@ set(VERTEX_SHADERS
 	"animbg.vert.cg"
 	"text.vert.cg"
 	"colour.vert.cg"
+	"backgroundtext.vert.cg"
 )
 
 set(FRAGMENT_SHADERS
@@ -14,6 +15,7 @@ set(FRAGMENT_SHADERS
 	"animbg.frag.cg"
 	"text.frag.cg"
 	"colour.frag.cg"
+	"backgroundtext.frag.cg"
 )
 
 function(CompileShaderResource shader output type)

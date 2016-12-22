@@ -10,18 +10,20 @@
 #include "installerview.h"
 #include "camera.h"
 #include "animatedbackground.h"
+#include "fpscounter.h"
 
 #include <framework/task.h>
 
 #include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
 
 #include <easyloggingpp/easylogging++.h>
 
 InstallerView::InstallerView(void)
+	: m_animatedBackground(new AnimatedBackground(&m_patcher))
+	, m_fpsCounter(new FpsCounter(&m_patcher))
+	, m_camera(new Camera)
 {
-	m_animatedBackground = new AnimatedBackground(&m_patcher);
-	m_camera = new Camera;
-
 	// align z = 0 to screen coordiantes
 	auto fov = 45.f;
 	m_camera->setPerspectiveProjection(glm::radians(fov), 960.f/544.f, 0.1f, 1024.f);
@@ -32,14 +34,20 @@ InstallerView::InstallerView(void)
 	m_camera->setViewCenter(glm::vec3(960.f/2, 544.f/2, 0));
 	m_camera->setUpVector(glm::vec3(0, 1, 0));
 
+	m_fpsCounter->setModel(glm::scale(glm::mat4(1), glm::vec3(0.7, 0.7, 0)));
+
 	m_simulationTasks = std::make_shared<Task>();
 	m_simulationTasks->set(std::bind(&InstallerView::update, this));
 
 	auto animatedBackgroundTask = std::make_shared<Task>();
 	animatedBackgroundTask->set(std::bind(&AnimatedBackground::update, m_animatedBackground, std::cref(m_dt)));
 
+	auto fpsCounterTask = std::make_shared<Task>();
+	fpsCounterTask->set(std::bind(&FpsCounter::update, m_fpsCounter, std::cref(m_dt)));
+
 	// add as dependent tasks
 	m_simulationTasks->insertDependant(animatedBackgroundTask);
+	m_simulationTasks->insertDependant(fpsCounterTask);
 }
 
 InstallerView::~InstallerView(void)
@@ -61,4 +69,5 @@ void InstallerView::update(void)
 void InstallerView::render(SceGxmContext *ctx)
 {
 	m_animatedBackground->draw(ctx, m_camera);
+	m_fpsCounter->draw(ctx, m_camera);
 }
