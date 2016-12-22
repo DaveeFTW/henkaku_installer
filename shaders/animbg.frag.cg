@@ -13,7 +13,7 @@ float3 overlay(float3 base, float3 layer)
 }
 
 float4 main(
-	float3 in vColor: TEXCOORD0,
+	float3 in vColour: TEXCOORD0,
 	float2 in vTexCoord1: TEXCOORD1,
 	float2 in vTexCoord2: TEXCOORD2,
 	float2 in vTexCoord3: TEXCOORD3,
@@ -26,7 +26,7 @@ float4 main(
 	uniform sampler2D tex5 : TEXUNIT4
 ) : COLOR
 {
-	float3 colour = vColor;
+	float3 colour = vColour;
 	float4 texColour1 = tex2D(tex1, vTexCoord1);
 	colour = lerp(colour, overlay(colour, texColour1.rgb), texColour1.a);
 	float4 texColour2 = tex2D(tex2, vTexCoord2);
