@@ -28,6 +28,9 @@ public:
 	void setTopLeft(const Vertex& vertex);
 	void setTopRight(const Vertex& vertex);
 
+	template <typename Colour>
+	void setColour(Colour colour);
+
 private:
 	void doDraw(SceGxmContext *ctx) const override;
 
@@ -101,6 +104,19 @@ template <typename Vertex>
 void Rectangle<Vertex>::setTopRight(const Vertex& vertex)
 {
 	*m_topRight = vertex;
+}
+
+template <typename Vertex>
+template <typename Colour>
+void Rectangle<Vertex>::setColour(Colour colour)
+{
+	auto vertices = m_vertices->address();
+
+	// apply colour to all vertices
+	for (auto i = 0u; i < m_vertices->count(); ++i)
+	{
+		vertices[i].colour = colour;
+	}
 }
 
 template <typename Vertex>
