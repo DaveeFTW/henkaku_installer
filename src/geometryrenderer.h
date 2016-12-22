@@ -54,7 +54,7 @@ void GeometryRenderer::setShaders(const std::string& vertexShader, const std::st
 
 	m_program.setVertexAttributeFormat(attributes.data(), attributes.size());
 	m_program.setVertexStreamFormat(streams.data(), streams.size());
-	auto status = m_program.link();
+	m_program.link();
 }
 
 
