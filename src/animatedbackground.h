@@ -54,7 +54,6 @@ private:
 	BgTexture m_textures[5];
 	glm::vec3 m_colourTopLeft, m_colourBottomRight;
 	std::unique_ptr<GpuMemoryBlock<TextureCoordVertex>> m_texCoords;
-	bool m_animateColours;
 };
 
 #endif // ANIMATEDBACKGROUND_H

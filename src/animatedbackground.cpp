@@ -105,7 +105,6 @@ AnimatedBackground::AnimatedBackground(GxmShaderPatcher *patcher)
 		4,
 		SCE_GXM_MEMORY_ATTRIB_READ
 	))
-	, m_animateColours(false)
 {
 	// set our shader program
 	m_renderer.setShaders<AnimatedBackgroundVertex<TextureCoordVertex>>("rsc:/animbg.vert.cg.gxp", "rsc:/animbg.frag.cg.gxp");
@@ -113,7 +112,7 @@ AnimatedBackground::AnimatedBackground(GxmShaderPatcher *patcher)
 
 	auto bottomRightRgb = glm::vec3(172.f/255.f, 228.f/255.f, 234.f/255.f);
 	auto topLeftRgb = glm::vec3(255.f/255.f, 228.f/255.f, 234.f/255.f);
-	
+
 	m_colourTopLeft = glm::hsvColor(topLeftRgb);
 	m_colourBottomRight = glm::hsvColor(bottomRightRgb);
 
@@ -215,22 +214,6 @@ void AnimatedBackground::update(const Camera *camera, float dt)
 		m_texCoords->address()[2].texCoord[i] = glm::vec2(dxl, dyl);
 		m_texCoords->address()[3].texCoord[i] = glm::vec2(dxu, dyl);
 	}
-
-/*	if (m_animateColours)
-	{
-		m_colourTopLeft.x = std::fmod(m_colourTopLeft.x + dt, 360.f);
-		m_colourBottomRight.x = std::fmod(m_colourBottomRight.x + dt, 360.f);
-
-		auto topLeftRgb = glm::rgbColor(m_colourTopLeft);
-		auto bottomRightRgb = glm::rgbColor(m_colourBottomRight);
-
-		auto interp = 0.5f*topLeftRgb + 0.5f*bottomRightRgb;
-
-		std::memcpy((char *)(&m_vertices->address()[0])+4*3, glm::value_ptr(interp), 4*3);
-		std::memcpy((char *)(&m_vertices->address()[1])+4*3, glm::value_ptr(bottomRightRgb), 4*3);
-		std::memcpy((char *)(&m_vertices->address()[2])+4*3, glm::value_ptr(topLeftRgb), 4*3);
-		std::memcpy((char *)(&m_vertices->address()[3])+4*3, glm::value_ptr(interp), 4*3);
-	}*/
 }
 
 void AnimatedBackground::draw(SceGxmContext *ctx, const Camera *camera)
@@ -240,13 +223,4 @@ void AnimatedBackground::draw(SceGxmContext *ctx, const Camera *camera)
 
 void AnimatedBackground::setColour(glm::vec3 topLeft, glm::vec3 bottomRight)
 {
-	/*m_colourTopLeft = glm::hsvColor(topLeft);
-	m_colourBottomRight = glm::hsvColor(bottomRight);
-
-	auto interp = 0.5f*topLeft + 0.5f*bottomRight;
-
-	std::memcpy((char *)(&m_vertices->address()[0])+4*3, glm::value_ptr(interp), 4*3);
-	std::memcpy((char *)(&m_vertices->address()[1])+4*3, glm::value_ptr(bottomRight), 4*3);
-	std::memcpy((char *)(&m_vertices->address()[2])+4*3, glm::value_ptr(topLeft), 4*3);
-	std::memcpy((char *)(&m_vertices->address()[3])+4*3, glm::value_ptr(interp), 4*3);*/
 }
