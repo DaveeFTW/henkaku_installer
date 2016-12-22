@@ -8,16 +8,29 @@
  */
 
 #include <framework/view.h>
+#include <framework/gxmshaderpatcher.h>
+
+#include <memory>
+
+class AnimatedBackground;
+class Camera;
 
 class InstallerView : public View
 {
 public:
 	InstallerView(void);
-	~InstallerView(void) = default;
+	~InstallerView(void);
 
 	TaskPtr simulationTask(double dt) override;
 	void render(SceGxmContext *ctx) override;
 
 private:
+	void update(void);
+
+private:
 	TaskPtr m_simulationTasks;
+	GxmShaderPatcher m_patcher;
+	AnimatedBackground *m_animatedBackground;
+	Camera *m_camera;
+	float m_dt;
 };
