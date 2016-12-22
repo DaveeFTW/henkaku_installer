@@ -25,7 +25,7 @@ class AnimatedBackground
 public:
 	AnimatedBackground(GxmShaderPatcher *patcher);
 
-	void update(const Camera *camera, float dt);
+	void update(float dt);
 	void draw(SceGxmContext *ctx, const Camera *camera);
 
 	void setColour(glm::vec3 topleft, glm::vec3 bottomRight);

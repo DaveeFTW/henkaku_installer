@@ -195,7 +195,7 @@ void AnimatedBackground::fragmentTask(SceGxmContext *ctx)
 	sceGxmSetVertexStream(ctx, 1, m_texCoords->address());
 }
 
-void AnimatedBackground::update(const Camera *camera, float dt)
+void AnimatedBackground::update(float dt)
 {
 	for (auto i = 0; i < 5; ++i)
 	{
