@@ -11,11 +11,14 @@
 #define GEOMETRY_H
 
 #include <glm/mat4x4.hpp>
+#include <functional>
 
 struct SceGxmContext;
 
 class Geometry
 {
+	using FragmentTask = std::function<void(SceGxmContext *ctx)>;
+	
 public:
 	Geometry(void)
 	{
@@ -32,76 +35,27 @@ public:
 		return m_model;
 	}
 
-	virtual void draw(SceGxmContext *ctx) const = 0;
+	void setFragmentTask(FragmentTask task)
+	{
+		m_fragmentTask = task;
+	}
+
+	void draw(SceGxmContext *ctx) const
+	{
+		if (m_fragmentTask)
+		{
+			m_fragmentTask(ctx);
+		}
+
+		return doDraw(ctx);
+	}
+
+private:
+	virtual void doDraw(SceGxmContext *ctx) const = 0;
 
 private:
 	glm::mat4 m_model;
+	FragmentTask m_fragmentTask;
 };
 
 #endif // GEOMETRY_H
-
-/*class Geometry
-{
-public:
-	GpuMemoryBlock<Vertex> *vertices(void) const
-	{
-		return m_vertices.get();
-	}
-
-	GpuMemoryBlock<uint16_t> *indices(void) const
-	{
-		return m_indices.get();
-	}
-};
-
-class Rectangle
-{
-public:
-	struct RectangleVertex
-	{
-		glm::vec3 position;
-		glm::vec4 colour;
-	};
-
-public:
-	Rectangle(void);
-	Rectangle(float x, float y, float width, float height);
-
-	void draw(SceGxmContext *ctx) override;
-
-private:
-	RectangleVertex *m_topLeft;
-	RectangleVertex *m_topRight;
-	RectangleVertex *m_bottomLeft;
-	RectangleVertex *m_bottomRight;
-};
-
-struct VertexPosition
-{
-	glm::vec3 position;
-};
-
-struct PositionVertex
-{
-	
-};
-
-
-
-
-
-
-
-
-
-void GeometryRenderer::draw(SceGxmContext *ctx, Geometry *geometry)
-{
-	m_program.bind(ctx);
-
-	void *uniform = nullptr;
-	sceGxmReserveVertexDefaultUniformBuffer(ctx, &uniform);
-	m_vertexShader.setUniformBuffer(uniform);
-	m_vertexShader.setUniformValue(m_mvpIndex, camera->projectionMatrix() * camera->viewMatrix() * geometry->modelMatrix());
-
-	geometry->draw(ctx);
-}*/
