@@ -113,7 +113,7 @@ bool GxmTexture::isStorageAllocated(void) const
 	return m_storage != nullptr;
 }
 
-void GxmTexture::bind(SceGxmContext *ctx, std::uint32_t unit)
+void GxmTexture::bind(SceGxmContext *ctx, std::uint32_t unit) const
 {
 	sceGxmSetFragmentTexture(ctx, unit, m_texture.get());
 }

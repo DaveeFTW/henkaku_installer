@@ -64,7 +64,7 @@ public:
 	void allocateStorage(void);
 	bool isStorageAllocated(void) const;
 
-	void bind(SceGxmContext *ctx, std::uint32_t unit);
+	void bind(SceGxmContext *ctx, std::uint32_t unit) const;
 	void setSize(std::size_t width, std::size_t height = 1, std::size_t depth = 1);
 
 	std::size_t width(void) const { return m_width; }
