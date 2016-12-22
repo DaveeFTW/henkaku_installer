@@ -19,6 +19,7 @@ struct FT_FaceRec_;
 class Font
 {
 	friend class TextRenderer;
+	friend class Text;
 	
 public:
 	using GlyphInfo = CharacterAtlas::GlyphInfo;

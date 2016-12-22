@@ -10,13 +10,14 @@
 void main(
 	float3 in position,
 	float2 in texCoord,
+	float4 in colour,
 	uniform in float4x4 mvp,
 	float4 out vPosition : POSITION,
-	float3 out vVertex : TEXCOORD0,
-	float2 out vTexCoord : TEXCOORD1
+	float2 out vTexCoord : TEXCOORD0,
+	float4 out vColour : TEXCOORD1
 )
 {
-	vVertex = position;
 	vTexCoord = texCoord;
+	vColour = colour;
 	vPosition = mul(float4(position, 1.0f), mvp);
 }

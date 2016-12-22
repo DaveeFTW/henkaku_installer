@@ -34,6 +34,7 @@ set(INSTALLER_SOURCES
 	"src/font.cpp"
 	"src/textrenderer.cpp"
 	"src/geometryrenderer.cpp"
+	"src/text.cpp"
 )
 
 include_directories(3rdparty/include)
