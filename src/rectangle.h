@@ -32,7 +32,7 @@ public:
 	void setColour(Colour colour);
 
 private:
-	void doDraw(SceGxmContext *ctx) const override;
+	void doDraw(SceGxmContext *ctx, GeometryRenderer *renderer, const Camera *camera) const override;
 
 private:
 	std::unique_ptr<GpuMemoryBlock<Vertex>> m_vertices;
@@ -120,7 +120,7 @@ void Rectangle<Vertex>::setColour(Colour colour)
 }
 
 template <typename Vertex>
-void Rectangle<Vertex>::doDraw(SceGxmContext *ctx) const
+void Rectangle<Vertex>::doDraw(SceGxmContext *ctx, GeometryRenderer *renderer, const Camera *camera) const
 {
 	sceGxmSetVertexStream(ctx, 0, m_vertices->address());
 	sceGxmDraw(ctx, SCE_GXM_PRIMITIVE_TRIANGLES, SCE_GXM_INDEX_FORMAT_U16, m_indices->address(), m_indices->count());

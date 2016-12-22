@@ -31,7 +31,7 @@ void GeometryRenderer::readShaders(const std::string& vertexShader, const std::s
 	ShaderUtility::read(fragmentShader, &m_fragmentShader);
 }
 
-void GeometryRenderer::draw(SceGxmContext *ctx, const Camera *camera, Geometry *geometry)
+void GeometryRenderer::draw(SceGxmContext *ctx, const Camera *camera, const Geometry *geometry)
 {
 	m_program.bind(ctx);
 
@@ -40,5 +40,5 @@ void GeometryRenderer::draw(SceGxmContext *ctx, const Camera *camera, Geometry *
 	m_vertexShader.setUniformBuffer(uniform);
 	m_vertexShader.setUniformValue(m_mvpIndex, camera->projectionMatrix() * camera->viewMatrix() * geometry->modelMatrix());
 
-	geometry->draw(ctx);
+	geometry->draw(ctx, this, camera);
 }

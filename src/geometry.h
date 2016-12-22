@@ -15,6 +15,9 @@
 
 struct SceGxmContext;
 
+class Camera;
+class GeometryRenderer;
+
 class Geometry
 {
 	using FragmentTask = std::function<void(SceGxmContext *ctx)>;
@@ -40,18 +43,18 @@ public:
 		m_fragmentTask = task;
 	}
 
-	void draw(SceGxmContext *ctx) const
+	void draw(SceGxmContext *ctx, GeometryRenderer *renderer, const Camera *camera) const
 	{
 		if (m_fragmentTask)
 		{
 			m_fragmentTask(ctx);
 		}
 
-		return doDraw(ctx);
+		return doDraw(ctx, renderer, camera);
 	}
 
 private:
-	virtual void doDraw(SceGxmContext *ctx) const = 0;
+	virtual void doDraw(SceGxmContext *ctx, GeometryRenderer *renderer, const Camera *camera) const = 0;
 
 private:
 	glm::mat4 m_model;

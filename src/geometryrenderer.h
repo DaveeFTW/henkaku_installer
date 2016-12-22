@@ -26,7 +26,7 @@ public:
 
 	template <typename Vertex>
 	void setShaders(const std::string& vertexShader, const std::string& fragmentShader);
-	void draw(SceGxmContext *ctx, const Camera *camera, Geometry *geometry);
+	void draw(SceGxmContext *ctx, const Camera *camera, const Geometry *geometry);
 
 private:
 	void readShaders(const std::string& vertexShader, const std::string& fragmentShader);
