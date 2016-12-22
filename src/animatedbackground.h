@@ -12,9 +12,10 @@
 
 #include <framework/gxmtexture.h>
 #include <framework/gpumemoryblock.h>
-#include <framework/gxmfragmentshader.h>
-#include <framework/gxmvertexshader.h>
-#include <framework/gxmshaderprogram.h>
+
+#include "geometryrenderer.h"
+#include "rectangle.h"
+#include "vertextypes.h"
 
 struct SceGxmContext;
 class Camera;
@@ -25,26 +26,17 @@ public:
 	AnimatedBackground(GxmShaderPatcher *patcher);
 
 	void update(const Camera *camera, float dt);
-	void draw(SceGxmContext *ctx);
+	void draw(SceGxmContext *ctx, const Camera *camera);
 
 	void setColour(glm::vec3 topleft, glm::vec3 bottomRight);
 
 private:
-	using Vertex = struct
+	struct TextureCoordVertex
 	{
-		glm::vec3 position;
-		glm::vec3 color;
-
-		constexpr static std::size_t size(void) { return sizeof(float)*6; }
+		glm::vec2 texCoord[5];
 	};
 
-	using TextureCoord = struct
-	{
-		float u;
-		float v;
-	};
-	
-	using BgTexture = struct
+	struct BgTexture
 	{
 		GxmTexture texture;
 		glm::vec2 position;
@@ -53,19 +45,16 @@ private:
 
 private:
 	void loadTexture(GxmTexture *texture, const char *file);
+	void fragmentTask(SceGxmContext *ctx);
 
 private:
-	GxmShaderProgram m_program;
-	GxmVertexShader m_vertex;
-	GxmFragmentShader m_fragment;
-	GxmShader::UniformIndex m_mvpIndex;
+	GeometryRenderer m_renderer;
+	Rectangle<ColouredGeometryVertex> m_rectangle;
+	
 	BgTexture m_textures[5];
 	glm::vec3 m_colourTopLeft, m_colourBottomRight;
-	std::unique_ptr<GpuMemoryBlock<Vertex>> m_vertices;
-	std::unique_ptr<GpuMemoryBlock<TextureCoord>> m_texCoords;
-	std::unique_ptr<GpuMemoryBlock<uint16_t>> m_indices;
+	std::unique_ptr<GpuMemoryBlock<TextureCoordVertex>> m_texCoords;
 	bool m_animateColours;
-	glm::mat4 m_mvp;
 };
 
 #endif // ANIMATEDBACKGROUND_H
