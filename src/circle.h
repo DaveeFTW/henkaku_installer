@@ -30,6 +30,9 @@ public:
 	void setRadius(float radius);
 	float radius(void) const;
 
+	template <typename Colour>
+	void setColour(Colour colour);
+
 private:
 	void doDraw(SceGxmContext *ctx) const override;
 
@@ -103,6 +106,19 @@ template <typename Vertex>
 float Circle<Vertex>::radius(void) const
 {
 	return m_radius;
+}
+
+template <typename Vertex>
+template <typename Colour>
+void Circle<Vertex>::setColour(Colour colour)
+{
+	auto vertices = m_vertices->address();
+
+	// apply colour to all vertices
+	for (auto i = 0u; i < m_vertices->count(); ++i)
+	{
+		vertices[i].colour = colour;
+	}
 }
 
 template <typename Vertex>
