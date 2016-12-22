@@ -9,14 +9,14 @@
 
 void main(
 	float3 position,
-	float3 in color,
+	float3 in colour,
 	float2 in texCoord1,
 	float2 in texCoord2,
 	float2 in texCoord3,
 	float2 in texCoord4,
 	float2 in texCoord5,
 	float4 out vPosition : POSITION,
-	float3 out vColor : TEXCOORD0,
+	float3 out vColour : TEXCOORD0,
 	float2 out vTexCoord1 : TEXCOORD1,
 	float2 out vTexCoord2 : TEXCOORD2,
 	float2 out vTexCoord3 : TEXCOORD3,
@@ -25,7 +25,7 @@ void main(
 	uniform float4x4 mvp
 )
 {
-	vColor = color;
+	vColour = colour;
 	vTexCoord1 = texCoord1;
 	vTexCoord2 = texCoord2;
 	vTexCoord3 = texCoord3;
