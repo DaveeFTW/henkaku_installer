@@ -30,6 +30,10 @@ public:
 	template <typename Colour>
 	void setColour(Colour colour);
 
+	float width(void) const { return m_rectVertical.width(); }
+	float height(void) const { return m_rectHorizontal.height(); }
+	float radius(void) const { return m_bl.radius(); }
+
 private:
 	glm::mat4 rotateTranslate(float deg, float radius, float tx, float ty);
 	void doDraw(SceGxmContext *ctx, GeometryRenderer *renderer, const Camera *camera) const override;
