@@ -9,6 +9,8 @@
 
 #include <framework/vitainput.h>
 #include <framework/task.h>
+#include <framework/buttonevent.h>
+#include <framework/guiapplication.h>
 
 VitaInput::VitaInput(void)
 {
@@ -75,8 +77,8 @@ void VitaInput::readButtonInput(void)
 	}
 
 	// send event
-	//ButtonEvent event(buttons);
-	//GuiApplication::sendEvent(&event);
+	ButtonEvent event(buttons);
+	GuiApplication::sendEvent(&event);
 }
 
 void VitaInput::readTouchInput(unsigned int port, TouchInput *data)
