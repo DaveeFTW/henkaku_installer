@@ -13,10 +13,12 @@
 #include <stateless++/state_machine.hpp>
 
 #include <memory>
+#include <unordered_map>
 
 class AnimatedBackground;
 class Camera;
 class FpsCounter;
+class Page;
 
 class InstallerView : public View
 {
@@ -32,13 +34,22 @@ protected:
 
 private:
 	void update(void);
+	bool isTransitioning(void) const;
 
 private:
-	enum class Page
+	enum class State
 	{
 		Init,
 		Welcome,
-		Setup
+		SimpleInstall,
+		CustomInstall,
+		Reset,
+		Config,
+		Offline,
+		Confirm,
+		Install,
+		Success,
+		Failure
 	};
 
 	enum class Trigger
@@ -52,7 +63,7 @@ private:
 		None
 	};
 
-	using StateMachine = stateless::state_machine<Page, Trigger>;
+	using StateMachine = stateless::state_machine<State, Trigger>;
 
 private:
 	TaskPtr m_simulationTasks;
@@ -62,4 +73,6 @@ private:
 	Camera *m_camera;
 	float m_dt;
 	StateMachine m_stateMachine;
+	bool m_isTransitioning{false};
+	std::unordered_map<State, Page*> m_pages;
 };

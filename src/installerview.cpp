@@ -11,6 +11,7 @@
 #include "camera.h"
 #include "animatedbackground.h"
 #include "fpscounter.h"
+#include "welcomepage.h"
 
 #include <framework/task.h>
 #include <framework/buttonevent.h>
@@ -49,11 +50,11 @@ InstallerView::InstallerView(void)
 	: m_animatedBackground(new AnimatedBackground(&m_patcher))
 	, m_fpsCounter(new FpsCounter(&m_patcher))
 	, m_camera(new Camera)
-	, m_stateMachine(Page::Init)
+	, m_stateMachine(State::Init)
 {
 	// align z = 0 to screen coordiantes
 	auto fov = 45.f;
-	m_camera->setPerspectiveProjection(glm::radians(fov), 960.f/544.f, 0.1f, 1024.f);
+	m_camera->setPerspectiveProjection(glm::radians(fov), 960.f/544.f, 0.1f, 10000.0f);
 	float angle1=fov/2.0;
 	float angle2=180 - (90 + angle1);
 	float Z = 0.5 * 544.f * std::sin(glm::radians(angle2))/std::sin(glm::radians(angle1));
@@ -72,16 +73,21 @@ InstallerView::InstallerView(void)
 	auto fpsCounterTask = std::make_shared<Task>();
 	fpsCounterTask->set(std::bind(&FpsCounter::update, m_fpsCounter, std::cref(m_dt)));
 
-	// add as dependent tasks
-	m_simulationTasks->insertDependant(animatedBackgroundTask);
-	m_simulationTasks->insertDependant(fpsCounterTask);
+	// set pages
+	auto welcomePage = new WelcomePage(&m_patcher);
+	auto welcomePageTask = std::make_shared<Task>();
+	welcomePageTask->set(std::bind(&WelcomePage::update, welcomePage, std::cref(m_dt)));
+
+	m_pages.insert({ State::Welcome, welcomePage });
 
 	// setup state machine
-	m_stateMachine.configure(Page::Init)
-		.permit(Trigger::Start, Page::Welcome);
+	m_stateMachine.configure(State::Init)
+		.permit(Trigger::Start, State::Welcome);
 
-	m_stateMachine.configure(Page::Welcome)
-		.permit(Trigger::Right, Page::Setup);
+	// add update tasks
+	m_simulationTasks->insertDependant(animatedBackgroundTask);
+	m_simulationTasks->insertDependant(fpsCounterTask);
+	m_simulationTasks->insertDependant(welcomePageTask);
 
 	// goto next
 	m_stateMachine.fire(Trigger::Start);
@@ -89,6 +95,13 @@ InstallerView::InstallerView(void)
 
 InstallerView::~InstallerView(void)
 {
+	for (auto& page : m_pages)
+	{
+		delete page.second;
+	}
+
+	m_pages.clear();
+
 	delete m_camera;
 	delete m_animatedBackground;
 }
@@ -101,6 +114,7 @@ void InstallerView::onEvent(Event *event)
 		
 		auto trigger = buttonToTrigger<Trigger>(button->buttons());
 
+		// check if this input will trigger a state change
 		if (m_stateMachine.can_fire(trigger))
 		{
 			m_stateMachine.fire(trigger);
@@ -122,4 +136,14 @@ void InstallerView::render(SceGxmContext *ctx)
 {
 	m_animatedBackground->draw(ctx, m_camera);
 	m_fpsCounter->draw(ctx, m_camera);
+
+	for (auto& page : m_pages)
+	{
+		page.second->draw(ctx, m_camera);
+	}
+}
+
+bool InstallerView::isTransitioning(void) const
+{
+	return m_isTransitioning;
 }
