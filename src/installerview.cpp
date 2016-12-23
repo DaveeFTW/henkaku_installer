@@ -13,16 +13,43 @@
 #include "fpscounter.h"
 
 #include <framework/task.h>
+#include <framework/buttonevent.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include <psp2/ctrl.h>
+
 #include <easyloggingpp/easylogging++.h>
+
+namespace
+{
+	template <typename T, typename B>
+	T buttonToTrigger(B buttons)
+	{
+		switch (buttons)
+		{
+		case SCE_CTRL_LEFT:
+			return T::Left;
+		case SCE_CTRL_RIGHT:
+			return T::Right;
+		case SCE_CTRL_UP:
+			return T::Up;
+		case SCE_CTRL_DOWN:
+			return T::Down;
+		case SCE_CTRL_CROSS:
+			return T::Cross;
+		default:
+			return T::None;
+		}
+	}
+} // anonymous namespace
 
 InstallerView::InstallerView(void)
 	: m_animatedBackground(new AnimatedBackground(&m_patcher))
 	, m_fpsCounter(new FpsCounter(&m_patcher))
 	, m_camera(new Camera)
+	, m_stateMachine(Page::Init)
 {
 	// align z = 0 to screen coordiantes
 	auto fov = 45.f;
@@ -48,12 +75,37 @@ InstallerView::InstallerView(void)
 	// add as dependent tasks
 	m_simulationTasks->insertDependant(animatedBackgroundTask);
 	m_simulationTasks->insertDependant(fpsCounterTask);
+
+	// setup state machine
+	m_stateMachine.configure(Page::Init)
+		.permit(Trigger::Start, Page::Welcome);
+
+	m_stateMachine.configure(Page::Welcome)
+		.permit(Trigger::Right, Page::Setup);
+
+	// goto next
+	m_stateMachine.fire(Trigger::Start);
 }
 
 InstallerView::~InstallerView(void)
 {
 	delete m_camera;
 	delete m_animatedBackground;
+}
+
+void InstallerView::onEvent(Event *event)
+{
+	if (event->type() == Event::Button)
+	{
+		ButtonEvent *button = reinterpret_cast<ButtonEvent *>(event);
+		
+		auto trigger = buttonToTrigger<Trigger>(button->buttons());
+
+		if (m_stateMachine.can_fire(trigger))
+		{
+			m_stateMachine.fire(trigger);
+		}
+	}
 }
 
 TaskPtr InstallerView::simulationTask(double dt)
