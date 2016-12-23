@@ -11,6 +11,7 @@
 #define ROUNDEDRECTANGLE_H
 
 #include "geometry.h"
+#include "geometryrenderer.h"
 #include "circularsegment.h"
 #include "rectangle.h"
 
@@ -36,7 +37,7 @@ public:
 
 private:
 	glm::mat4 rotateTranslate(float deg, float radius, float tx, float ty);
-	void doDraw(SceGxmContext *ctx, GeometryRenderer *renderer, const Camera *camera) const override;
+	void doDraw(SceGxmContext *ctx, const GeometryRenderer *renderer, const Camera *camera) const override;
 
 private:
 	mutable CircularSegment<Vertex> m_bl, m_br, m_tl, m_tr;
@@ -83,7 +84,7 @@ glm::mat4 RoundedRectangle<Vertex>::rotateTranslate(float deg, float radius, flo
 }
 
 template <typename Vertex>
-void RoundedRectangle<Vertex>::doDraw(SceGxmContext *ctx, GeometryRenderer *renderer, const Camera *camera) const
+void RoundedRectangle<Vertex>::doDraw(SceGxmContext *ctx, const GeometryRenderer *renderer, const Camera *camera) const
 {
 	// prevent overlapping by stenciling
 	sceGxmSetFrontStencilRef(ctx, 1);

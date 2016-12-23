@@ -26,14 +26,14 @@ public:
 
 	template <typename Vertex>
 	void setShaders(const std::string& vertexShader, const std::string& fragmentShader);
-	void draw(SceGxmContext *ctx, const Camera *camera, const Geometry *geometry);
+	void draw(SceGxmContext *ctx, const Camera *camera, const Geometry *geometry) const;
 
 private:
 	void readShaders(const std::string& vertexShader, const std::string& fragmentShader);
 
 private:
 	GxmShaderProgram m_program;
-	GxmVertexShader m_vertexShader;
+	mutable GxmVertexShader m_vertexShader;
 	GxmFragmentShader m_fragmentShader;
 	GxmShader::UniformIndex m_mvpIndex;
 };

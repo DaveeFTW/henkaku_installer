@@ -43,7 +43,7 @@ public:
 		m_fragmentTask = task;
 	}
 
-	void draw(SceGxmContext *ctx, GeometryRenderer *renderer, const Camera *camera) const
+	void draw(SceGxmContext *ctx, const GeometryRenderer *renderer, const Camera *camera) const
 	{
 		if (m_fragmentTask)
 		{
@@ -54,7 +54,7 @@ public:
 	}
 
 private:
-	virtual void doDraw(SceGxmContext *ctx, GeometryRenderer *renderer, const Camera *camera) const = 0;
+	virtual void doDraw(SceGxmContext *ctx, const GeometryRenderer *renderer, const Camera *camera) const = 0;
 
 private:
 	glm::mat4 m_model;

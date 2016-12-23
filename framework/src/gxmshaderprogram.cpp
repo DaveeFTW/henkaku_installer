@@ -151,7 +151,7 @@ bool GxmShaderProgram::link(void)
 	return true;
 }
 
-void GxmShaderProgram::bind(SceGxmContext *context)
+void GxmShaderProgram::bind(SceGxmContext *context) const
 {
 	sceGxmSetVertexProgram(context, m_vertexProgram);
 	sceGxmSetFragmentProgram(context, m_fragmentProgram);

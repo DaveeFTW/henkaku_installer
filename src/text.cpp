@@ -121,7 +121,7 @@ void Text::generateGeometry(void)
 	m_boundingBox = glm::vec2(x, y+heightMax);
 }
 
-void Text::doDraw(SceGxmContext *ctx, GeometryRenderer *renderer, const Camera *camera) const
+void Text::doDraw(SceGxmContext *ctx, const GeometryRenderer *renderer, const Camera *camera) const
 {
 	m_font->atlas()->bind(ctx, 0);
 	sceGxmSetVertexStream(ctx, 0, m_vertices->address());

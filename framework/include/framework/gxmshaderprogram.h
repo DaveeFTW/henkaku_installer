@@ -35,7 +35,7 @@ public:
 	void setVertexAttributeFormat(SceGxmVertexAttribute *attributes, unsigned int count);
 
 	bool link(void);
-	void bind(SceGxmContext *context);
+	void bind(SceGxmContext *context) const;
 
 	bool isLinked(void) const;
 

@@ -10,6 +10,11 @@
 #ifndef PAGE_H
 #define PAGE_H
 
+#include <glm/mat4x4.hpp>
+
+struct SceGxmContext;
+class Camera;
+
 class Page
 {
 public:
@@ -18,7 +23,7 @@ public:
 	virtual void setModel(glm::mat4 model) = 0;
 
 	virtual void update(float dt) { }
-	virtual void draw(SceGxmContext *ctx, const Camera *camera) = 0;
+	virtual void draw(SceGxmContext *ctx, const Camera *camera) const = 0;
 };
 
 #endif // PAGE_H

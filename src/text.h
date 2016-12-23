@@ -49,7 +49,7 @@ public:
 
 private:
 	void generateGeometry(void);
-	void doDraw(SceGxmContext *ctx, GeometryRenderer *renderer, const Camera *camera) const;
+	void doDraw(SceGxmContext *ctx, const GeometryRenderer *renderer, const Camera *camera) const;
 
 private:
 	Font *m_font;

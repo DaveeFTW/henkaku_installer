@@ -31,7 +31,7 @@ void GeometryRenderer::readShaders(const std::string& vertexShader, const std::s
 	ShaderUtility::read(fragmentShader, &m_fragmentShader);
 }
 
-void GeometryRenderer::draw(SceGxmContext *ctx, const Camera *camera, const Geometry *geometry)
+void GeometryRenderer::draw(SceGxmContext *ctx, const Camera *camera, const Geometry *geometry) const
 {
 	m_program.bind(ctx);
 
