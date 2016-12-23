@@ -78,11 +78,29 @@ InstallerView::InstallerView(void)
 	auto welcomePageTask = std::make_shared<Task>();
 	welcomePageTask->set(std::bind(&WelcomePage::update, welcomePage, std::cref(m_dt)));
 
+	
+	auto welcomePage2 = new WelcomePage(&m_patcher);
+	welcomePage2->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f, 0, 0)));
+	
 	m_pages.insert({ State::Welcome, welcomePage });
+	m_pages.insert({ State::SimpleInstall, welcomePage2 });
 
+	auto transitionGuard = [this](void)
+	{
+		return !this->isTransitioning();
+	};
+	
 	// setup state machine
 	m_stateMachine.configure(State::Init)
 		.permit(Trigger::Start, State::Welcome);
+
+	m_stateMachine.configure(State::Welcome)
+		.permit_if(Trigger::Right, State::SimpleInstall, transitionGuard);
+		
+	m_stateMachine.configure(State::SimpleInstall)
+		.permit_if(Trigger::Left, State::Welcome, transitionGuard);
+
+	setupTransitionPan();
 
 	// add update tasks
 	m_simulationTasks->insertDependant(animatedBackgroundTask);
@@ -130,6 +148,7 @@ TaskPtr InstallerView::simulationTask(double dt)
 
 void InstallerView::update(void)
 {
+	m_cameraPanX.update(m_dt);
 }
 
 void InstallerView::render(SceGxmContext *ctx)
@@ -146,4 +165,56 @@ void InstallerView::render(SceGxmContext *ctx)
 bool InstallerView::isTransitioning(void) const
 {
 	return m_isTransitioning;
+}
+
+void InstallerView::setupTransitionPan(void)
+{
+	m_cameraPanX.setDuration(300);
+	m_cameraPanY.setDuration(300);
+
+	m_cameraPanX.setStepHandler([this](auto step)
+	{
+		// update camera position
+		auto pos = this->m_camera->position();
+		this->m_camera->setPosition(glm::vec3(step, pos.y, pos.z));
+
+		// update camera view
+		auto view = this->m_camera->viewCenter();
+		this->m_camera->setViewCenter(glm::vec3(step, view.y, view.z));
+	});
+
+	// use quadratic in
+	m_cameraPanX.setEasing([](float t, float b, float c, float d)
+	{
+		t /= d;
+		return -c * t*(t-2) + b;
+	});
+
+	m_cameraPanX.setCompletionHandler([this](void)
+	{
+		m_isTransitioning = false;
+	});
+
+	m_stateMachine.on_transition([this](auto& t)
+	{
+		LOG(INFO) << "transition from [" << (int)t.source() << "] to [" << (int)t.destination() << "] via trigger [" << (int)t.trigger() << "]";
+
+		auto source = t.source();
+		auto dest = t.destination();
+
+		// if either state is not a page we dont move the camera
+		if (!this->m_pages.count(source) || !this->m_pages.count(dest))
+			return;
+
+		auto position = this->m_camera->position();
+		auto destPosition = this->m_pages.at(dest)->modelMatrix() * glm::vec4(1.f);
+		auto sourcePosition = this->m_pages.at(source)->modelMatrix() * glm::vec4(1.f);
+		auto distance = destPosition - sourcePosition;
+
+		this->m_cameraPanX.setStart(position.x);
+		this->m_cameraPanX.setEnd(distance.x);
+
+		m_isTransitioning = true;
+		this->m_cameraPanX.start();
+	});
 }

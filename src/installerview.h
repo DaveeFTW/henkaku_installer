@@ -7,6 +7,8 @@
  * of the MIT license.  See the LICENSE file for details.
  */
 
+#include "numberanimation.h"
+
 #include <framework/view.h>
 #include <framework/gxmshaderpatcher.h>
 
@@ -35,7 +37,8 @@ protected:
 private:
 	void update(void);
 	bool isTransitioning(void) const;
-
+	void setupTransitionPan(void);
+	
 private:
 	enum class State
 	{
@@ -75,4 +78,8 @@ private:
 	StateMachine m_stateMachine;
 	bool m_isTransitioning{false};
 	std::unordered_map<State, Page*> m_pages;
+
+	// camera pan operations
+	NumberAnimation m_cameraPanX;
+	NumberAnimation m_cameraPanY;
 };
