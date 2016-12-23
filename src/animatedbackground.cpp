@@ -202,8 +202,12 @@ void AnimatedBackground::update(float dt)
 		auto tex = &m_textures[i];
 		tex->position = tex->position + tex->dispRate*dt;
 
+		// dont lose precision
+		tex->position.x = std::fmod(tex->position.x, 512.f);
+		tex->position.y = std::fmod(tex->position.y, 512.f);
+
 		float tileFrequency = 3;
-		
+
 		float dxl = tex->position.x/512.f-tileFrequency/2.f;
 		float dxu = tex->position.x/512.f+tileFrequency/2.f;
 		float dyl = tex->position.y/512.f-tileFrequency/2.f;
