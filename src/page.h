@@ -20,10 +20,17 @@ class Page
 public:
 	virtual ~Page(void) = default;
 
-	virtual void setModel(glm::mat4 model) = 0;
+	void setModel(glm::mat4 model) { m_model = model; onModelChanged(model); }
+	glm::mat4 modelMatrix(void) { return m_model; }
 
 	virtual void update(float dt) { }
 	virtual void draw(SceGxmContext *ctx, const Camera *camera) const = 0;
+
+private:
+	virtual void onModelChanged(glm::mat4 model) = 0;
+
+private:
+	glm::mat4 m_model;
 };
 
 #endif // PAGE_H

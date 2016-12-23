@@ -48,7 +48,7 @@ WelcomePage::WelcomePage(GxmShaderPatcher *patcher)
 	m_textRenderer.setShaders<ColouredTextVertex>("rsc:/text.vert.cg.gxp", "rsc:/text.frag.cg.gxp");
 }
 
-void WelcomePage::setModel(glm::mat4 model)
+void WelcomePage::onModelChanged(glm::mat4 model)
 {
 	m_rectangle.setModel(model * glm::translate(glm::mat4(1), glm::vec3((960-m_rectangle.width())/2.f-m_rectangle.radius(), (544-m_rectangle.height())/2.f-m_rectangle.radius(), 0)));
 

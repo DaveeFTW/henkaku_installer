@@ -22,8 +22,10 @@ class WelcomePage : public Page
 public:
 	WelcomePage(GxmShaderPatcher *patcher);
 
-	void setModel(glm::mat4 model) final;
 	void draw(SceGxmContext *ctx, const Camera *camera) const final;
+
+private:
+	void onModelChanged(glm::mat4 model) final;
 
 private:
 	RoundedRectangle<ColouredGeometryVertex> m_rectangle;
