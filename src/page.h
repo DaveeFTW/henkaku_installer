@@ -1,0 +1,24 @@
+/*
+ * page.h - baseclass for a page
+ *
+ * Copyright (C) 2016 David "Davee" Morgan
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license.  See the LICENSE file for details.
+ */
+
+#ifndef PAGE_H
+#define PAGE_H
+
+class Page
+{
+public:
+	virtual ~Page(void) = default;
+
+	virtual void setModel(glm::mat4 model) = 0;
+
+	virtual void update(float dt) { }
+	virtual void draw(SceGxmContext *ctx, const Camera *camera) = 0;
+};
+
+#endif // PAGE_H
