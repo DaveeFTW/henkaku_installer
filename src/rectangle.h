@@ -31,6 +31,9 @@ public:
 	template <typename Colour>
 	void setColour(Colour colour);
 
+	float width(void) const { return m_topRight->position.x - m_topLeft->position.x; }
+	float height(void) const { return m_topRight->position.y - m_bottomRight->position.y; }
+
 private:
 	void doDraw(SceGxmContext *ctx, GeometryRenderer *renderer, const Camera *camera) const override;
 
