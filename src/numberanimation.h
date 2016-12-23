@@ -44,7 +44,7 @@ public:
 private:
 	float m_start, m_end, m_elapsed;
 	int m_duration;
-	bool m_complete{false};
+	bool m_complete{true};
 
 	StepHandler m_stepHandler;
 	CompletionHandler m_completionHandler;
