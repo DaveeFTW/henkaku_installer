@@ -61,13 +61,19 @@ Font::~Font(void)
 
 bool Font::setFont(const std::string& file)
 {
-	m_atlas = new CharacterAtlas();
+	if (m_atlas != nullptr)
+	{
+		delete m_atlas;
+		m_atlas = nullptr;
+	}
 
 	if (m_face != nullptr)
 	{
 		// TODO: handle this
 	}
-	
+
+	m_atlas = new CharacterAtlas;
+
 	auto fileData = Resource::read(file);
 	
 	if (!fileData.good)
@@ -78,6 +84,19 @@ bool Font::setFont(const std::string& file)
 	FT_New_Memory_Face(FreeType::library(), reinterpret_cast<FT_Byte *>(m_fontData.data()), m_fontData.size(), 0, &m_face);
 	FT_Set_Char_Size(m_face, 0, 16*64, 960/4.357877685622746f, 544/2.451306198162795);
 	return true;
+}
+
+void Font::setPointSize(float size)
+{
+	FT_Set_Char_Size(m_face, 0, FT_F26Dot6(size*64), 960/4.357877685622746f, 544/2.451306198162795);
+
+	// TODO: implement a clear rather than rebuild expensive object
+	if (m_atlas != nullptr)
+	{
+		delete m_atlas;
+	}
+
+	m_atlas = new CharacterAtlas;
 }
 
 Font::GlyphInfo Font::glyphInfo(unsigned int character)

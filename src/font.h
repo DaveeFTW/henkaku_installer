@@ -30,6 +30,8 @@ public:
 	~Font(void);
 
 	bool setFont(const std::string& file);
+	void setPointSize(float size);
+
 	Font::GlyphInfo glyphInfo(unsigned int character);
 
 private:
