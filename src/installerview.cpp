@@ -149,6 +149,7 @@ TaskPtr InstallerView::simulationTask(double dt)
 void InstallerView::update(void)
 {
 	m_cameraPanX.update(m_dt);
+	m_cameraPanY.update(m_dt);
 }
 
 void InstallerView::render(SceGxmContext *ctx)
@@ -172,6 +173,7 @@ void InstallerView::setupTransitionPan(void)
 	m_cameraPanX.setDuration(300);
 	m_cameraPanY.setDuration(300);
 
+	// set step handlers
 	m_cameraPanX.setStepHandler([this](auto step)
 	{
 		// update camera position
@@ -183,6 +185,17 @@ void InstallerView::setupTransitionPan(void)
 		this->m_camera->setViewCenter(glm::vec3(step, view.y, view.z));
 	});
 
+	m_cameraPanY.setStepHandler([this](auto step)
+	{
+		// update camera position
+		auto pos = this->m_camera->position();
+		this->m_camera->setPosition(glm::vec3(pos.x, step, pos.z));
+
+		// update camera view
+		auto view = this->m_camera->viewCenter();
+		this->m_camera->setViewCenter(glm::vec3(view.x, step, view.z));
+	});
+
 	// use quadratic in
 	m_cameraPanX.setEasing([](float t, float b, float c, float d)
 	{
@@ -190,6 +203,13 @@ void InstallerView::setupTransitionPan(void)
 		return -c * t*(t-2) + b;
 	});
 
+	m_cameraPanY.setEasing([](float t, float b, float c, float d)
+	{
+		t /= d;
+		return -c * t*(t-2) + b;
+	});
+
+	// we only need one of these
 	m_cameraPanX.setCompletionHandler([this](void)
 	{
 		m_isTransitioning = false;
@@ -211,10 +231,16 @@ void InstallerView::setupTransitionPan(void)
 		auto sourcePosition = this->m_pages.at(source)->modelMatrix() * glm::vec4(1.f);
 		auto distance = destPosition - sourcePosition;
 
+		// setup x axis pan
 		this->m_cameraPanX.setStart(position.x);
 		this->m_cameraPanX.setEnd(distance.x);
 
+		// setup y axis pan
+		this->m_cameraPanY.setStart(position.y);
+		this->m_cameraPanY.setEnd(distance.y);
+
 		m_isTransitioning = true;
 		this->m_cameraPanX.start();
+		this->m_cameraPanY.start();
 	});
 }
