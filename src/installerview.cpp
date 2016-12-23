@@ -52,15 +52,7 @@ InstallerView::InstallerView(void)
 	, m_camera(new Camera)
 	, m_stateMachine(State::Init)
 {
-	// align z = 0 to screen coordiantes
-	auto fov = 45.f;
-	m_camera->setPerspectiveProjection(glm::radians(fov), 960.f/544.f, 0.1f, 10000.0f);
-	float angle1=fov/2.0;
-	float angle2=180 - (90 + angle1);
-	float Z = 0.5 * 544.f * std::sin(glm::radians(angle2))/std::sin(glm::radians(angle1));
-	m_camera->setPosition(glm::vec3(960.f/2, 544.f/2, Z));
-	m_camera->setViewCenter(glm::vec3(960.f/2, 544.f/2, 0));
-	m_camera->setUpVector(glm::vec3(0, 1, 0));
+	setupCamera();
 
 	m_fpsCounter->setModel(glm::scale(glm::mat4(1), glm::vec3(0.7, 0.7, 0)));
 
@@ -73,39 +65,32 @@ InstallerView::InstallerView(void)
 	auto fpsCounterTask = std::make_shared<Task>();
 	fpsCounterTask->set(std::bind(&FpsCounter::update, m_fpsCounter, std::cref(m_dt)));
 
-	// set pages
-	auto welcomePage = new WelcomePage(&m_patcher);
-	auto welcomePageTask = std::make_shared<Task>();
-	welcomePageTask->set(std::bind(&WelcomePage::update, welcomePage, std::cref(m_dt)));
+	// add update tasks
+	m_simulationTasks->insertDependant(animatedBackgroundTask);
+	m_simulationTasks->insertDependant(fpsCounterTask);
 
-	
-	auto welcomePage2 = new WelcomePage(&m_patcher);
-	welcomePage2->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f, 0, 0)));
-	
-	m_pages.insert({ State::Welcome, welcomePage });
-	m_pages.insert({ State::SimpleInstall, welcomePage2 });
-
-	auto transitionGuard = [this](void)
+	// create state transition guard
+	m_transitionGuard = [this](void)
 	{
 		return !this->isTransitioning();
 	};
-	
+
+	// setup pages and states
+	setupWelcomePage();
+
+	auto welcomePage2 = new WelcomePage(&m_patcher);
+	welcomePage2->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f, 544.f*1.5f, 0)));
+
+	m_pages.insert({ State::SimpleInstall, welcomePage2 });
+
 	// setup state machine
 	m_stateMachine.configure(State::Init)
 		.permit(Trigger::Start, State::Welcome);
 
-	m_stateMachine.configure(State::Welcome)
-		.permit_if(Trigger::Right, State::SimpleInstall, transitionGuard);
-		
 	m_stateMachine.configure(State::SimpleInstall)
-		.permit_if(Trigger::Left, State::Welcome, transitionGuard);
+		.permit_if(Trigger::Left, State::Welcome, m_transitionGuard);
 
 	setupTransitionPan();
-
-	// add update tasks
-	m_simulationTasks->insertDependant(animatedBackgroundTask);
-	m_simulationTasks->insertDependant(fpsCounterTask);
-	m_simulationTasks->insertDependant(welcomePageTask);
 
 	// goto next
 	m_stateMachine.fire(Trigger::Start);
@@ -166,6 +151,19 @@ void InstallerView::render(SceGxmContext *ctx)
 bool InstallerView::isTransitioning(void) const
 {
 	return m_isTransitioning;
+}
+
+void InstallerView::setupCamera(void)
+{
+	// align z = 0 to screen coordiantes
+	auto fov = 45.f;
+	m_camera->setPerspectiveProjection(glm::radians(fov), 960.f/544.f, 0.1f, 10000.0f);
+	float angle1=fov/2.0;
+	float angle2=180 - (90 + angle1);
+	float Z = 0.5 * 544.f * std::sin(glm::radians(angle2))/std::sin(glm::radians(angle1));
+	m_camera->setPosition(glm::vec3(960.f/2, 544.f/2, Z));
+	m_camera->setViewCenter(glm::vec3(960.f/2, 544.f/2, 0));
+	m_camera->setUpVector(glm::vec3(0, 1, 0));
 }
 
 void InstallerView::setupTransitionPan(void)
@@ -243,4 +241,21 @@ void InstallerView::setupTransitionPan(void)
 		this->m_cameraPanX.start();
 		this->m_cameraPanY.start();
 	});
+}
+
+void InstallerView::setupWelcomePage(void)
+{
+	auto page = new WelcomePage(&m_patcher);
+	
+	// add task as dependant on this view
+	auto welcomePageTask = std::make_shared<Task>();
+	welcomePageTask->set(std::bind(&WelcomePage::update, page, std::cref(m_dt)));
+	m_simulationTasks->insertDependant(welcomePageTask);
+
+	// add page to map
+	m_pages.insert({ State::Welcome, page });
+
+	// setup our state transitions
+	m_stateMachine.configure(State::Welcome)
+		.permit_if(Trigger::Right, State::SimpleInstall, m_transitionGuard);
 }

@@ -37,8 +37,10 @@ protected:
 private:
 	void update(void);
 	bool isTransitioning(void) const;
+	void setupCamera(void);
 	void setupTransitionPan(void);
-	
+	void setupWelcomePage(void);
+
 private:
 	enum class State
 	{
@@ -67,6 +69,7 @@ private:
 	};
 
 	using StateMachine = stateless::state_machine<State, Trigger>;
+	using TransitionGuard = StateMachine::TStateConfiguration::TGuard;
 
 private:
 	TaskPtr m_simulationTasks;
@@ -78,6 +81,7 @@ private:
 	StateMachine m_stateMachine;
 	bool m_isTransitioning{false};
 	std::unordered_map<State, Page*> m_pages;
+	TransitionGuard m_transitionGuard;
 
 	// camera pan operations
 	NumberAnimation m_cameraPanX;
