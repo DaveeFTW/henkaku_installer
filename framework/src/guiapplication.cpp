@@ -160,3 +160,15 @@ void GuiApplication::addView(ViewPtr view)
 	self->view_list.push_back(view);
 	//screen->onViewAdded(view);
 }
+
+void GuiApplication::sendEvent(Event *event)
+{
+	if (!self)
+	{
+		std::cerr << __func__ << ": Application object not instantiated." << std::endl;
+		return;
+	}
+
+	for (auto& view : self->view_list)
+		view->onEvent(event);
+}

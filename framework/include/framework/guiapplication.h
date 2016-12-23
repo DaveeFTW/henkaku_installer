@@ -22,6 +22,7 @@ using TaskPtr = std::shared_ptr<Task>;
 
 class Screen;
 class Input;
+class Event;
 
 class GuiApplication
 {
@@ -35,6 +36,9 @@ public:
 	static ViewPtrList allViews(void);
 
 	static void addView(ViewPtr view);
+
+	static void sendEvent(Event *event);
+
 private:
 	static GuiApplication *self;
 

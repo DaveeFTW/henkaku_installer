@@ -15,12 +15,15 @@
 class Task;
 using TaskPtr = std::shared_ptr<Task>;
 
+class Event;
+
 struct SceGxmContext;
 
 class View
 {
 	friend class ViewManager;
 	friend class Screen;
+	friend class GuiApplication;
 
 public:
 	View(void);
@@ -35,9 +38,9 @@ public:
 	void show(void);
 	
 	virtual void render(SceGxmContext *ctx) = 0;
+
 protected:
-	//virtual void update(double dt) = 0;
-	//virtual void render(void) = 0;
+	virtual void onEvent(Event *event) { }
 	
 private:
 	//http://eigen.tuxfamily.org/dox-devel/group__TopicUnalignedArrayAssert.htm
