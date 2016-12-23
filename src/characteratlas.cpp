@@ -45,7 +45,13 @@ bool CharacterAtlas::addGlyph(unsigned int character, const FT_GlyphSlotRec_ *gl
 	}
 	
 	m_atlas->setRegion(region, reinterpret_cast<char *>(bitmap->buffer), bitmap->pitch);
-	m_glyphMap.insert({character, {region, glm::vec2(glyph->linearHoriAdvance >> 16, glyph->linearVertAdvance >> 16)}});
+	m_glyphMap.insert({character, 
+	{
+		region, 
+		glm::vec2(glyph->linearHoriAdvance >> 16, glyph->linearVertAdvance >> 16),
+		static_cast<float>(glyph->bitmap_left),
+		static_cast<float>(glyph->bitmap_top)
+	}});
 	return true;
 }
 
@@ -59,6 +65,8 @@ CharacterAtlas::GlyphInfo CharacterAtlas::glyphInfo(unsigned int character)
 	auto glyph = m_glyphMap.at(character);
 	info.quad = m_atlas->toQuad(glyph.region);
 	info.advance = glyph.advance;
+	info.bitmap_left = glyph.bitmap_left;
+	info.bitmap_top = glyph.bitmap_top;
 	return info;
 }
 

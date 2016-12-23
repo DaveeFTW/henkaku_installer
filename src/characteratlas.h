@@ -25,6 +25,8 @@ public:
 	{
 		TextureAtlas::Quad quad;
 		glm::vec2 advance;
+		float bitmap_left;
+		float bitmap_top;
 	};
 
 public:
@@ -42,6 +44,8 @@ private:
 	{
 		TextureAtlas::AtlasRegion region;
 		glm::vec2 advance;
+		float bitmap_left;
+		float bitmap_top;
 	};
 
 private:

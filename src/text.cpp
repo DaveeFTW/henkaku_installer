@@ -77,25 +77,25 @@ void Text::generateGeometry(void)
 
 		// bottom left
 		vertices[i+0].position.x = x;
-		vertices[i+0].position.y = y;
+		vertices[i+0].position.y = y-(glyphInfo.quad.size.y - glyphInfo.bitmap_top);
 		vertices[i+0].position.z = 0;
 		vertices[i+0].texCoord = glyphInfo.quad.bl;
 
 		// bottom right
 		vertices[i+1].position.x = x+glyphInfo.quad.size.x;
-		vertices[i+1].position.y = y;
+		vertices[i+1].position.y = y-(glyphInfo.quad.size.y - glyphInfo.bitmap_top);
 		vertices[i+1].position.z = 0;
 		vertices[i+1].texCoord = glyphInfo.quad.br;
 
 		// top left
 		vertices[i+2].position.x = x;
-		vertices[i+2].position.y = y+glyphInfo.quad.size.y;
+		vertices[i+2].position.y = y+glyphInfo.quad.size.y-(glyphInfo.quad.size.y - glyphInfo.bitmap_top);
 		vertices[i+2].position.z = 0;
 		vertices[i+2].texCoord = glyphInfo.quad.tl;
 
 		// top right
 		vertices[i+3].position.x = x+glyphInfo.quad.size.x;
-		vertices[i+3].position.y = y+glyphInfo.quad.size.y;
+		vertices[i+3].position.y = y+glyphInfo.quad.size.y-(glyphInfo.quad.size.y - glyphInfo.bitmap_top);
 		vertices[i+3].position.z = 0;
 		vertices[i+3].texCoord = glyphInfo.quad.tr;
 		
@@ -111,8 +111,8 @@ void Text::generateGeometry(void)
 
 		x += glyphInfo.advance.x;
 
-		if (glyphInfo.advance.y > heightMax)
-			heightMax = glyphInfo.advance.y;
+		if (y+glyphInfo.quad.size.y-(glyphInfo.quad.size.y - glyphInfo.bitmap_top) > heightMax)
+			heightMax = y+glyphInfo.quad.size.y-(glyphInfo.quad.size.y - glyphInfo.bitmap_top);
 	}
 
 	m_boundingBox = glm::vec2(x, y+heightMax);
