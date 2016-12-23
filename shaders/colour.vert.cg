@@ -9,10 +9,10 @@
 
 void main(
 	float3 in position,
-	float3 in colour,
+	float4 in colour,
 	uniform in float4x4 mvp,
 	float4 out vPosition : POSITION,
-	float3 out vColour : TEXCOORD0
+	float4 out vColour : TEXCOORD0
 )
 {
 	vColour = colour;

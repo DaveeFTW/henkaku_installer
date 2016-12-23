@@ -22,7 +22,7 @@
 struct ColouredGeometryVertex
 {
 	glm::vec3 position;
-	glm::vec3 colour;
+	glm::vec4 colour;
 
 	static std::vector<SceGxmVertexAttribute> attributes(GxmVertexShader *vertexShader)
 	{
@@ -36,7 +36,7 @@ struct ColouredGeometryVertex
 		attributes[1].streamIndex = 0;
 		attributes[1].offset = offsetof(ColouredGeometryVertex, colour);
 		attributes[1].format = SCE_GXM_ATTRIBUTE_FORMAT_F32;
-		attributes[1].componentCount = 3;
+		attributes[1].componentCount = 4;
 		attributes[1].regIndex = sceGxmProgramParameterGetResourceIndex(vertexShader->attributeIndex("colour"));
 		return attributes;
 	}
