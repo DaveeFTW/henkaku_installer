@@ -48,6 +48,9 @@ glm::vec2 Text::boundingBox(void) const
 
 void Text::generateGeometry(void)
 {
+	if (!m_font)
+		return;
+
 	utf8::iterator<std::string::const_iterator> it(m_text.begin(), m_text.begin(), m_text.end());
 	utf8::iterator<std::string::const_iterator> end(m_text.end(), m_text.begin(), m_text.end());
 

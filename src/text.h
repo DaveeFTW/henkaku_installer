@@ -25,6 +25,7 @@ class Font;
 class Text : public Geometry
 {
 public:
+	Text(void) = default;
 	Text(Font *font, const std::string& text);
 
 	void setFont(Font *font);
