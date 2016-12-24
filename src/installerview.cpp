@@ -213,14 +213,19 @@ void InstallerView::setupTransitionPan(void)
 	{
 		m_isTransitioning = false;
 	});
+
+	m_stateMachine.on_transition([this](auto& transition)
+	{
+		this->performPageTransition(transition);
+	});
 }
 
-void InstallerView::performPageTransition(const StateTransition& t, State page)
+void InstallerView::performPageTransition(const StateTransition& t)
 {
 	LOG(INFO) << "transition from [" << (int)t.source() << "] to [" << (int)t.destination() << "] via trigger [" << (int)t.trigger() << "]";
 
-	auto source = m_currentPage;
-	auto dest = page;
+	auto source = t.source();
+	auto dest = t.destination();
 
 	// if source is not a page we do nothing
 	// TODO: if dest is not a page we should error or something
@@ -261,12 +266,7 @@ void InstallerView::setupWelcomePage(void)
 
 	// setup our state transitions
 	m_stateMachine.configure(State::Welcome)
-		.on_entry([this](auto& transition)
-		{
-			this->performPageTransition(transition, State::Welcome);
-			this->m_currentPage = State::Welcome;
-		})
-		.permit_if(Trigger::Right, State::SimpleInstall, m_transitionGuard);
+		.permit_if(Trigger::Right, State::SelectInstallOption, m_transitionGuard);
 }
 
 void InstallerView::setupInstallOptionPage(void)
@@ -284,38 +284,26 @@ void InstallerView::setupInstallOptionPage(void)
 
 	// setup our state transitions
 	m_stateMachine.configure(State::SelectInstallOption)
-		.on_entry([this](auto& transition)
-		{
-			this->performPageTransition(transition, State::SelectInstallOption);
-			this->m_currentPage = State::SelectInstallOption;
-		})
 		.permit_if(Trigger::Left, State::Welcome, m_transitionGuard)
-		.permit_dynamic_if(Trigger::Right, m_transitionGuard, [=](auto& source)
+		.permit_dynamic_if(Trigger::Right, m_transitionGuard, [this, page](auto& source)
 		{
-			if (source == State::SimpleInstall)
+			if (page->selection() == InstallOptionPage::Selection::Simple)
+			{
+				// set default options
+				this->m_henkakuOptions.unsafeHomebrew = true;
+				this->m_henkakuOptions.versionSpoofing = true;
+				this->m_henkakuOptions.offlineInstaller = false;
+				this->m_henkakuOptions.resetAll = false;
 				return State::Install;
+			}
 
 			// TODO: check if henkaku config exists
 			auto configExists = true;
 			return configExists ? State::Reset : State::Config;
 		});
+}
 
-	// simple installation -> unsafe features disabled by default
-	m_stateMachine.configure(State::SimpleInstall)
-		.sub_state_of(State::SelectInstallOption)
-		.on_exit([this](auto& t)
-		{
-			this->m_henkakuOptions.unsafeHomebrew = true;
-			this->m_henkakuOptions.versionSpoofing = true;
-			this->m_henkakuOptions.offlineInstaller = false;
-			this->m_henkakuOptions.resetAll = false;
-		})
-		.permit(Trigger::Up, State::CustomInstall)
-		.permit(Trigger::Down, State::CustomInstall);
+void InstallerView::setupResetPage(void)
+{
 
-	// custom installation -> only for advanced users
-	m_stateMachine.configure(State::CustomInstall)
-		.sub_state_of(State::SelectInstallOption)
-		.permit(Trigger::Up, State::SimpleInstall)
-		.permit(Trigger::Down, State::SimpleInstall);
 }

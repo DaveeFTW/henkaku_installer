@@ -17,12 +17,31 @@
 #include "text.h"
 #include "font.h"
 
+#include <stateless++/state_machine.hpp>
+
 class InstallOptionPage : public Page
 {
 public:
+	enum class Selection
+	{
+		Simple,
+		Custom
+	};
+
+public:
 	InstallOptionPage(GxmShaderPatcher *patcher);
 
+	Selection selection(void) const;
 	void draw(SceGxmContext *ctx, const Camera *camera) const final;
+
+private:
+	enum class Trigger
+	{
+		Up,
+		Down
+	};
+
+	using StateMachine = stateless::state_machine<Selection, Trigger>;
 
 private:
 	void onModelChanged(glm::mat4 model) final;
@@ -32,6 +51,8 @@ private:
 	GeometryRenderer m_renderer, m_textRenderer;
 	Font m_font20, m_font12;
 	Text m_welcomeText, m_nextPageDirection;
+	Selection m_selection;
+	StateMachine m_stateMachine;
 };
 
 #endif // INSTALLOPTIONPAGE_H

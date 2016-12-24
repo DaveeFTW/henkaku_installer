@@ -77,11 +77,12 @@ private:
 private:
 	void update(void);
 	bool isTransitioning(void) const;
-	void performPageTransition(const StateTransition& transition, State page);
+	void performPageTransition(const StateTransition& transition);
 	void setupCamera(void);
 	void setupTransitionPan(void);
 	void setupWelcomePage(void);
 	void setupInstallOptionPage(void);
+	void setupResetPage(void);
 
 private:
 	TaskPtr m_simulationTasks;
@@ -94,7 +95,6 @@ private:
 	bool m_isTransitioning{false};
 	std::unordered_map<State, Page*> m_pages;
 	TransitionGuard m_transitionGuard;
-	State m_currentPage;
 	HenkakuOptions m_henkakuOptions;
 
 	// camera pan operations

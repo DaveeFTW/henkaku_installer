@@ -15,6 +15,7 @@ InstallOptionPage::InstallOptionPage(GxmShaderPatcher *patcher)
 	, m_textRenderer(patcher)
 	, m_font20("rsc:/fonts/slabo27px-regular.ttf")
 	, m_font12("rsc:/fonts/slabo27px-regular.ttf")
+	, m_stateMachine(Selection::Simple)
 {
 	m_font20.setPointSize(20.f);
 	m_font12.setPointSize(12.f);
@@ -62,4 +63,9 @@ void InstallOptionPage::draw(SceGxmContext *ctx, const Camera *camera) const
 	m_renderer.draw(ctx, camera, &m_rectangle);
 	m_textRenderer.draw(ctx, camera, &m_welcomeText);
 	m_textRenderer.draw(ctx, camera, &m_nextPageDirection);
+}
+
+InstallOptionPage::Selection InstallOptionPage::selection(void) const
+{
+	return m_stateMachine.state();
 }
