@@ -83,15 +83,15 @@ private:
 	void performPageTransition(const StateTransition& transition);
 	void setupCamera(void);
 	void setupTransitionPan(void);
-	void setupWelcomePage(void);
-	void setupInstallOptionPage(void);
-	void setupResetPage(void);
-	void setupConfigPage(void);
-	void setupOfflinePage(void);
-	void setupConfirmPage(void);
-	void setupInstallPage(void);
-	void setupSuccessPage(void);
-	void setupFailurePage(void);
+	void setupWelcomePage(int x, int y);
+	void setupInstallOptionPage(int x, int y);
+	void setupResetPage(int x, int y);
+	void setupConfigPage(int x, int y);
+	void setupOfflinePage(int x, int y);
+	void setupConfirmPage(int x, int y);
+	void setupInstallPage(int x, int y);
+	void setupSuccessPage(int x, int y);
+	void setupFailurePage(int x, int y);
 
 private:
 	TaskPtr m_simulationTasks;

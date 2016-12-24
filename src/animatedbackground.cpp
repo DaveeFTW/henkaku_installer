@@ -120,9 +120,9 @@ AnimatedBackground::AnimatedBackground(GxmShaderPatcher *patcher)
 	
 	ColouredGeometryVertex vertices[4] =
 	{
-		{ glm::vec3(-1028, -1028, -256), interp },
-		{ glm::vec3(4096*2, -1028, -256), bottomRightRgb },
-		{ glm::vec3(-1028, 4096*2, -256), topLeftRgb },
+		{ glm::vec3(-4096*2, -4096*2, -256), interp },
+		{ glm::vec3(4096*2, -4096*2, -256), bottomRightRgb },
+		{ glm::vec3(-4096*2, 4096*2, -256), topLeftRgb },
 		{ glm::vec3(4096*2, 4096*2, -256), interp }
 	};
 

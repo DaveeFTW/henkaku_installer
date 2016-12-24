@@ -88,15 +88,15 @@ InstallerView::InstallerView(void)
 	};
 
 	// setup pages and states
-	setupWelcomePage();
-	setupInstallOptionPage();
-	setupResetPage();
-	setupConfigPage();
-	setupOfflinePage();
-	setupConfirmPage();
-	setupInstallPage();
-	setupSuccessPage();
-	setupFailurePage();
+	setupWelcomePage(-3, 0);
+	setupInstallOptionPage(-2, 0);
+	setupResetPage(-1, 0);
+	setupConfigPage(0, 0);
+	setupOfflinePage(1, 0);
+	setupConfirmPage(2, 0);
+	setupInstallPage(3, 0);
+	setupSuccessPage(4, 0);
+	setupFailurePage(4, 0);
 
 	// setup state machine
 	m_stateMachine.configure(State::Init)
@@ -251,12 +251,22 @@ void InstallerView::performPageTransition(const StateTransition& t)
 	auto source = t.source();
 	auto dest = t.destination();
 
-	// if source is not a page we do nothing
 	if (!this->m_pages.count(source) || !this->m_pages.count(dest))
 	{
+		// if source is not a page we just move the camera directly to the dest
 		if (this->m_pages.count(dest))
 		{
 			this->m_renderQueue.push_back(this->m_pages.at(dest));
+			
+			auto destPosition = this->m_pages.at(dest)->modelMatrix() * glm::vec4(1.f);
+
+			// update camera position
+			auto pos = this->m_camera->position() + glm::vec3(destPosition.x, destPosition.y, 0.f);
+			this->m_camera->setPosition(pos);
+
+			// update camera view
+			auto view = this->m_camera->viewCenter() + glm::vec3(destPosition.x, destPosition.y, 0.f);
+			this->m_camera->setViewCenter(view);
 		}
 
 		return;
@@ -283,9 +293,10 @@ void InstallerView::performPageTransition(const StateTransition& t)
 	this->m_cameraPanY.start();
 }
 
-void InstallerView::setupWelcomePage(void)
+void InstallerView::setupWelcomePage(int x, int y)
 {
 	auto page = new WelcomePage(&m_patcher);
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Welcome, page });
@@ -295,10 +306,10 @@ void InstallerView::setupWelcomePage(void)
 		.permit_if(Trigger::Right, State::SelectInstallOption, m_transitionGuard);
 }
 
-void InstallerView::setupInstallOptionPage(void)
+void InstallerView::setupInstallOptionPage(int x, int y)
 {
 	auto page = new InstallOptionPage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f, 0, 0)));
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::SelectInstallOption, page });
@@ -324,10 +335,10 @@ void InstallerView::setupInstallOptionPage(void)
 		});
 }
 
-void InstallerView::setupResetPage(void)
+void InstallerView::setupResetPage(int x, int y)
 {
 	auto page = new ResetPage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f, 0, 0)));
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Reset, page });
@@ -338,10 +349,10 @@ void InstallerView::setupResetPage(void)
 		.permit_if(Trigger::Right, State::Config, m_transitionGuard);
 }
 
-void InstallerView::setupConfigPage(void)
+void InstallerView::setupConfigPage(int x, int y)
 {
 	auto page = new ConfigPage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*2.f, 0, 0)));
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Config, page });
@@ -352,10 +363,10 @@ void InstallerView::setupConfigPage(void)
 		.permit_if(Trigger::Right, State::Offline, m_transitionGuard);
 }
 
-void InstallerView::setupOfflinePage(void)
+void InstallerView::setupOfflinePage(int x, int y)
 {
 	auto page = new OfflinePage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*3.f, 0, 0)));
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Offline, page });
@@ -366,10 +377,10 @@ void InstallerView::setupOfflinePage(void)
 		.permit_if(Trigger::Right, State::Confirm, m_transitionGuard);
 }
 
-void InstallerView::setupConfirmPage(void)
+void InstallerView::setupConfirmPage(int x, int y)
 {
 	auto page = new ConfirmPage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*4.f, 0, 0)));
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Confirm, page });
@@ -380,10 +391,10 @@ void InstallerView::setupConfirmPage(void)
 		.permit_if(Trigger::Cross, State::Install, m_transitionGuard);
 }
 
-void InstallerView::setupInstallPage(void)
+void InstallerView::setupInstallPage(int x, int y)
 {
 	auto page = new InstallPage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*4.f, 0, 0)));
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Install, page });
@@ -393,10 +404,10 @@ void InstallerView::setupInstallPage(void)
 		.permit_if(Trigger::Cross, State::Success, m_transitionGuard);
 }
 
-void InstallerView::setupSuccessPage(void)
+void InstallerView::setupSuccessPage(int x, int y)
 {
 	auto page = new SuccessPage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*5.f, 0, 0)));
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Success, page });
@@ -406,10 +417,10 @@ void InstallerView::setupSuccessPage(void)
 		.permit_if(Trigger::Cross, State::Exit, m_transitionGuard);
 }
 
-void InstallerView::setupFailurePage(void)
+void InstallerView::setupFailurePage(int x, int y)
 {
 	auto page = new FailurePage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*5.f, 0, 0)));
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Failure, page });
