@@ -19,6 +19,7 @@
 #include "confirmpage.h"
 #include "installpage.h"
 #include "successpage.h"
+#include "failurepage.h"
 
 #include <framework/task.h>
 #include <framework/buttonevent.h>
@@ -92,6 +93,7 @@ InstallerView::InstallerView(void)
 	setupConfirmPage();
 	setupInstallPage();
 	setupSuccessPage();
+	setupFailurePage();
 
 	//auto welcomePage2 = new WelcomePage(&m_patcher);
 
@@ -416,5 +418,18 @@ void InstallerView::setupSuccessPage(void)
 
 	// setup our state transitions
 	m_stateMachine.configure(State::Success)
+		.permit_if(Trigger::Cross, State::Exit, m_transitionGuard);
+}
+
+void InstallerView::setupFailurePage(void)
+{
+	auto page = new FailurePage(&m_patcher);
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*5.f, 544.f*1.5f, 0)));
+
+	// add page to map
+	m_pages.insert({ State::Failure, page });
+
+	// setup our state transitions
+	m_stateMachine.configure(State::Failure)
 		.permit_if(Trigger::Cross, State::Exit, m_transitionGuard);
 }

@@ -90,6 +90,7 @@ private:
 	void setupConfirmPage(void);
 	void setupInstallPage(void);
 	void setupSuccessPage(void);
+	void setupFailurePage(void);
 
 private:
 	TaskPtr m_simulationTasks;
