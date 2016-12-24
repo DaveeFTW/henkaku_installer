@@ -45,6 +45,7 @@ set(INSTALLER_SOURCES
 	"src/offlinepage.cpp"
 	"src/confirmpage.cpp"
 	"src/installpage.cpp"
+	"src/successpage.cpp"
 )
 
 include_directories(3rdparty/include)
