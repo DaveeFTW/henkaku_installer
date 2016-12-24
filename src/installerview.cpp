@@ -103,6 +103,9 @@ InstallerView::InstallerView(void)
 
 	setupTransitionPan();
 
+	m_stateMachine.configure(State::Exit)
+		.on_entry(std::bind(&GuiApplication::exit));
+
 	// goto next
 	m_stateMachine.fire(Trigger::Start);
 }
@@ -242,8 +245,7 @@ void InstallerView::performPageTransition(const StateTransition& t)
 	auto dest = t.destination();
 
 	// if source is not a page we do nothing
-	// TODO: if dest is not a page we should error or something
-	if (!this->m_pages.count(source))
+	if (!this->m_pages.count(source) || !this->m_pages.count(dest))
 	{
 		return;
 	}

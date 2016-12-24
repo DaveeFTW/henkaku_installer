@@ -49,7 +49,8 @@ private:
 		Confirm,
 		Install,
 		Success,
-		Failure
+		Failure,
+		Exit
 	};
 
 	enum class Trigger
