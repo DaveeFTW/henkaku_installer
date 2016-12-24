@@ -9,6 +9,10 @@
 
 #include "installoptionpage.h"
 
+#include <framework/buttonevent.h>
+#include <psp2/ctrl.h>
+#include <easyloggingpp/easylogging++.h>
+
 InstallOptionPage::InstallOptionPage(GxmShaderPatcher *patcher)
 	: m_rectangle((960-200), 200, 20)
 	, m_renderer(patcher)
@@ -47,6 +51,19 @@ InstallOptionPage::InstallOptionPage(GxmShaderPatcher *patcher)
 
 	m_textRenderer.setBlendInfo(&blendInfo);
 	m_textRenderer.setShaders<ColouredTextVertex>("rsc:/text.vert.cg.gxp", "rsc:/text.frag.cg.gxp");
+
+	m_stateMachine.configure(Selection::Simple)
+		.permit(Trigger::Up, Selection::Custom)
+		.permit(Trigger::Down, Selection::Custom);
+
+	m_stateMachine.configure(Selection::Custom)
+		.permit(Trigger::Up, Selection::Simple)
+		.permit(Trigger::Down, Selection::Simple);
+
+	m_stateMachine.on_transition([this](auto& t)
+	{
+		LOG(INFO) << "Install option transition from [" << (int)t.source() << "] to [" << (int)t.destination() << "] via trigger [" << (int)t.trigger() << "]";
+	});
 }
 
 void InstallOptionPage::onModelChanged(glm::mat4 model)
@@ -68,4 +85,16 @@ void InstallOptionPage::draw(SceGxmContext *ctx, const Camera *camera) const
 InstallOptionPage::Selection InstallOptionPage::selection(void) const
 {
 	return m_stateMachine.state();
+}
+
+void InstallOptionPage::onEvent(ButtonEvent *event)
+{
+	if (event->buttons() == SCE_CTRL_UP)
+	{
+		m_stateMachine.fire(Trigger::Up);
+	}
+	else if (event->buttons() == SCE_CTRL_DOWN)
+	{
+		m_stateMachine.fire(Trigger::Down);
+	}
 }

@@ -34,6 +34,8 @@ public:
 	Selection selection(void) const;
 	void draw(SceGxmContext *ctx, const Camera *camera) const final;
 
+	void onEvent(ButtonEvent *event) final;
+
 private:
 	enum class Trigger
 	{
