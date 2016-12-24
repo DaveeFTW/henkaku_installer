@@ -14,6 +14,7 @@
 
 struct SceGxmContext;
 class Camera;
+class ButtonEvent;
 
 class Page
 {
@@ -25,6 +26,8 @@ public:
 
 	virtual void update(float dt) { }
 	virtual void draw(SceGxmContext *ctx, const Camera *camera) const = 0;
+
+	virtual void onEvent(ButtonEvent *event) { }
 
 private:
 	virtual void onModelChanged(glm::mat4 model) = 0;

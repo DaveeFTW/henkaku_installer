@@ -123,6 +123,10 @@ void InstallerView::onEvent(Event *event)
 		{
 			m_stateMachine.fire(trigger);
 		}
+		else if (m_pages.count(m_stateMachine.state()))
+		{
+			m_pages.at(m_stateMachine.state())->onEvent(button);
+		}
 	}
 }
 
