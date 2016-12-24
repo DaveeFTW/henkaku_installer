@@ -13,6 +13,7 @@
 #include "fpscounter.h"
 #include "welcomepage.h"
 #include "installoptionpage.h"
+#include "resetpage.h"
 
 #include <framework/task.h>
 #include <framework/buttonevent.h>
@@ -79,6 +80,7 @@ InstallerView::InstallerView(void)
 	// setup pages and states
 	setupWelcomePage();
 	setupInstallOptionPage();
+	setupResetPage();
 
 	//auto welcomePage2 = new WelcomePage(&m_patcher);
 
@@ -309,5 +311,18 @@ void InstallerView::setupInstallOptionPage(void)
 
 void InstallerView::setupResetPage(void)
 {
+	auto page = new ResetPage(&m_patcher);
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f, -544.f*1.5f, 0)));
+	
+	// add task as dependant on this view
+	auto task = std::make_shared<Task>();
+	task->set(std::bind(&InstallOptionPage::update, page, std::cref(m_dt)));
+	m_simulationTasks->insertDependant(task);
 
+	// add page to map
+	m_pages.insert({ State::Reset, page });
+
+	// setup our state transitions
+	m_stateMachine.configure(State::Reset)
+		.permit_if(Trigger::Left, State::SelectInstallOption, m_transitionGuard);
 }

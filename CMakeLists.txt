@@ -40,6 +40,7 @@ set(INSTALLER_SOURCES
 	"src/buttoneventfilter.cpp"
 	"src/welcomepage.cpp"
 	"src/installoptionpage.cpp"
+	"src/resetpage.cpp"
 )
 
 include_directories(3rdparty/include)
