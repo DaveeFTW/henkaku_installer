@@ -98,21 +98,14 @@ InstallerView::InstallerView(void)
 	setupSuccessPage();
 	setupFailurePage();
 
-	//auto welcomePage2 = new WelcomePage(&m_patcher);
-
-	//m_pages.insert({ State::SimpleInstall, welcomePage2 });
-
 	// setup state machine
 	m_stateMachine.configure(State::Init)
 		.permit(Trigger::Start, State::Welcome);
 
-	//m_stateMachine.configure(State::SimpleInstall)
-	//	.permit_if(Trigger::Left, State::Welcome, m_transitionGuard);
-
-	setupTransitionPan();
-
 	m_stateMachine.configure(State::Exit)
 		.on_entry(std::bind(&GuiApplication::exit));
+
+	setupTransitionPan();
 
 	// goto next
 	m_stateMachine.fire(Trigger::Start);
