@@ -16,6 +16,7 @@
 #include <stateless++/state_machine.hpp>
 
 #include <memory>
+#include <queue>
 #include <unordered_map>
 
 class AnimatedBackground;
@@ -77,7 +78,7 @@ private:
 	};
 
 private:
-	void update(void);
+	void update(float dt);
 	bool isTransitioning(void) const;
 	void performPageTransition(const StateTransition& transition);
 	void setupCamera(void);
@@ -102,6 +103,7 @@ private:
 	StateMachine m_stateMachine;
 	bool m_isTransitioning{false};
 	std::unordered_map<State, Page*> m_pages;
+	std::deque<Page*> m_renderQueue;
 	TransitionGuard m_transitionGuard;
 	HenkakuOptions m_henkakuOptions;
 	ButtonEventFilter m_buttonFilter;

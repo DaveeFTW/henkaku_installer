@@ -66,7 +66,6 @@ InstallerView::InstallerView(void)
 	m_fpsCounter->setModel(glm::scale(glm::mat4(1), glm::vec3(0.7, 0.7, 0)));
 
 	m_simulationTasks = std::make_shared<Task>();
-	m_simulationTasks->set(std::bind(&InstallerView::update, this));
 
 	auto animatedBackgroundTask = std::make_shared<Task>();
 	animatedBackgroundTask->set(std::bind(&AnimatedBackground::update, m_animatedBackground, std::cref(m_dt)));
@@ -74,9 +73,13 @@ InstallerView::InstallerView(void)
 	auto fpsCounterTask = std::make_shared<Task>();
 	fpsCounterTask->set(std::bind(&FpsCounter::update, m_fpsCounter, std::cref(m_dt)));
 
+	auto localTask = std::make_shared<Task>();
+	localTask->set(std::bind(&InstallerView::update, this, std::cref(m_dt)));
+
 	// add update tasks
 	m_simulationTasks->insertDependant(animatedBackgroundTask);
 	m_simulationTasks->insertDependant(fpsCounterTask);
+	m_simulationTasks->insertDependant(localTask);
 
 	// create state transition guard
 	m_transitionGuard = [this](void)
@@ -154,10 +157,15 @@ TaskPtr InstallerView::simulationTask(double dt)
 	return m_simulationTasks;
 }
 
-void InstallerView::update(void)
+void InstallerView::update(float dt)
 {
-	m_cameraPanX.update(m_dt);
-	m_cameraPanY.update(m_dt);
+	m_cameraPanX.update(dt);
+	m_cameraPanY.update(dt);
+
+	for (auto& page : m_pages)
+	{
+		page.second->update(dt);
+	}
 }
 
 void InstallerView::render(SceGxmContext *ctx)
@@ -165,9 +173,9 @@ void InstallerView::render(SceGxmContext *ctx)
 	m_animatedBackground->draw(ctx, m_camera);
 	m_fpsCounter->draw(ctx, m_camera);
 
-	for (auto& page : m_pages)
+	for (auto& page : m_renderQueue)
 	{
-		page.second->draw(ctx, m_camera);
+		page->draw(ctx, m_camera);
 	}
 }
 
@@ -233,6 +241,7 @@ void InstallerView::setupTransitionPan(void)
 	// we only need one of these
 	m_cameraPanX.setCompletionHandler([this](void)
 	{
+		this->m_renderQueue.pop_front();
 		m_isTransitioning = false;
 	});
 
@@ -252,8 +261,16 @@ void InstallerView::performPageTransition(const StateTransition& t)
 	// if source is not a page we do nothing
 	if (!this->m_pages.count(source) || !this->m_pages.count(dest))
 	{
+		if (this->m_pages.count(dest))
+		{
+			this->m_renderQueue.push_back(this->m_pages.at(dest));
+		}
+
 		return;
 	}
+
+	// add page to render queue
+	this->m_renderQueue.push_back(this->m_pages.at(dest));
 
 	auto position = this->m_camera->position();
 	auto destPosition = this->m_pages.at(dest)->modelMatrix() * glm::vec4(1.f);
@@ -289,11 +306,6 @@ void InstallerView::setupInstallOptionPage(void)
 {
 	auto page = new InstallOptionPage(&m_patcher);
 	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f, 0, 0)));
-	
-	// add task as dependant on this view
-	auto task = std::make_shared<Task>();
-	task->set(std::bind(&InstallOptionPage::update, page, std::cref(m_dt)));
-	m_simulationTasks->insertDependant(task);
 
 	// add page to map
 	m_pages.insert({ State::SelectInstallOption, page });
@@ -322,12 +334,7 @@ void InstallerView::setupInstallOptionPage(void)
 void InstallerView::setupResetPage(void)
 {
 	auto page = new ResetPage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f, -544.f*1.5f, 0)));
-	
-	// add task as dependant on this view
-	auto task = std::make_shared<Task>();
-	task->set(std::bind(&ResetPage::update, page, std::cref(m_dt)));
-	m_simulationTasks->insertDependant(task);
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f, 0, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Reset, page });
@@ -341,12 +348,7 @@ void InstallerView::setupResetPage(void)
 void InstallerView::setupConfigPage(void)
 {
 	auto page = new ConfigPage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*2.f, -544.f*1.5f, 0)));
-	
-	// add task as dependant on this view
-	auto task = std::make_shared<Task>();
-	task->set(std::bind(&ConfigPage::update, page, std::cref(m_dt)));
-	m_simulationTasks->insertDependant(task);
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*2.f, 0, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Config, page });
@@ -360,12 +362,7 @@ void InstallerView::setupConfigPage(void)
 void InstallerView::setupOfflinePage(void)
 {
 	auto page = new OfflinePage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*3.f, -544.f*1.5f, 0)));
-	
-	// add task as dependant on this view
-	auto task = std::make_shared<Task>();
-	task->set(std::bind(&ConfigPage::update, page, std::cref(m_dt)));
-	m_simulationTasks->insertDependant(task);
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*3.f, 0, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Offline, page });
@@ -379,7 +376,7 @@ void InstallerView::setupOfflinePage(void)
 void InstallerView::setupConfirmPage(void)
 {
 	auto page = new ConfirmPage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*4.f, -544.f*1.5f, 0)));
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*4.f, 0, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Confirm, page });
@@ -394,11 +391,6 @@ void InstallerView::setupInstallPage(void)
 {
 	auto page = new InstallPage(&m_patcher);
 	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*4.f, 0, 0)));
-	
-	// add task as dependant on this view
-	auto task = std::make_shared<Task>();
-	task->set(std::bind(&ConfigPage::update, page, std::cref(m_dt)));
-	m_simulationTasks->insertDependant(task);
 
 	// add page to map
 	m_pages.insert({ State::Install, page });
@@ -424,7 +416,7 @@ void InstallerView::setupSuccessPage(void)
 void InstallerView::setupFailurePage(void)
 {
 	auto page = new FailurePage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*5.f, 544.f*1.5f, 0)));
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*5.f, 0, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Failure, page });
