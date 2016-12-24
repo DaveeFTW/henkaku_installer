@@ -16,6 +16,8 @@
 
 #include <psp2/kernel/sysmem.h>
 
+#include <easyloggingpp/easylogging++.h>
+
 extern int g_counter;
 
 template <typename T>
@@ -51,8 +53,7 @@ public:
 		
 		if (m_uid < 0)
 		{
-			// TODO: handle this error
-			//g_counter = m_size;
+			LOG(FATAL) << "MemoryBlock allocate failure: " << m_uid << ". sceKernelAllocMemBlock(\"\", " << type << ", " << m_size << ", " << (unsigned int)popt << ")";
 			return;
 		}
 		
@@ -60,8 +61,7 @@ public:
 		
 		if (res < 0)
 		{
-			// TODO: handle this error
-			//g_counter = m_size;
+			LOG(FATAL) << "MemoryBlock get block failure: " << m_uid << ". sceKernelGetMemBlockBase(" << m_uid << ", " << (unsigned int)reinterpret_cast<void **>(&m_address) << ")";
 			return;
 		}
 	}
