@@ -25,6 +25,7 @@ GuiApplication::GuiApplication(int argc, char **argv)
 	: platform_screen(nullptr)
 	, platform_input(nullptr)
 	, focused_view(nullptr)
+	, running(false)
 {
 	if (self)
 	{
@@ -102,8 +103,9 @@ int GuiApplication::exec(void)
 		
 		cv.notify_one();
 	});
-	
-	while (true)
+
+	self->running = true;
+	while (self->running)
 	{
 		complete = false;
 		
@@ -171,4 +173,15 @@ void GuiApplication::sendEvent(Event *event)
 
 	for (auto& view : self->view_list)
 		view->onEvent(event);
+}
+
+void GuiApplication::exit(void)
+{
+	if (!self)
+	{
+		std::cerr << __func__ << ": Application object not instantiated." << std::endl;
+		return;
+	}
+
+	self->running = false;
 }

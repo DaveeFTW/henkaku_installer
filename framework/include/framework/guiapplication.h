@@ -38,6 +38,7 @@ public:
 	static void addView(ViewPtr view);
 
 	static void sendEvent(Event *event);
+	static void exit(void);
 
 private:
 	static GuiApplication *self;
@@ -48,6 +49,7 @@ private:
 	ViewPtr focused_view;
 	ViewPtrList view_list;
 	TaskPtr update_task, draw_task;
+	bool running;
 };
 
 #endif // GUIAPPLICATION_H
