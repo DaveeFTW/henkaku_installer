@@ -87,6 +87,7 @@ private:
 	void setupConfigPage(void);
 	void setupOfflinePage(void);
 	void setupConfirmPage(void);
+	void setupInstallPage(void);
 
 private:
 	TaskPtr m_simulationTasks;

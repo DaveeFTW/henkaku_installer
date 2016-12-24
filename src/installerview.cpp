@@ -17,6 +17,7 @@
 #include "configpage.h"
 #include "offlinepage.h"
 #include "confirmpage.h"
+#include "installpage.h"
 
 #include <framework/task.h>
 #include <framework/buttonevent.h>
@@ -87,6 +88,7 @@ InstallerView::InstallerView(void)
 	setupConfigPage();
 	setupOfflinePage();
 	setupConfirmPage();
+	setupInstallPage();
 	
 	//auto welcomePage2 = new WelcomePage(&m_patcher);
 
@@ -389,4 +391,22 @@ void InstallerView::setupConfirmPage(void)
 	m_stateMachine.configure(State::Confirm)
 		.permit_if(Trigger::Left, State::Offline, m_transitionGuard)
 		.permit_if(Trigger::Cross, State::Install, m_transitionGuard);
+}
+
+void InstallerView::setupInstallPage(void)
+{
+	auto page = new InstallPage(&m_patcher);
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*4.f, 0, 0)));
+	
+	// add task as dependant on this view
+	auto task = std::make_shared<Task>();
+	task->set(std::bind(&ConfigPage::update, page, std::cref(m_dt)));
+	m_simulationTasks->insertDependant(task);
+
+	// add page to map
+	m_pages.insert({ State::Install, page });
+
+	// setup our state transitions
+	m_stateMachine.configure(State::Install)
+		.permit_if(Trigger::Cross, State::Welcome, m_transitionGuard);
 }
