@@ -276,7 +276,7 @@ void InstallerView::setupWelcomePage(void)
 void InstallerView::setupInstallOptionPage(void)
 {
 	auto page = new InstallOptionPage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f, 544.f*1.5f, 0)));
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f, 0, 0)));
 	
 	// add task as dependant on this view
 	auto task = std::make_shared<Task>();
@@ -289,7 +289,7 @@ void InstallerView::setupInstallOptionPage(void)
 	// setup our state transitions
 	m_stateMachine.configure(State::SelectInstallOption)
 		.permit_if(Trigger::Left, State::Welcome, m_transitionGuard)
-		.permit_dynamic_if(Trigger::Right, m_transitionGuard, [this, page](auto& source)
+		.permit_dynamic_if(Trigger::Cross, m_transitionGuard, [this, page](auto& source)
 		{
 			if (page->selection() == InstallOptionPage::Selection::Simple)
 			{

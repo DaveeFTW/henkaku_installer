@@ -53,7 +53,6 @@ private:
 	GeometryRenderer m_renderer, m_textRenderer;
 	Font m_font20, m_font12;
 	Text m_welcomeText, m_nextPageDirection;
-	Selection m_selection;
 	StateMachine m_stateMachine;
 };
 
