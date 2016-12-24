@@ -42,6 +42,7 @@ set(INSTALLER_SOURCES
 	"src/installoptionpage.cpp"
 	"src/resetpage.cpp"
 	"src/configpage.cpp"
+	"src/offlinepage.cpp"
 )
 
 include_directories(3rdparty/include)
