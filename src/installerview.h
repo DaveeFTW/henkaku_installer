@@ -35,17 +35,11 @@ protected:
 	void onEvent(Event *event) override;
 
 private:
-	void update(void);
-	bool isTransitioning(void) const;
-	void setupCamera(void);
-	void setupTransitionPan(void);
-	void setupWelcomePage(void);
-
-private:
 	enum class State
 	{
 		Init,
 		Welcome,
+		SelectInstallOption,
 		SimpleInstall,
 		CustomInstall,
 		Reset,
@@ -70,6 +64,24 @@ private:
 
 	using StateMachine = stateless::state_machine<State, Trigger>;
 	using TransitionGuard = StateMachine::TStateConfiguration::TGuard;
+	using StateTransition = StateMachine::TTransition;
+
+	struct HenkakuOptions
+	{
+		bool unsafeHomebrew;
+		bool versionSpoofing;
+		bool offlineInstaller;
+		bool resetAll;
+	};
+
+private:
+	void update(void);
+	bool isTransitioning(void) const;
+	void performPageTransition(const StateTransition& transition, State page);
+	void setupCamera(void);
+	void setupTransitionPan(void);
+	void setupWelcomePage(void);
+	void setupInstallOptionPage(void);
 
 private:
 	TaskPtr m_simulationTasks;
@@ -82,6 +94,8 @@ private:
 	bool m_isTransitioning{false};
 	std::unordered_map<State, Page*> m_pages;
 	TransitionGuard m_transitionGuard;
+	State m_currentPage;
+	HenkakuOptions m_henkakuOptions;
 
 	// camera pan operations
 	NumberAnimation m_cameraPanX;

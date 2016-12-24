@@ -38,6 +38,7 @@ set(INSTALLER_SOURCES
 	"src/fpscounter.cpp"
 	"src/numberanimation.cpp"
 	"src/welcomepage.cpp"
+	"src/installoptionpage.cpp"
 )
 
 include_directories(3rdparty/include)

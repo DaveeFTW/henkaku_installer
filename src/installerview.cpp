@@ -12,6 +12,7 @@
 #include "animatedbackground.h"
 #include "fpscounter.h"
 #include "welcomepage.h"
+#include "installoptionpage.h"
 
 #include <framework/task.h>
 #include <framework/buttonevent.h>
@@ -77,18 +78,18 @@ InstallerView::InstallerView(void)
 
 	// setup pages and states
 	setupWelcomePage();
+	setupInstallOptionPage();
 
-	auto welcomePage2 = new WelcomePage(&m_patcher);
-	welcomePage2->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f, 544.f*1.5f, 0)));
+	//auto welcomePage2 = new WelcomePage(&m_patcher);
 
-	m_pages.insert({ State::SimpleInstall, welcomePage2 });
+	//m_pages.insert({ State::SimpleInstall, welcomePage2 });
 
 	// setup state machine
 	m_stateMachine.configure(State::Init)
 		.permit(Trigger::Start, State::Welcome);
 
-	m_stateMachine.configure(State::SimpleInstall)
-		.permit_if(Trigger::Left, State::Welcome, m_transitionGuard);
+	//m_stateMachine.configure(State::SimpleInstall)
+	//	.permit_if(Trigger::Left, State::Welcome, m_transitionGuard);
 
 	setupTransitionPan();
 
@@ -212,35 +213,38 @@ void InstallerView::setupTransitionPan(void)
 	{
 		m_isTransitioning = false;
 	});
+}
 
-	m_stateMachine.on_transition([this](auto& t)
+void InstallerView::performPageTransition(const StateTransition& t, State page)
+{
+	LOG(INFO) << "transition from [" << (int)t.source() << "] to [" << (int)t.destination() << "] via trigger [" << (int)t.trigger() << "]";
+
+	auto source = m_currentPage;
+	auto dest = page;
+
+	// if source is not a page we do nothing
+	// TODO: if dest is not a page we should error or something
+	if (!this->m_pages.count(source))
 	{
-		LOG(INFO) << "transition from [" << (int)t.source() << "] to [" << (int)t.destination() << "] via trigger [" << (int)t.trigger() << "]";
+		return;
+	}
 
-		auto source = t.source();
-		auto dest = t.destination();
+	auto position = this->m_camera->position();
+	auto destPosition = this->m_pages.at(dest)->modelMatrix() * glm::vec4(1.f);
+	auto sourcePosition = this->m_pages.at(source)->modelMatrix() * glm::vec4(1.f);
+	auto distance = destPosition - sourcePosition;
 
-		// if either state is not a page we dont move the camera
-		if (!this->m_pages.count(source) || !this->m_pages.count(dest))
-			return;
+	// setup x axis pan
+	this->m_cameraPanX.setStart(position.x);
+	this->m_cameraPanX.setEnd(distance.x);
 
-		auto position = this->m_camera->position();
-		auto destPosition = this->m_pages.at(dest)->modelMatrix() * glm::vec4(1.f);
-		auto sourcePosition = this->m_pages.at(source)->modelMatrix() * glm::vec4(1.f);
-		auto distance = destPosition - sourcePosition;
+	// setup y axis pan
+	this->m_cameraPanY.setStart(position.y);
+	this->m_cameraPanY.setEnd(distance.y);
 
-		// setup x axis pan
-		this->m_cameraPanX.setStart(position.x);
-		this->m_cameraPanX.setEnd(distance.x);
-
-		// setup y axis pan
-		this->m_cameraPanY.setStart(position.y);
-		this->m_cameraPanY.setEnd(distance.y);
-
-		m_isTransitioning = true;
-		this->m_cameraPanX.start();
-		this->m_cameraPanY.start();
-	});
+	m_isTransitioning = true;
+	this->m_cameraPanX.start();
+	this->m_cameraPanY.start();
 }
 
 void InstallerView::setupWelcomePage(void)
@@ -248,14 +252,70 @@ void InstallerView::setupWelcomePage(void)
 	auto page = new WelcomePage(&m_patcher);
 	
 	// add task as dependant on this view
-	auto welcomePageTask = std::make_shared<Task>();
-	welcomePageTask->set(std::bind(&WelcomePage::update, page, std::cref(m_dt)));
-	m_simulationTasks->insertDependant(welcomePageTask);
+	auto task = std::make_shared<Task>();
+	task->set(std::bind(&WelcomePage::update, page, std::cref(m_dt)));
+	m_simulationTasks->insertDependant(task);
 
 	// add page to map
 	m_pages.insert({ State::Welcome, page });
 
 	// setup our state transitions
 	m_stateMachine.configure(State::Welcome)
+		.on_entry([this](auto& transition)
+		{
+			this->performPageTransition(transition, State::Welcome);
+			this->m_currentPage = State::Welcome;
+		})
 		.permit_if(Trigger::Right, State::SimpleInstall, m_transitionGuard);
+}
+
+void InstallerView::setupInstallOptionPage(void)
+{
+	auto page = new InstallOptionPage(&m_patcher);
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f, 544.f*1.5f, 0)));
+	
+	// add task as dependant on this view
+	auto task = std::make_shared<Task>();
+	task->set(std::bind(&InstallOptionPage::update, page, std::cref(m_dt)));
+	m_simulationTasks->insertDependant(task);
+
+	// add page to map
+	m_pages.insert({ State::SelectInstallOption, page });
+
+	// setup our state transitions
+	m_stateMachine.configure(State::SelectInstallOption)
+		.on_entry([this](auto& transition)
+		{
+			this->performPageTransition(transition, State::SelectInstallOption);
+			this->m_currentPage = State::SelectInstallOption;
+		})
+		.permit_if(Trigger::Left, State::Welcome, m_transitionGuard)
+		.permit_dynamic_if(Trigger::Right, m_transitionGuard, [=](auto& source)
+		{
+			if (source == State::SimpleInstall)
+				return State::Install;
+
+			// TODO: check if henkaku config exists
+			auto configExists = true;
+			return configExists ? State::Reset : State::Config;
+		});
+
+	// simple installation -> unsafe features disabled by default
+	m_stateMachine.configure(State::SimpleInstall)
+		.sub_state_of(State::SelectInstallOption)
+		.on_exit([this](auto& t)
+		{
+			this->m_henkakuOptions.unsafeHomebrew = true;
+			this->m_henkakuOptions.versionSpoofing = true;
+			this->m_henkakuOptions.offlineInstaller = false;
+			this->m_henkakuOptions.resetAll = false;
+		})
+		.permit(Trigger::Up, State::CustomInstall)
+		.permit(Trigger::Down, State::CustomInstall);
+
+	// custom installation -> only for advanced users
+	m_stateMachine.configure(State::CustomInstall)
+		.sub_state_of(State::SelectInstallOption)
+		.permit(Trigger::Up, State::SimpleInstall)
+		.permit(Trigger::Down, State::SimpleInstall);
 }
