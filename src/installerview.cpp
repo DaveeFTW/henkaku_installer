@@ -114,9 +114,9 @@ void InstallerView::onEvent(Event *event)
 {
 	if (event->type() == Event::Button)
 	{
-		ButtonEvent *button = reinterpret_cast<ButtonEvent *>(event);
+		ButtonEvent button = m_buttonFilter.filter(reinterpret_cast<ButtonEvent *>(event));
 		
-		auto trigger = buttonToTrigger<Trigger>(button->buttons());
+		auto trigger = buttonToTrigger<Trigger>(button.buttons());
 
 		// check if this input will trigger a state change
 		if (m_stateMachine.can_fire(trigger))
@@ -125,7 +125,7 @@ void InstallerView::onEvent(Event *event)
 		}
 		else if (m_pages.count(m_stateMachine.state()))
 		{
-			m_pages.at(m_stateMachine.state())->onEvent(button);
+			m_pages.at(m_stateMachine.state())->onEvent(&button);
 		}
 	}
 }

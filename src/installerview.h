@@ -8,6 +8,7 @@
  */
 
 #include "numberanimation.h"
+#include "buttoneventfilter.h"
 
 #include <framework/view.h>
 #include <framework/gxmshaderpatcher.h>
@@ -96,6 +97,7 @@ private:
 	std::unordered_map<State, Page*> m_pages;
 	TransitionGuard m_transitionGuard;
 	HenkakuOptions m_henkakuOptions;
+	ButtonEventFilter m_buttonFilter;
 
 	// camera pan operations
 	NumberAnimation m_cameraPanX;
