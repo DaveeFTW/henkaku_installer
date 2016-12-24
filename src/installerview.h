@@ -84,6 +84,7 @@ private:
 	void setupWelcomePage(void);
 	void setupInstallOptionPage(void);
 	void setupResetPage(void);
+	void setupConfigPage(void);
 
 private:
 	TaskPtr m_simulationTasks;

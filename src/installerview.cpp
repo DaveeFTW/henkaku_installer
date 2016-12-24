@@ -14,6 +14,7 @@
 #include "welcomepage.h"
 #include "installoptionpage.h"
 #include "resetpage.h"
+#include "configpage.h"
 
 #include <framework/task.h>
 #include <framework/buttonevent.h>
@@ -81,7 +82,8 @@ InstallerView::InstallerView(void)
 	setupWelcomePage();
 	setupInstallOptionPage();
 	setupResetPage();
-
+	setupConfigPage();
+	
 	//auto welcomePage2 = new WelcomePage(&m_patcher);
 
 	//m_pages.insert({ State::SimpleInstall, welcomePage2 });
@@ -316,7 +318,7 @@ void InstallerView::setupResetPage(void)
 	
 	// add task as dependant on this view
 	auto task = std::make_shared<Task>();
-	task->set(std::bind(&InstallOptionPage::update, page, std::cref(m_dt)));
+	task->set(std::bind(&ResetPage::update, page, std::cref(m_dt)));
 	m_simulationTasks->insertDependant(task);
 
 	// add page to map
@@ -324,5 +326,25 @@ void InstallerView::setupResetPage(void)
 
 	// setup our state transitions
 	m_stateMachine.configure(State::Reset)
-		.permit_if(Trigger::Left, State::SelectInstallOption, m_transitionGuard);
+		.permit_if(Trigger::Left, State::SelectInstallOption, m_transitionGuard)
+		.permit_if(Trigger::Right, State::Config, m_transitionGuard);
+}
+
+void InstallerView::setupConfigPage(void)
+{
+	auto page = new ConfigPage(&m_patcher);
+	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*2.f, -544.f*1.5f, 0)));
+	
+	// add task as dependant on this view
+	auto task = std::make_shared<Task>();
+	task->set(std::bind(&ConfigPage::update, page, std::cref(m_dt)));
+	m_simulationTasks->insertDependant(task);
+
+	// add page to map
+	m_pages.insert({ State::Config, page });
+
+	// setup our state transitions
+	m_stateMachine.configure(State::Config)
+		.permit_if(Trigger::Left, State::Reset, m_transitionGuard)
+		.permit_if(Trigger::Right, State::Offline, m_transitionGuard);
 }
