@@ -52,7 +52,7 @@ private:
 	void doDraw(SceGxmContext *ctx, const GeometryRenderer *renderer, const Camera *camera) const;
 
 private:
-	Font *m_font;
+	Font *m_font{nullptr};
 	std::string m_text;
 	glm::vec2 m_boundingBox;
 	std::unique_ptr<GpuMemoryBlock<ColouredTextVertex>> m_vertices;
