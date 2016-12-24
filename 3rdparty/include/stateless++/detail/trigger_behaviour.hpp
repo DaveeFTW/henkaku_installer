@@ -98,7 +98,7 @@ class dynamic_trigger_behaviour
   : public trigger_behaviour<TState, TTrigger>
 {
 public:
-  typedef typename std::function<TState(TArgs...)> TDecision;
+  typedef typename std::function<TState(const TState&, TArgs...)> TDecision;
 
   dynamic_trigger_behaviour(
     const TTrigger& trigger,
@@ -110,7 +110,7 @@ public:
 
   bool results_in_transition_from(const TState& source, TState& destination, TArgs... args) const
   {
-    destination = decision_(args...);
+    destination = decision_(source, args...);
     return true;
   }
 
