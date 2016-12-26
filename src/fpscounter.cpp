@@ -13,7 +13,7 @@
 #include <iomanip>
 
 FpsCounter::FpsCounter(GxmShaderPatcher *patcher)
-	: m_font("rsc:/fonts/slabo27px-regular.ttf")
+	: m_font("rsc:/fonts/DroidSans.ttf")
 	, m_fpsText(&m_font, "FPS: 00.00")
 	, m_renderer(patcher)
 {

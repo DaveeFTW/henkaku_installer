@@ -13,8 +13,8 @@ WelcomePage::WelcomePage(GxmShaderPatcher *patcher)
 	: m_rectangle((960-200), 200, 20)
 	, m_renderer(patcher)
 	, m_textRenderer(patcher)
-	, m_font20("rsc:/fonts/slabo27px-regular.ttf")
-	, m_font12("rsc:/fonts/slabo27px-regular.ttf")
+	, m_font20("rsc:/fonts/DroidSans.ttf")
+	, m_font12("rsc:/fonts/DroidSans.ttf")
 {
 	m_font20.setPointSize(20.f);
 	m_font12.setPointSize(12.f);
