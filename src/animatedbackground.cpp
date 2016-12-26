@@ -206,7 +206,7 @@ void AnimatedBackground::update(float dt)
 		tex->position.x = std::fmod(tex->position.x, 512.f);
 		tex->position.y = std::fmod(tex->position.y, 512.f);
 
-		float tileFrequency = 3;
+		float tileFrequency = 10;
 
 		float dxl = tex->position.x/512.f-tileFrequency/2.f;
 		float dxu = tex->position.x/512.f+tileFrequency/2.f;
