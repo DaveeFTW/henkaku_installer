@@ -21,12 +21,15 @@ class Rectangle : public Geometry
 
 public:
 	Rectangle(void);
-	Rectangle(float x, float y, float z, float width, float height);
+	Rectangle(float width, float height);
 
 	void setBottomLeft(const Vertex& vertex);
 	void setBottomRight(const Vertex& vertex);
 	void setTopLeft(const Vertex& vertex);
 	void setTopRight(const Vertex& vertex);
+
+	void setWidth(float width);
+	void setHeight(float height);
 
 	template <typename Colour>
 	void setColour(Colour colour);
@@ -76,13 +79,36 @@ Rectangle<Vertex>::Rectangle(void)
 }
 
 template <typename Vertex>
-Rectangle<Vertex>::Rectangle(float x, float y, float z, float width, float height)
+Rectangle<Vertex>::Rectangle(float width, float height)
 	: Rectangle<Vertex>()
 {
-	m_bottomLeft->position = glm::vec3(x, y, z);
-	m_bottomRight->position = glm::vec3(x+width, y, z);
-	m_topLeft->position = glm::vec3(x, y+height, z);
-	m_topRight->position = glm::vec3(x+width, y+height, z);
+	m_bottomLeft->position = glm::vec3(0, 0, 0);
+	m_bottomRight->position = glm::vec3(width, 0, 0);
+	m_topLeft->position = glm::vec3(0, height, 0);
+	m_topRight->position = glm::vec3(width, height, 0);
+}
+
+
+template <typename Vertex>
+void Rectangle<Vertex>::setWidth(float width)
+{
+	auto height = this->height();
+
+	m_bottomLeft->position = glm::vec3(0, 0, 0);
+	m_bottomRight->position = glm::vec3(width, 0, 0);
+	m_topLeft->position = glm::vec3(0, height, 0);
+	m_topRight->position = glm::vec3(width, height, 0);
+}
+
+template <typename Vertex>
+void Rectangle<Vertex>::setHeight(float height)
+{
+	auto width = this->width();
+
+	m_bottomLeft->position = glm::vec3(0, 0, 0);
+	m_bottomRight->position = glm::vec3(width, 0, 0);
+	m_topLeft->position = glm::vec3(0, height, 0);
+	m_topRight->position = glm::vec3(width, height, 0);
 }
 
 template <typename Vertex>

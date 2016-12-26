@@ -50,8 +50,8 @@ RoundedRectangle<Vertex>::RoundedRectangle(float width, float height, float radi
 	, m_br(radius, 95.f)
 	, m_tl(radius, 95.f)
 	, m_tr(radius, 95.f)
-	, m_rectVertical(0, 0, 0, width, height+radius*2)
-	, m_rectHorizontal(0, 0, 0, width+radius*2, height)
+	, m_rectVertical(width, height+radius*2)
+	, m_rectHorizontal(width+radius*2, height)
 {
 	m_tr.setModel(glm::translate(glm::mat4(1), glm::vec3(width, height, 0)));
 	m_tl.setModel(rotateTranslate(90.f, radius, 0, height));
