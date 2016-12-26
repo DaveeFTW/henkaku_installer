@@ -11,6 +11,9 @@
 #define RECTANGLE_H
 
 #include <framework/gpumemoryblock.h>
+
+#include <glm/gtx/transform.hpp>
+
 #include <memory>
 #include "geometry.h"
 
@@ -22,7 +25,7 @@ class Rectangle : public Geometry
 public:
 	Rectangle(void);
 	Rectangle(float width, float height);
-
+	
 	void setBottomLeft(const Vertex& vertex);
 	void setBottomRight(const Vertex& vertex);
 	void setTopLeft(const Vertex& vertex);
@@ -34,10 +37,11 @@ public:
 	template <typename Colour>
 	void setColour(Colour colour);
 
-	float width(void) const { return m_topRight->position.x - m_topLeft->position.x; }
-	float height(void) const { return m_topRight->position.y - m_bottomRight->position.y; }
+	float width(void) const { return m_width; }
+	float height(void) const { return m_height; }
 
 private:
+	void setSize(float width, float height);
 	void doDraw(SceGxmContext *ctx, const GeometryRenderer *renderer, const Camera *camera) const override;
 
 private:
@@ -48,6 +52,10 @@ private:
 	Vertex *m_topRight;
 	Vertex *m_bottomLeft;
 	Vertex *m_bottomRight;
+
+	float m_width, m_height;
+	glm::mat4 m_model;
+	glm::mat4 m_setModel;
 };
 
 template <typename Vertex>
@@ -69,6 +77,11 @@ Rectangle<Vertex>::Rectangle(void)
 	m_bottomRight = &m_vertices->address()[1];
 	m_topLeft = &m_vertices->address()[2];
 	m_topRight = &m_vertices->address()[3];
+	
+	m_bottomLeft->position = glm::vec3(-1, -1, 0);
+	m_bottomRight->position = glm::vec3(1, -1, 0);
+	m_topLeft->position = glm::vec3(-1, 1, 0);
+	m_topRight->position = glm::vec3(1, 1, 0);
 
 	m_indices->address()[0] = 0;
 	m_indices->address()[1] = 1;
@@ -76,39 +89,40 @@ Rectangle<Vertex>::Rectangle(void)
 	m_indices->address()[3] = 1;
 	m_indices->address()[4] = 3;
 	m_indices->address()[5] = 2;
+
+	setWidth(1.f);
+	setHeight(1.f);
 }
 
 template <typename Vertex>
 Rectangle<Vertex>::Rectangle(float width, float height)
 	: Rectangle<Vertex>()
 {
-	m_bottomLeft->position = glm::vec3(0, 0, 0);
-	m_bottomRight->position = glm::vec3(width, 0, 0);
-	m_topLeft->position = glm::vec3(0, height, 0);
-	m_topRight->position = glm::vec3(width, height, 0);
+	setWidth(width);
+	setHeight(height);
 }
-
 
 template <typename Vertex>
 void Rectangle<Vertex>::setWidth(float width)
 {
-	auto height = this->height();
-
-	m_bottomLeft->position = glm::vec3(0, 0, 0);
-	m_bottomRight->position = glm::vec3(width, 0, 0);
-	m_topLeft->position = glm::vec3(0, height, 0);
-	m_topRight->position = glm::vec3(width, height, 0);
+	setSize(width, height());
 }
 
 template <typename Vertex>
 void Rectangle<Vertex>::setHeight(float height)
 {
-	auto width = this->width();
+	setSize(width(), height);
+}
 
-	m_bottomLeft->position = glm::vec3(0, 0, 0);
-	m_bottomRight->position = glm::vec3(width, 0, 0);
-	m_topLeft->position = glm::vec3(0, height, 0);
-	m_topRight->position = glm::vec3(width, height, 0);
+template <typename Vertex>
+void Rectangle<Vertex>::setSize(float width, float height)
+{
+	m_width = width;
+	m_height = height;
+
+	auto scale = glm::scale(glm::mat4(1), glm::vec3(width/2.f, height/2.f, 1.f));
+	auto translate = glm::translate(glm::mat4(1), glm::vec3(width/2.f, height/2.f, 0.f));
+	setModel(translate, glm::mat4(1), scale);
 }
 
 template <typename Vertex>

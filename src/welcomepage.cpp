@@ -30,7 +30,7 @@ WelcomePage::WelcomePage(GxmShaderPatcher *patcher)
 	m_nextPageDirection.setColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
 
 	// set models
-	setModel(glm::mat4(1));
+	//setModel(glm::mat4(1));
 
 	SceGxmBlendInfo blendInfo;
 	blendInfo.colorFunc = SCE_GXM_BLEND_FUNC_ADD;
@@ -46,15 +46,17 @@ WelcomePage::WelcomePage(GxmShaderPatcher *patcher)
 
 	m_textRenderer.setBlendInfo(&blendInfo);
 	m_textRenderer.setShaders<ColouredTextVertex>("rsc:/text.vert.cg.gxp", "rsc:/text.frag.cg.gxp");
+
+	positionComponents();
 }
 
 void WelcomePage::onModelChanged(glm::mat4 model)
 {
-	m_rectangle.setModel(model * glm::translate(glm::mat4(1), glm::vec3((960-m_rectangle.width())/2.f-m_rectangle.radius(), (544-m_rectangle.height())/2.f-m_rectangle.radius(), 0)));
+	//m_rectangle.setModel(model * glm::translate(glm::mat4(1), );
 
 	// welcome text
-	m_welcomeText.setModel(model * glm::translate(glm::mat4(1), glm::vec3((960-m_welcomeText.width())/2.f, (544/2.f)+m_welcomeText.height()/2.f+m_nextPageDirection.height()-m_rectangle.radius(), 0)));
-	m_nextPageDirection.setModel(model * glm::translate(glm::mat4(1), glm::vec3((960-m_nextPageDirection.width())/2.f, (544/2.f)+m_nextPageDirection.height()/2.f-m_welcomeText.height()-m_rectangle.radius(), 0)));
+	//m_welcomeText.setModel(model * glm::translate(glm::mat4(1), ));
+	//m_nextPageDirection.setModel(model * glm::translate(glm::mat4(1), glm::vec3((960-m_nextPageDirection.width())/2.f, (544/2.f)+m_nextPageDirection.height()/2.f-m_welcomeText.height()-m_rectangle.radius(), 0)));
 }
 
 void WelcomePage::draw(SceGxmContext *ctx, const Camera *camera) const
@@ -62,4 +64,16 @@ void WelcomePage::draw(SceGxmContext *ctx, const Camera *camera) const
 	m_renderer.draw(ctx, camera, &m_rectangle);
 	m_textRenderer.draw(ctx, camera, &m_welcomeText);
 	m_textRenderer.draw(ctx, camera, &m_nextPageDirection);
+}
+
+void WelcomePage::positionComponents(void)
+{
+	// set world matrices
+	m_rectangle.setWorldMatrix(modelMatrix());
+	m_welcomeText.setWorldMatrix(modelMatrix());
+	m_nextPageDirection.setWorldMatrix(modelMatrix());
+
+	m_rectangle.setTranslation(glm::vec3((960-m_rectangle.width())/2.f-m_rectangle.radius(), (544-m_rectangle.height())/2.f-m_rectangle.radius(), 0));
+	m_welcomeText.setTranslation(glm::vec3((960-m_welcomeText.width())/2.f, (544/2.f)+m_welcomeText.height()/2.f+m_nextPageDirection.height()-m_rectangle.radius(), 0));
+	m_nextPageDirection.setTranslation(glm::vec3((960-m_nextPageDirection.width())/2.f, (544/2.f)+m_nextPageDirection.height()/2.f-m_welcomeText.height()-m_rectangle.radius(), 0));
 }

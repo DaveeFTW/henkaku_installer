@@ -51,6 +51,7 @@ CircularSegment<Vertex>::CircularSegment(float radius, float angle, std::size_t 
 	, m_angle(angle)
 {
 	setSteps(steps);
+	setRadius(radius);
 }
 
 template <typename Vertex>
@@ -69,7 +70,27 @@ void CircularSegment<Vertex>::setSteps(std::size_t steps)
 	);
 
 	m_steps = steps;
-	setRadius(m_radius);
+
+	auto vertices = m_vertices->address();
+	auto indices = m_indices->address();
+	
+	// add centre
+	vertices[0].position = glm::vec3(0.f, 0.f, 0.f);
+	indices[0] = 0;
+	
+	constexpr auto pi = 3.141592653589793238462643383279502884;
+	auto theta = (2*pi / static_cast<float>(m_steps))/(360.f/m_angle);
+	
+	// step through rest of circle
+	for (auto i = 0u; i < m_steps; ++i)
+	{
+		// +1 to consider the centre vertex
+		vertices[i+1].position = glm::vec3(std::cos(theta*i), std::sin(theta*i), 0.f);
+		indices[i+1] = i+1;
+	}
+
+	// end fan on first vertex on edge
+	indices[m_steps+1] = 0;
 }
 
 template <typename Vertex>
@@ -81,27 +102,11 @@ std::size_t CircularSegment<Vertex>::steps(void) const
 template <typename Vertex>
 void CircularSegment<Vertex>::setRadius(float radius)
 {
-	auto vertices = m_vertices->address();
-	auto indices = m_indices->address();
-	
-	// add centre
-	vertices[0].position = glm::vec3(radius, radius, 0.f);
-	indices[0] = 0;
-	
-	constexpr auto pi = 3.141592653589793238462643383279502884;
-	auto theta = (2*pi / static_cast<float>(m_steps))/(360.f/m_angle);
-	
-	// step through rest of circle
-	for (auto i = 0u; i < m_steps; ++i)
-	{
-		// +1 to consider the centre vertex
-		vertices[i+1].position = glm::vec3(radius+radius*std::cos(theta*i), radius+radius*std::sin(theta*i), 0.f);
-		indices[i+1] = i+1;
-	}
-
-	// end fan on first vertex on edge
-	indices[m_steps+1] = 0;
 	m_radius = radius;
+
+	auto scale = glm::scale(glm::mat4(1), glm::vec3(radius, radius, 1.f));
+	auto translate = glm::translate(glm::mat4(1), glm::vec3(radius, radius, 0.f));
+	setModel(translate, glm::mat4(1), scale);
 }
 
 template <typename Vertex>

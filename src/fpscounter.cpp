@@ -22,7 +22,7 @@ FpsCounter::FpsCounter(GxmShaderPatcher *patcher)
 
 void FpsCounter::setModel(glm::mat4 model)
 {
-	m_fpsText.setModel(model);
+	//m_fpsText.setModel(model);
 }
 
 glm::mat4 FpsCounter::modelMatrix(void) const

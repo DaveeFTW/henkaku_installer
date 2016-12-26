@@ -26,6 +26,7 @@ public:
 
 private:
 	void onModelChanged(glm::mat4 model) final;
+	void positionComponents(void);
 
 private:
 	RoundedRectangle<ColouredGeometryVertex> m_rectangle;

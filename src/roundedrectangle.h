@@ -36,7 +36,8 @@ public:
 	float radius(void) const { return m_bl.radius(); }
 
 private:
-	glm::mat4 rotateTranslate(float deg, float radius, float tx, float ty);
+	void updateWorldMatrices(glm::mat4 matrix);
+	void onModelChanged(glm::mat4 model) override;
 	void doDraw(SceGxmContext *ctx, const GeometryRenderer *renderer, const Camera *camera) const override;
 
 private:
@@ -53,13 +54,19 @@ RoundedRectangle<Vertex>::RoundedRectangle(float width, float height, float radi
 	, m_rectVertical(width, height+radius*2)
 	, m_rectHorizontal(width+radius*2, height)
 {
-	m_tr.setModel(glm::translate(glm::mat4(1), glm::vec3(width, height, 0)));
-	m_tl.setModel(rotateTranslate(90.f, radius, 0, height));
-	m_bl.setModel(rotateTranslate(180.f, radius, 0, 0));
-	m_br.setModel(rotateTranslate(270.f, radius, width, 0));
+	m_tr.setTranslation(width, height);
+	m_tr.setRotation(0.f);
+	m_tl.setTranslation(0, height);
+	m_tl.setRotation(90.f);
+	m_bl.setTranslation(0, 0);
+	m_bl.setRotation(180.f);
+	m_br.setTranslation(width, 0);
+	m_br.setRotation(270.f);
 
-	m_rectVertical.setModel(glm::translate(glm::mat4(1), glm::vec3(radius, 0, 0)));
-	m_rectHorizontal.setModel(glm::translate(glm::mat4(1), glm::vec3(0, radius, 0)));
+	m_rectVertical.setTranslation(radius, 0);
+	m_rectHorizontal.setTranslation(0, radius);
+
+	updateWorldMatrices(modelMatrix());
 }
 
 template <typename Vertex>
@@ -75,12 +82,20 @@ void RoundedRectangle<Vertex>::setColour(Colour colour)
 }
 
 template <typename Vertex>
-glm::mat4 RoundedRectangle<Vertex>::rotateTranslate(float deg, float radius, float tx, float ty)
+void RoundedRectangle<Vertex>::updateWorldMatrices(glm::mat4 matrix)
 {
-	auto model = glm::translate(glm::mat4(1), glm::vec3(tx, ty, 0));
-	model = glm::translate(model, glm::vec3(radius, radius, 0));
-	model = glm::rotate(model, glm::radians(deg), glm::vec3(0, 0, 1.f));
-	return glm::translate(model, glm::vec3(-radius, -radius, 0));
+	m_tr.setWorldMatrix(matrix);
+	m_tl.setWorldMatrix(matrix);
+	m_bl.setWorldMatrix(matrix);
+	m_br.setWorldMatrix(matrix);
+	m_rectVertical.setWorldMatrix(matrix);
+	m_rectHorizontal.setWorldMatrix(matrix);
+}
+
+template <typename Vertex>
+void RoundedRectangle<Vertex>::onModelChanged(glm::mat4 model)
+{
+	updateWorldMatrices(model);
 }
 
 template <typename Vertex>
@@ -90,37 +105,15 @@ void RoundedRectangle<Vertex>::doDraw(SceGxmContext *ctx, const GeometryRenderer
 	sceGxmSetFrontStencilRef(ctx, 1);
 	sceGxmSetFrontStencilFunc(ctx, SCE_GXM_STENCIL_FUNC_ALWAYS, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_REPLACE, 1, ~0);
 
-	auto prevModel = m_bl.modelMatrix();
-	m_bl.setModel(modelMatrix()*prevModel);
 	renderer->draw(ctx, camera, &m_bl);
-	m_bl.setModel(prevModel);
-
-	prevModel = m_br.modelMatrix();
-	m_br.setModel(modelMatrix()*prevModel);
 	renderer->draw(ctx, camera, &m_br);
-	m_br.setModel(prevModel);
-
-	prevModel = m_tl.modelMatrix();
-	m_tl.setModel(modelMatrix()*prevModel);
 	renderer->draw(ctx, camera, &m_tl);
-	m_tl.setModel(prevModel);
-
-	prevModel = m_tr.modelMatrix();
-	m_tr.setModel(modelMatrix()*prevModel);
 	renderer->draw(ctx, camera, &m_tr);
-	m_tr.setModel(prevModel);
 
 	sceGxmSetFrontStencilFunc(ctx, SCE_GXM_STENCIL_FUNC_NOT_EQUAL, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_REPLACE, 1, ~0);
 
-	prevModel = m_rectVertical.modelMatrix();
-	m_rectVertical.setModel(modelMatrix()*prevModel);
 	renderer->draw(ctx, camera, &m_rectVertical);
-	m_rectVertical.setModel(prevModel);
-
-	prevModel = m_rectHorizontal.modelMatrix();
-	m_rectHorizontal.setModel(modelMatrix()*prevModel);
 	renderer->draw(ctx, camera, &m_rectHorizontal);
-	m_rectHorizontal.setModel(prevModel);
 
 	sceGxmSetFrontStencilRef(ctx, 0);
 	sceGxmSetFrontStencilFunc(ctx, SCE_GXM_STENCIL_FUNC_ALWAYS, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_KEEP, SCE_GXM_STENCIL_OP_KEEP, 0, 0);

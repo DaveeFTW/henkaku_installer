@@ -19,9 +19,13 @@ class ButtonEvent;
 class Page
 {
 public:
+	Page(void)
+	{
+		m_model = glm::mat4(1);
+	}
+
 	virtual ~Page(void) = default;
 
-	void setModel(glm::mat4 model) { m_model = model; onModelChanged(model); }
 	glm::mat4 modelMatrix(void) { return m_model; }
 
 	virtual void update(float dt) { }

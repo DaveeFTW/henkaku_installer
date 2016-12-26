@@ -57,7 +57,7 @@ InstallOptionPage::InstallOptionPage(GxmShaderPatcher *patcher)
 	m_selectionBox.setHeight(m_simpleInstallationText.height()+m_simpleInstallationDesc.height()+(544.f * (5.f/100.f))*3.f);
 
 	// set models
-	setModel(glm::mat4(1));
+	//setModel(glm::mat4(1));
 
 	SceGxmBlendInfo blendInfo;
 	blendInfo.colorFunc = SCE_GXM_BLEND_FUNC_ADD;
@@ -92,7 +92,7 @@ InstallOptionPage::InstallOptionPage(GxmShaderPatcher *patcher)
 
 void InstallOptionPage::onModelChanged(glm::mat4 model)
 {
-	constexpr auto seperationPadding = 544.f * (5.f/100.f);
+	/*constexpr auto seperationPadding = 544.f * (5.f/100.f);
 	auto boxOffsetX = (960.f - m_rectangle.width())/2.f;
 	auto boxOffsetY = (544.f + m_rectangle.height())/2.f;
 
@@ -119,14 +119,14 @@ void InstallOptionPage::onModelChanged(glm::mat4 model)
 
 	m_nextPageDirection.setModel(model * glm::translate(glm::mat4(1), glm::vec3((960-m_nextPageDirection.width())/2.f, (544.f - m_rectangle.height())/2.f, 0)));
 	
-	updateSelectionModel();
+	updateSelectionModel();*/
 }
 
 void InstallOptionPage::updateSelectionModel(void)
 {
-	auto model = modelMatrix();
+	//auto model = modelMatrix();
 
-	constexpr auto seperationPadding = 544.f * (5.f/100.f);
+	/*constexpr auto seperationPadding = 544.f * (5.f/100.f);
 	auto boxOffsetX = (960.f - m_rectangle.width())/2.f;
 	auto boxOffsetY = (544.f + m_rectangle.height())/2.f;
 	boxOffsetY -= m_titleText.height();
@@ -138,8 +138,8 @@ void InstallOptionPage::updateSelectionModel(void)
 		boxOffsetY -= m_customInstallationText.height() + seperationPadding*2;
 		boxOffsetY -= m_customInstallationDesc.height() + seperationPadding;
 	}
-
-	m_selectionBox.setModel(model * glm::translate(glm::mat4(1), glm::vec3(boxOffsetX-m_rectangle.radius(), boxOffsetY-seperationPadding, 0)));
+*/
+	//m_selectionBox.setModel(model * glm::translate(glm::mat4(1), glm::vec3(boxOffsetX-m_rectangle.radius(), boxOffsetY-seperationPadding, 0)));
 }
 
 float g_alphaHah = 0.2f;

@@ -64,7 +64,7 @@ InstallerView::InstallerView(void)
 {
 	setupCamera();
 
-	m_fpsCounter->setModel(glm::scale(glm::mat4(1), glm::vec3(0.7, 0.7, 0)));
+	//m_fpsCounter->setModel(glm::scale(glm::mat4(1), glm::vec3(0.7, 0.7, 0)));
 
 	m_simulationTasks = std::make_shared<Task>();
 
@@ -89,7 +89,7 @@ InstallerView::InstallerView(void)
 	};
 
 	// setup pages and states
-	setupWelcomePage(-3, 0);
+	setupWelcomePage(0, 0);
 	setupInstallOptionPage(-2, 0);
 	setupResetPage(-1, 0);
 	setupConfigPage(0, 0);
@@ -295,7 +295,7 @@ void InstallerView::performPageTransition(const StateTransition& t)
 void InstallerView::setupWelcomePage(int x, int y)
 {
 	auto page = new WelcomePage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
+	//page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Welcome, page });
@@ -308,7 +308,7 @@ void InstallerView::setupWelcomePage(int x, int y)
 void InstallerView::setupInstallOptionPage(int x, int y)
 {
 	auto page = new InstallOptionPage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
+	//page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::SelectInstallOption, page });
@@ -337,7 +337,7 @@ void InstallerView::setupInstallOptionPage(int x, int y)
 void InstallerView::setupResetPage(int x, int y)
 {
 	auto page = new ResetPage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
+	//page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Reset, page });
@@ -351,7 +351,7 @@ void InstallerView::setupResetPage(int x, int y)
 void InstallerView::setupConfigPage(int x, int y)
 {
 	auto page = new ConfigPage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
+	//page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Config, page });
@@ -365,7 +365,7 @@ void InstallerView::setupConfigPage(int x, int y)
 void InstallerView::setupOfflinePage(int x, int y)
 {
 	auto page = new OfflinePage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
+	//page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Offline, page });
@@ -379,7 +379,7 @@ void InstallerView::setupOfflinePage(int x, int y)
 void InstallerView::setupConfirmPage(int x, int y)
 {
 	auto page = new ConfirmPage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
+	//page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Confirm, page });
@@ -393,7 +393,7 @@ void InstallerView::setupConfirmPage(int x, int y)
 void InstallerView::setupInstallPage(int x, int y)
 {
 	auto page = new InstallPage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
+	//page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Install, page });
@@ -406,7 +406,7 @@ void InstallerView::setupInstallPage(int x, int y)
 void InstallerView::setupSuccessPage(int x, int y)
 {
 	auto page = new SuccessPage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
+	//page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Success, page });
@@ -419,7 +419,7 @@ void InstallerView::setupSuccessPage(int x, int y)
 void InstallerView::setupFailurePage(int x, int y)
 {
 	auto page = new FailurePage(&m_patcher);
-	page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
+	//page->setModel(glm::translate(glm::mat4(1), glm::vec3(960.f*1.5f*x, 544.f*1.5f*y, 0)));
 
 	// add page to map
 	m_pages.insert({ State::Failure, page });
