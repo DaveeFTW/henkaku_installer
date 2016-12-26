@@ -32,6 +32,9 @@ public:
 	bool setFont(const std::string& file);
 	void setPointSize(float size);
 
+	bool kerning(void) const;
+	glm::vec2 kerningInfo(unsigned int character, unsigned int prev);
+
 	Font::GlyphInfo glyphInfo(unsigned int character);
 
 private:

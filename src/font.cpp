@@ -99,6 +99,27 @@ void Font::setPointSize(float size)
 	m_atlas = new CharacterAtlas;
 }
 
+bool Font::kerning(void) const
+{
+	return FT_HAS_KERNING(m_face);
+}
+
+glm::vec2 Font::kerningInfo(unsigned int character, unsigned int prev)
+{
+	glm::vec2 info(0, 0);
+
+	if (!kerning())
+		return info;
+
+	FT_Vector dxy;
+	FT_Get_Kerning(m_face, FT_Get_Char_Index(m_face, prev), FT_Get_Char_Index(m_face, character), FT_KERNING_DEFAULT, &dxy);
+
+	info.x = dxy.x >> 6;
+	info.y = dxy.y >> 6;
+
+	return info;
+}
+
 Font::GlyphInfo Font::glyphInfo(unsigned int character)
 {
 	if (!m_atlas->contains(character))
