@@ -1,7 +1,7 @@
 project(installer_assets)
 
 set(FONTS
-	"fonts/slabo27px-regular.ttf"
+	"fonts/DroidSans.ttf"
 )
 
 source_group(fonts FILES ${FONTS})
