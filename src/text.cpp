@@ -73,31 +73,41 @@ void Text::generateGeometry(void)
 	int y = 0;
 	int heightMax = 0;
 	std::size_t indiceCount = 0;
+	auto prev = 0;
 
 	for (auto i = 0; it != end; ++it)
 	{
-		auto glyphInfo = m_font->glyphInfo(*it);
+		auto character = *it;
+		auto glyphInfo = m_font->glyphInfo(character);
+
+		if (prev)
+		{
+			auto kerning = m_font->kerningInfo(character, prev);
+			x += kerning.x;
+		}
+
+		prev = character;
 
 		// bottom left
-		vertices[i+0].position.x = x;
+		vertices[i+0].position.x = x + glyphInfo.bitmap_left;
 		vertices[i+0].position.y = y-(glyphInfo.quad.size.y - glyphInfo.bitmap_top);
 		vertices[i+0].position.z = 0;
 		vertices[i+0].texCoord = glyphInfo.quad.bl;
 
 		// bottom right
-		vertices[i+1].position.x = x+glyphInfo.quad.size.x;
+		vertices[i+1].position.x = x+glyphInfo.quad.size.x + glyphInfo.bitmap_left;
 		vertices[i+1].position.y = y-(glyphInfo.quad.size.y - glyphInfo.bitmap_top);
 		vertices[i+1].position.z = 0;
 		vertices[i+1].texCoord = glyphInfo.quad.br;
 
 		// top left
-		vertices[i+2].position.x = x;
+		vertices[i+2].position.x = x + glyphInfo.bitmap_left;
 		vertices[i+2].position.y = y+glyphInfo.quad.size.y-(glyphInfo.quad.size.y - glyphInfo.bitmap_top);
 		vertices[i+2].position.z = 0;
 		vertices[i+2].texCoord = glyphInfo.quad.tl;
 
 		// top right
-		vertices[i+3].position.x = x+glyphInfo.quad.size.x;
+		vertices[i+3].position.x = x+glyphInfo.quad.size.x + glyphInfo.bitmap_left;
 		vertices[i+3].position.y = y+glyphInfo.quad.size.y-(glyphInfo.quad.size.y - glyphInfo.bitmap_top);
 		vertices[i+3].position.z = 0;
 		vertices[i+3].texCoord = glyphInfo.quad.tr;
