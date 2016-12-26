@@ -20,6 +20,7 @@
 #include "installpage.h"
 #include "successpage.h"
 #include "failurepage.h"
+#include "easingcurves.h"
 
 #include <framework/task.h>
 #include <framework/buttonevent.h>
@@ -218,17 +219,15 @@ void InstallerView::setupTransitionPan(void)
 		this->m_camera->setViewCenter(glm::vec3(view.x, step, view.z));
 	});
 
-	// use quadratic in
+	// use quadratic out
 	m_cameraPanX.setEasing([](float t, float b, float c, float d)
 	{
-		t /= d;
-		return -c * t*(t-2) + b;
+		return easing::quad::out(t, b, c, d);
 	});
 
 	m_cameraPanY.setEasing([](float t, float b, float c, float d)
 	{
-		t /= d;
-		return -c * t*(t-2) + b;
+		return easing::quad::out(t, b, c, d);
 	});
 
 	// we only need one of these
