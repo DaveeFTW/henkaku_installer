@@ -23,13 +23,13 @@ ConfigPage::ConfigPage(GxmShaderPatcher *patcher)
 	, m_unsafeCheckbox(UnsafeHomebrew::Disabled)
 	, m_spoofCheckbox(VersionSpoofing::Disabled)
 {
-	m_font20.setPointSize(20.f);
+	m_font16.setPointSize(16.f);
 	m_font12.setPointSize(12.f);
 	
 	m_rectangle.setColour(glm::vec4(0.f, 0.f, 0.f, 0.5f));
 
 	m_welcomeText.setText("Config Page!");
-	m_welcomeText.setFont(&m_font20);
+	m_welcomeText.setFont(&m_font16);
 	m_welcomeText.setColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
 
 	m_nextPageDirection.setText("Press right to continue.");

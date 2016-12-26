@@ -71,7 +71,7 @@ private:
 private:
 	RoundedRectangle<ColouredGeometryVertex> m_rectangle;
 	GeometryRenderer m_renderer, m_textRenderer;
-	Font m_font20, m_font12;
+	Font m_font16, m_font12;
 	Text m_welcomeText, m_nextPageDirection;
 	StateMachine m_stateMachine;
 	Checkbox<UnsafeHomebrew> m_unsafeCheckbox;
