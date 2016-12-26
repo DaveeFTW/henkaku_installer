@@ -28,7 +28,7 @@ public:
 	void update(float dt);
 	void draw(SceGxmContext *ctx, const Camera *camera);
 
-	void setColour(glm::vec3 topleft, glm::vec3 bottomRight);
+	void setColour(glm::vec4 topleft, glm::vec4 bottomRight);
 
 private:
 	struct TextureCoordVertex
@@ -52,7 +52,6 @@ private:
 	Rectangle<ColouredGeometryVertex> m_rectangle;
 	
 	BgTexture m_textures[5];
-	glm::vec3 m_colourTopLeft, m_colourBottomRight;
 	std::unique_ptr<GpuMemoryBlock<TextureCoordVertex>> m_texCoords;
 };
 

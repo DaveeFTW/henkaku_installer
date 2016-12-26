@@ -110,22 +110,13 @@ AnimatedBackground::AnimatedBackground(GxmShaderPatcher *patcher)
 	m_renderer.setShaders<AnimatedBackgroundVertex<TextureCoordVertex>>("rsc:/animbg.vert.cg.gxp", "rsc:/animbg.frag.cg.gxp");
 	m_rectangle.setFragmentTask(std::bind(&AnimatedBackground::fragmentTask, this, std::placeholders::_1));
 
-	auto bottomRightRgb = glm::vec4(172.f/255.f, 228.f/255.f, 234.f/255.f, 1.f);
-	auto topLeftRgb = glm::vec4(255.f/255.f, 228.f/255.f, 234.f/255.f, 1.f);
-
-	//m_colourTopLeft = glm::hsvColor(topLeftRgb);
-	//m_colourBottomRight = glm::hsvColor(bottomRightRgb);
-
-	auto interp = 0.5f*topLeftRgb + 0.5f*bottomRightRgb;
-
 	m_rectangle.setWidth(4096*4);
 	m_rectangle.setHeight(4096*4);
 	m_rectangle.setTranslation(-4096*2, -4096*2, -256);
 
-	m_rectangle.setBottomLeftColour(interp);
-	m_rectangle.setBottomRightColour(bottomRightRgb);
-	m_rectangle.setTopLeftColour(topLeftRgb);
-	m_rectangle.setTopRightColour(interp);
+	auto bottomRightRgb = glm::vec4(172.f/255.f, 228.f/255.f, 234.f/255.f, 1.f);
+	auto topLeftRgb = glm::vec4(255.f/255.f, 228.f/255.f, 234.f/255.f, 1.f);
+	setColour(topLeftRgb, bottomRightRgb);
 
 	// load textures
 	loadTexture(&m_textures[0].texture, "textures/bgbase.png");
@@ -221,6 +212,12 @@ void AnimatedBackground::draw(SceGxmContext *ctx, const Camera *camera)
 	m_renderer.draw(ctx, camera, &m_rectangle);
 }
 
-void AnimatedBackground::setColour(glm::vec3 topLeft, glm::vec3 bottomRight)
+void AnimatedBackground::setColour(glm::vec4 topLeft, glm::vec4 bottomRight)
 {
+	auto interp = 0.5f*topLeft + 0.5f*bottomRight;
+
+	m_rectangle.setBottomLeftColour(interp);
+	m_rectangle.setBottomRightColour(bottomRight);
+	m_rectangle.setTopLeftColour(topLeft);
+	m_rectangle.setTopRightColour(interp);
 }
