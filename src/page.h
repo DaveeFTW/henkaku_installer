@@ -10,34 +10,21 @@
 #ifndef PAGE_H
 #define PAGE_H
 
-#include <glm/mat4x4.hpp>
+#include "worldentity.h"
 
 struct SceGxmContext;
 class Camera;
 class ButtonEvent;
 
-class Page
+class Page : public WorldEntity
 {
 public:
-	Page(void)
-	{
-		m_model = glm::mat4(1);
-	}
-
 	virtual ~Page(void) = default;
-
-	glm::mat4 modelMatrix(void) { return m_model; }
 
 	virtual void update(float dt) { }
 	virtual void draw(SceGxmContext *ctx, const Camera *camera) const = 0;
 
 	virtual void onEvent(ButtonEvent *event) { }
-
-private:
-	virtual void onModelChanged(glm::mat4 model) = 0;
-
-private:
-	glm::mat4 m_model;
 };
 
 #endif // PAGE_H

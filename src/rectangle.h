@@ -26,10 +26,14 @@ public:
 	Rectangle(void);
 	Rectangle(float width, float height);
 	
-	void setBottomLeft(const Vertex& vertex);
-	void setBottomRight(const Vertex& vertex);
-	void setTopLeft(const Vertex& vertex);
-	void setTopRight(const Vertex& vertex);
+	template <typename Colour>
+	void setBottomLeftColour(Colour colour);
+	template <typename Colour>
+	void setBottomRightColour(Colour colour);
+	template <typename Colour>
+	void setTopLeftColour(Colour colour);
+	template <typename Colour>
+	void setTopRightColour(Colour colour);
 
 	void setWidth(float width);
 	void setHeight(float height);
@@ -126,27 +130,31 @@ void Rectangle<Vertex>::setSize(float width, float height)
 }
 
 template <typename Vertex>
-void Rectangle<Vertex>::setBottomLeft(const Vertex& vertex)
+template <typename Colour>
+void Rectangle<Vertex>::setBottomLeftColour(Colour colour)
 {
-	*m_bottomLeft = vertex;
+	m_bottomLeft->colour = colour;
 }
 
 template <typename Vertex>
-void Rectangle<Vertex>::setBottomRight(const Vertex& vertex)
+template <typename Colour>
+void Rectangle<Vertex>::setBottomRightColour(Colour colour)
 {
-	*m_bottomRight = vertex;
+	m_bottomRight->colour = colour;
 }
 
 template <typename Vertex>
-void Rectangle<Vertex>::setTopLeft(const Vertex& vertex)
+template <typename Colour>
+void Rectangle<Vertex>::setTopLeftColour(Colour colour)
 {
-	*m_topLeft = vertex;
+	m_topLeft->colour = colour;
 }
 
 template <typename Vertex>
-void Rectangle<Vertex>::setTopRight(const Vertex& vertex)
+template <typename Colour>
+void Rectangle<Vertex>::setTopRightColour(Colour colour)
 {
-	*m_topRight = vertex;
+	m_topRight->colour = colour;
 }
 
 template <typename Vertex>

@@ -117,19 +117,15 @@ AnimatedBackground::AnimatedBackground(GxmShaderPatcher *patcher)
 	//m_colourBottomRight = glm::hsvColor(bottomRightRgb);
 
 	auto interp = 0.5f*topLeftRgb + 0.5f*bottomRightRgb;
-	
-	ColouredGeometryVertex vertices[4] =
-	{
-		{ glm::vec3(-4096*2, -4096*2, -256), interp },
-		{ glm::vec3(4096*2, -4096*2, -256), bottomRightRgb },
-		{ glm::vec3(-4096*2, 4096*2, -256), topLeftRgb },
-		{ glm::vec3(4096*2, 4096*2, -256), interp }
-	};
 
-	m_rectangle.setBottomLeft(vertices[0]);
-	m_rectangle.setBottomRight(vertices[1]);
-	m_rectangle.setTopLeft(vertices[2]);
-	m_rectangle.setTopRight(vertices[3]);
+	m_rectangle.setWidth(4096*4);
+	m_rectangle.setHeight(4096*4);
+	m_rectangle.setTranslation(-4096*2, -4096*2, -256);
+
+	m_rectangle.setBottomLeftColour(interp);
+	m_rectangle.setBottomRightColour(bottomRightRgb);
+	m_rectangle.setTopLeftColour(topLeftRgb);
+	m_rectangle.setTopRightColour(interp);
 
 	// load textures
 	loadTexture(&m_textures[0].texture, "textures/bgbase.png");

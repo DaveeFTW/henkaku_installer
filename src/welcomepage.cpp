@@ -52,6 +52,9 @@ WelcomePage::WelcomePage(GxmShaderPatcher *patcher)
 
 void WelcomePage::onModelChanged(glm::mat4 model)
 {
+	m_rectangle.setWorldMatrix(model);
+	m_welcomeText.setWorldMatrix(model);
+	m_nextPageDirection.setWorldMatrix(model);
 	//m_rectangle.setModel(model * glm::translate(glm::mat4(1), );
 
 	// welcome text
