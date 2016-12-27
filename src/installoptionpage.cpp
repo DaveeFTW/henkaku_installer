@@ -8,6 +8,7 @@
  */
 
 #include "installoptionpage.h"
+#include "menu.h"
 
 #include <framework/buttonevent.h>
 #include <psp2/ctrl.h>
@@ -21,7 +22,7 @@ InstallOptionPage::InstallOptionPage(GxmShaderPatcher *patcher)
 	, m_font18("rsc:/fonts/DroidSans.ttf")
 	, m_font16("rsc:/fonts/DroidSans.ttf")
 	, m_font12("rsc:/fonts/DroidSans.ttf")
-	, m_stateMachine(Selection::Simple)
+	, m_menu(&m_renderer, &m_textRenderer)
 {
 	m_font18.setPointSize(18.f);
 	m_font16.setPointSize(12.f);
@@ -54,10 +55,19 @@ InstallOptionPage::InstallOptionPage(GxmShaderPatcher *patcher)
 	m_customInstallationDesc.setFont(&m_font12);
 	m_customInstallationDesc.setColour(glm::vec4(0xf7/255.f, 0xb6/255.f, 0x54/255.f, 1.f));
 
+	auto simpleId = m_menu.add({&m_simpleInstallationText, &m_simpleInstallationDesc});
+	auto customId = m_menu.add({&m_customInstallationText, &m_customInstallationDesc});
+	m_menu.setSelectionWidth(m_rectangle.width() + m_rectangle.radius()*2.f, -m_rectangle.radius());
+
+	// map these ids to an enum
+	m_selectionMap.insert({simpleId, Selection::Simple});
+	m_selectionMap.insert({customId, Selection::Custom});
+	
 	m_selectionBox.setHeight(m_simpleInstallationText.height()+m_simpleInstallationDesc.height()+(544.f * (5.f/100.f))*3.f);
 
-	// set models
-	//setModel(glm::mat4(1));
+	// position our components
+	positionComponents();
+	onModelChanged(modelMatrix());
 
 	SceGxmBlendInfo blendInfo;
 	blendInfo.colorFunc = SCE_GXM_BLEND_FUNC_ADD;
@@ -73,109 +83,58 @@ InstallOptionPage::InstallOptionPage(GxmShaderPatcher *patcher)
 
 	m_textRenderer.setBlendInfo(&blendInfo);
 	m_textRenderer.setShaders<ColouredTextVertex>("rsc:/text.vert.cg.gxp", "rsc:/text.frag.cg.gxp");
-
-	m_stateMachine.configure(Selection::Simple)
-		.on_entry(std::bind(&InstallOptionPage::updateSelectionModel, this))
-		.permit(Trigger::Up, Selection::Custom)
-		.permit(Trigger::Down, Selection::Custom);
-
-	m_stateMachine.configure(Selection::Custom)
-		.on_entry(std::bind(&InstallOptionPage::updateSelectionModel, this))
-		.permit(Trigger::Up, Selection::Simple)
-		.permit(Trigger::Down, Selection::Simple);
-
-	m_stateMachine.on_transition([this](auto& t)
-	{
-		LOG(INFO) << "Install option transition from [" << (int)t.source() << "] to [" << (int)t.destination() << "] via trigger [" << (int)t.trigger() << "]";
-	});
 }
 
 void InstallOptionPage::onModelChanged(glm::mat4 model)
 {
-	/*constexpr auto seperationPadding = 544.f * (5.f/100.f);
+	m_rectangle.setWorldMatrix(model);
+	m_selectionBox.setWorldMatrix(model);
+	m_titleText.setWorldMatrix(model);
+	m_nextPageDirection.setWorldMatrix(model);
+	m_menu.setWorldMatrix(model);
+}
+
+void InstallOptionPage::positionComponents(void)
+{
 	auto boxOffsetX = (960.f - m_rectangle.width())/2.f;
 	auto boxOffsetY = (544.f + m_rectangle.height())/2.f;
 
-	m_rectangle.setModel(model * glm::translate(glm::mat4(1), glm::vec3((960-m_rectangle.width())/2.f-m_rectangle.radius(), (544-m_rectangle.height())/2.f-m_rectangle.radius(), 0)));
+	// centre within view
+	m_rectangle.setTranslation((960-m_rectangle.width())/2.f-m_rectangle.radius(), (544-m_rectangle.height())/2.f-m_rectangle.radius());
 
 	// pin title centred within box
 	boxOffsetY -= m_titleText.height();
-	m_titleText.setModel(model * glm::translate(glm::mat4(1), glm::vec3((960-m_titleText.width())/2.f, boxOffsetY, 0)));
-	
-	boxOffsetY -= m_simpleInstallationText.height() + seperationPadding*2;
-	m_simpleInstallationText.setModel(model * glm::translate(glm::mat4(1), glm::vec3(boxOffsetX, boxOffsetY, 0)));
-	
-	boxOffsetY -= m_simpleInstallationDesc.height() + seperationPadding;
-	m_simpleInstallationDesc.setModel(model * glm::translate(glm::mat4(1), glm::vec3(boxOffsetX, boxOffsetY, 0)));
-	
-	boxOffsetY -= m_customInstallationText.height() + seperationPadding*2;
-	m_customInstallationText.setModel(model * glm::translate(glm::mat4(1), glm::vec3(boxOffsetX, boxOffsetY, 0)));
-
-	boxOffsetY -= m_customInstallationDesc.height() + seperationPadding;
-	m_customInstallationDesc.setModel(model * glm::translate(glm::mat4(1), glm::vec3(boxOffsetX, boxOffsetY, 0)));
-
-	if (selection() == Selection::Custom)
-		m_selectionBox.setModel(model * glm::translate(glm::mat4(1), glm::vec3(boxOffsetX-m_rectangle.radius(), boxOffsetY-seperationPadding, 0)));
-
-	m_nextPageDirection.setModel(model * glm::translate(glm::mat4(1), glm::vec3((960-m_nextPageDirection.width())/2.f, (544.f - m_rectangle.height())/2.f, 0)));
-	
-	updateSelectionModel();*/
+	m_titleText.setTranslation((960-m_titleText.width())/2.f, boxOffsetY);
+	m_menu.setTranslation(boxOffsetX, boxOffsetY);
+	m_nextPageDirection.setTranslation((960-m_nextPageDirection.width())/2.f, (544.f - m_rectangle.height())/2.f);
 }
-
-void InstallOptionPage::updateSelectionModel(void)
-{
-	//auto model = modelMatrix();
-
-	/*constexpr auto seperationPadding = 544.f * (5.f/100.f);
-	auto boxOffsetX = (960.f - m_rectangle.width())/2.f;
-	auto boxOffsetY = (544.f + m_rectangle.height())/2.f;
-	boxOffsetY -= m_titleText.height();
-	boxOffsetY -= m_simpleInstallationText.height() + seperationPadding*2;
-	boxOffsetY -= m_simpleInstallationDesc.height() + seperationPadding;
-
-	if (selection() == Selection::Custom)
-	{
-		boxOffsetY -= m_customInstallationText.height() + seperationPadding*2;
-		boxOffsetY -= m_customInstallationDesc.height() + seperationPadding;
-	}
-*/
-	//m_selectionBox.setModel(model * glm::translate(glm::mat4(1), glm::vec3(boxOffsetX-m_rectangle.radius(), boxOffsetY-seperationPadding, 0)));
-}
-
-float g_alphaHah = 0.2f;
 
 void InstallOptionPage::update(float dt)
 {
-	g_alphaHah = std::fmod(g_alphaHah + dt/10.f, 0.2f);
-	m_selectionBox.setColour(glm::vec4(146.f/255.f, 222.f/255.f, 239.f/255.f, g_alphaHah));
-	
+	m_menu.update(dt);
 }
 
 void InstallOptionPage::draw(SceGxmContext *ctx, const Camera *camera) const
 {
 	m_renderer.draw(ctx, camera, &m_rectangle);
-	m_renderer.draw(ctx, camera, &m_selectionBox);
 	m_textRenderer.draw(ctx, camera, &m_titleText);
 	m_textRenderer.draw(ctx, camera, &m_nextPageDirection);
-	m_textRenderer.draw(ctx, camera, &m_simpleInstallationText);
-	m_textRenderer.draw(ctx, camera, &m_simpleInstallationDesc);
-	m_textRenderer.draw(ctx, camera, &m_customInstallationText);
-	m_textRenderer.draw(ctx, camera, &m_customInstallationDesc);
+	m_menu.draw(ctx, camera);
 }
 
 InstallOptionPage::Selection InstallOptionPage::selection(void) const
 {
-	return m_stateMachine.state();
+	return m_selectionMap.at(m_menu.selection());
 }
 
 void InstallOptionPage::onEvent(ButtonEvent *event)
 {
 	if (event->buttons() == SCE_CTRL_UP)
 	{
-		m_stateMachine.fire(Trigger::Up);
+		m_menu.up();
 	}
 	else if (event->buttons() == SCE_CTRL_DOWN)
 	{
-		m_stateMachine.fire(Trigger::Down);
+		m_menu.down();
 	}
 }

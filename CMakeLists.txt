@@ -47,6 +47,7 @@ set(INSTALLER_SOURCES
 	"src/installpage.cpp"
 	"src/successpage.cpp"
 	"src/failurepage.cpp"
+	"src/menu.cpp"
 )
 
 include_directories(3rdparty/include)

@@ -17,8 +17,9 @@
 #include "geometryrenderer.h"
 #include "text.h"
 #include "font.h"
+#include "menu.h"
 
-#include <stateless++/state_machine.hpp>
+#include <unordered_map>
 
 class InstallOptionPage : public Page
 {
@@ -40,17 +41,8 @@ public:
 	void onEvent(ButtonEvent *event) final;
 
 private:
-	enum class Trigger
-	{
-		Up,
-		Down
-	};
-
-	using StateMachine = stateless::state_machine<Selection, Trigger>;
-
-private:
 	void onModelChanged(glm::mat4 model) final;
-	void updateSelectionModel(void);
+	void positionComponents(void);
 
 private:
 	RoundedRectangle<ColouredGeometryVertex> m_rectangle;
@@ -58,7 +50,8 @@ private:
 	GeometryRenderer m_renderer, m_textRenderer;
 	Font m_font18, m_font16, m_font12;
 	Text m_titleText, m_simpleInstallationText, m_simpleInstallationDesc, m_customInstallationText, m_customInstallationDesc, m_nextPageDirection;
-	StateMachine m_stateMachine;
+	Menu m_menu;
+	std::unordered_map<int, Selection> m_selectionMap;
 };
 
 #endif // INSTALLOPTIONPAGE_H
