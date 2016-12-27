@@ -316,7 +316,7 @@ void InstallerView::setupInstallOptionPage(int x, int y)
 	// setup our state transitions
 	m_stateMachine.configure(State::SelectInstallOption)
 		.permit_if(Trigger::Left, State::Welcome, m_transitionGuard)
-		.permit_dynamic_if(Trigger::Cross, m_transitionGuard, [this, page](auto& source)
+		.permit_dynamic_if(Trigger::Right, m_transitionGuard, [this, page](auto& source)
 		{
 			if (page->selection() == InstallOptionPage::Selection::Simple)
 			{
