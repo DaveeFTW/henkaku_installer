@@ -7,6 +7,9 @@
  * of the MIT license.  See the LICENSE file for details.
  */
 
+#ifndef INSTALLERVIEW_H
+#define INSTALLERVIEW_H
+
 #include "numberanimation.h"
 #include "buttoneventfilter.h"
 
@@ -26,6 +29,15 @@ class Page;
 
 class InstallerView : public View
 {
+public:
+	struct HenkakuOptions
+	{
+		bool unsafeHomebrew;
+		bool versionSpoofing;
+		bool offlineInstaller;
+		bool resetAll;
+	};
+
 public:
 	InstallerView(void);
 	~InstallerView(void);
@@ -69,20 +81,13 @@ private:
 	using TransitionGuard = StateMachine::TStateConfiguration::TGuard;
 	using StateTransition = StateMachine::TTransition;
 
-	struct HenkakuOptions
-	{
-		bool unsafeHomebrew;
-		bool versionSpoofing;
-		bool offlineInstaller;
-		bool resetAll;
-	};
-
 private:
 	void update(float dt);
 	bool isTransitioning(void) const;
 	void performPageTransition(const StateTransition& transition);
 	void setupCamera(void);
 	void setupTransitionPan(void);
+	bool resetAvailable(void) const;
 	void setupWelcomePage(int x, int y);
 	void setupInstallOptionPage(int x, int y);
 	void setupResetPage(int x, int y);
@@ -112,3 +117,5 @@ private:
 	NumberAnimation m_cameraPanX;
 	NumberAnimation m_cameraPanY;
 };
+
+#endif // INSTALLERVIEW_H

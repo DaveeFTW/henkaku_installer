@@ -26,6 +26,8 @@
 #include <framework/buttonevent.h>
 #include <framework/guiapplication.h>
 
+#include <sys/stat.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 
@@ -292,6 +294,15 @@ void InstallerView::performPageTransition(const StateTransition& t)
 	this->m_cameraPanY.start();
 }
 
+bool InstallerView::resetAvailable(void) const
+{
+	// check if henkaku config exists
+	struct stat buffer;   
+	auto henkakuConfigExists = stat("ux0:temp/app_work/MLCL00001/rec/config.bin", &buffer) == 0;
+	auto taihenConfigExists = stat("ux0:tai/config.txt", &buffer) == 0;
+	return henkakuConfigExists || taihenConfigExists;
+}
+
 void InstallerView::setupWelcomePage(int x, int y)
 {
 	auto page = new WelcomePage(&m_patcher);
@@ -328,9 +339,8 @@ void InstallerView::setupInstallOptionPage(int x, int y)
 				return State::Install;
 			}
 
-			// TODO: check if henkaku config exists
-			auto configExists = true;
-			return configExists ? State::Reset : State::Config;
+			// present reset page if config is available
+			return this->resetAvailable() ? State::Reset : State::Config;
 		});
 }
 
@@ -344,6 +354,11 @@ void InstallerView::setupResetPage(int x, int y)
 
 	// setup our state transitions
 	m_stateMachine.configure(State::Reset)
+		.on_exit([this, page](auto s)
+		{
+			// nice naming consistency nerd
+			this->m_henkakuOptions.resetAll = page->reset();
+		})
 		.permit_if(Trigger::Left, State::SelectInstallOption, m_transitionGuard)
 		.permit_if(Trigger::Right, State::Config, m_transitionGuard);
 }
@@ -358,7 +373,17 @@ void InstallerView::setupConfigPage(int x, int y)
 
 	// setup our state transitions
 	m_stateMachine.configure(State::Config)
-		.permit_if(Trigger::Left, State::Reset, m_transitionGuard)
+		.on_exit([this, page](auto s)
+		{
+			// nice naming consistency nerd
+			this->m_henkakuOptions.unsafeHomebrew = page->unsafeHomebrew() == ConfigPage::UnsafeHomebrew::Enabled;
+			this->m_henkakuOptions.versionSpoofing = page->versionSpoofing() == ConfigPage::VersionSpoofing::Enabled;
+		})
+		.permit_dynamic_if(Trigger::Left, m_transitionGuard, [this](auto& source)
+		{
+			// present reset page if config is available
+			return this->resetAvailable() ? State::Reset : State::SelectInstallOption;
+		})
 		.permit_if(Trigger::Right, State::Offline, m_transitionGuard);
 }
 
@@ -372,6 +397,11 @@ void InstallerView::setupOfflinePage(int x, int y)
 
 	// setup our state transitions
 	m_stateMachine.configure(State::Offline)
+		.on_exit([this, page](auto s)
+		{
+			// nice naming consistency nerd
+			this->m_henkakuOptions.offlineInstaller = page->installOffline();
+		})
 		.permit_if(Trigger::Left, State::Config, m_transitionGuard)
 		.permit_if(Trigger::Right, State::Confirm, m_transitionGuard);
 }
@@ -386,6 +416,10 @@ void InstallerView::setupConfirmPage(int x, int y)
 
 	// setup our state transitions
 	m_stateMachine.configure(State::Confirm)
+		.on_entry([this, page](auto s)
+		{
+			page->setConfigurationOptions(this->m_henkakuOptions);
+		})
 		.permit_if(Trigger::Left, State::Offline, m_transitionGuard)
 		.permit_if(Trigger::Cross, State::Install, m_transitionGuard);
 }
