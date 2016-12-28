@@ -16,8 +16,8 @@
 #include "geometryrenderer.h"
 #include "text.h"
 #include "font.h"
-
-#include <stateless++/state_machine.hpp>
+#include "checkboxmenu.h"
+#include "checkbox.h"
 
 class ConfigPage : public Page
 {
@@ -39,43 +39,21 @@ public:
 	UnsafeHomebrew unsafeHomebrew(void) const;
 	VersionSpoofing versionSpoofing(void) const;
 
+	void update(float dt) final;
 	void draw(SceGxmContext *ctx, const Camera *camera) const final;
 	void onEvent(ButtonEvent *event) final;
 
 private:
-	enum class State
-	{
-		UnsafeHomebrew,
-		VersionSpoofing
-	};
-
-	enum class Trigger
-	{
-		Up,
-		Down,
-	};
-	
-	enum class CheckboxTrigger
-	{
-		Cross
-	};
-
-	using StateMachine = stateless::state_machine<State, Trigger>;
-	
-	template <typename T>
-	using Checkbox = stateless::state_machine<T, CheckboxTrigger>;
-
-private:
 	void onModelChanged(glm::mat4 model) final;
+	void positionComponents(void);
 
 private:
 	RoundedRectangle<ColouredGeometryVertex> m_rectangle;
 	GeometryRenderer m_renderer, m_textRenderer;
-	Font m_font16, m_font12;
-	Text m_welcomeText, m_nextPageDirection;
-	StateMachine m_stateMachine;
-	Checkbox<UnsafeHomebrew> m_unsafeCheckbox;
-	Checkbox<VersionSpoofing> m_spoofCheckbox;
+	Font m_font20, m_font10, m_font8;
+	Text m_titleText, m_nextPageDirection, m_unsafeLabel, m_unsafeLabelDesc, m_spoofLabel, m_spoofLabelDesc;
+	CheckBoxMenu m_menu;
+	CheckBox m_unsafeCheckbox, m_spoofCheckbox;
 };
 
 #endif // CONFIGPAGE_H
