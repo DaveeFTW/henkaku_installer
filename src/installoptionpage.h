@@ -48,7 +48,7 @@ private:
 	RoundedRectangle<ColouredGeometryVertex> m_rectangle;
 	Rectangle<ColouredGeometryVertex> m_selectionBox;
 	GeometryRenderer m_renderer, m_textRenderer;
-	Font m_font18, m_font16, m_font12;
+	Font m_font18, m_font16, m_font8;
 	Text m_titleText, m_simpleInstallationText, m_simpleInstallationDesc, m_customInstallationText, m_customInstallationDesc, m_nextPageDirection;
 	Menu m_menu;
 	std::unordered_map<int, Selection> m_selectionMap;

@@ -21,12 +21,12 @@ InstallOptionPage::InstallOptionPage(GxmShaderPatcher *patcher)
 	, m_textRenderer(patcher)
 	, m_font18("rsc:/fonts/DroidSans.ttf")
 	, m_font16("rsc:/fonts/DroidSans.ttf")
-	, m_font12("rsc:/fonts/DroidSans.ttf")
+	, m_font8("rsc:/fonts/DroidSans.ttf")
 	, m_menu(&m_renderer, &m_textRenderer)
 {
 	m_font18.setPointSize(18.f);
 	m_font16.setPointSize(12.f);
-	m_font12.setPointSize(8.f);
+	m_font8.setPointSize(8.f);
 	
 	m_rectangle.setColour(glm::vec4(0.f, 0.f, 0.f, 0.5f));
 	m_selectionBox.setColour(glm::vec4(0.3f, 1.f, 0.2f, 0.2f));
@@ -36,7 +36,7 @@ InstallOptionPage::InstallOptionPage(GxmShaderPatcher *patcher)
 	m_titleText.setColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
 
 	m_nextPageDirection.setText("Press right to continue.");
-	m_nextPageDirection.setFont(&m_font12);
+	m_nextPageDirection.setFont(&m_font8);
 	m_nextPageDirection.setColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
 
 	m_simpleInstallationText.setText("Simple Installation");
@@ -44,7 +44,7 @@ InstallOptionPage::InstallOptionPage(GxmShaderPatcher *patcher)
 	m_simpleInstallationText.setColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
 
 	m_simpleInstallationDesc.setText("Enables homebrews. Advanced features disabled to protect your device.");
-	m_simpleInstallationDesc.setFont(&m_font12);
+	m_simpleInstallationDesc.setFont(&m_font8);
 	m_simpleInstallationDesc.setColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
 
 	m_customInstallationText.setText("Advanced Installation");
@@ -52,7 +52,7 @@ InstallOptionPage::InstallOptionPage(GxmShaderPatcher *patcher)
 	m_customInstallationText.setColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
 
 	m_customInstallationDesc.setText("Only for advanced users. Enable potentially dangerous options.");
-	m_customInstallationDesc.setFont(&m_font12);
+	m_customInstallationDesc.setFont(&m_font8);
 	m_customInstallationDesc.setColour(glm::vec4(0xf7/255.f, 0xb6/255.f, 0x54/255.f, 1.f));
 
 	auto simpleId = m_menu.add({&m_simpleInstallationText, &m_simpleInstallationDesc});
