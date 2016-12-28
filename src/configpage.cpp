@@ -47,12 +47,13 @@ ConfigPage::ConfigPage(GxmShaderPatcher *patcher)
 	m_unsafeLabelDesc.setColour(glm::vec4(0xf7/255.f, 0xb6/255.f, 0x54/255.f, 1.f));
 
 	m_unsafeCheckbox.setText(&m_unsafeLabel);
+	m_unsafeCheckbox.setChecked(false);
 
 	m_spoofLabel.setText("Enable version spoofing to block update prompts");
 	m_spoofLabel.setFont(&m_font10);
 	m_spoofLabel.setColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
 
-	m_spoofLabelDesc.setText("TODO:");
+	m_spoofLabelDesc.setText("Spoofing only prevents accidental updates. It won't enable 3.61+ games");
 	m_spoofLabelDesc.setFont(&m_font8);
 	m_spoofLabelDesc.setColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
 
