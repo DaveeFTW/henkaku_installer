@@ -52,7 +52,7 @@ namespace
 CheckBox::CheckBox(GeometryRenderer *geometryRenderer, GeometryRenderer *textRenderer)
 	: m_geometryRenderer(geometryRenderer)
 	, m_textRenderer(textRenderer)
-	, m_checked(false)
+	, m_checked(true)
 	, m_text(nullptr)
 	, m_width(0.f)
 {
@@ -87,7 +87,9 @@ CheckBox::CheckBox(GeometryRenderer *geometryRenderer, GeometryRenderer *textRen
 		this->m_checked = !this->m_checked;
 	});
 
-	setChecked(m_checked);
+	// we do this to ensure that the proper state is set
+	m_checked = true;
+	setChecked(!m_checked);
 }
 
 void CheckBox::setText(Text *text)
