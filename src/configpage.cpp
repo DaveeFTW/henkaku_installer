@@ -142,10 +142,10 @@ void ConfigPage::onEvent(ButtonEvent *event)
 
 ConfigPage::UnsafeHomebrew ConfigPage::unsafeHomebrew(void) const
 {
-	return UnsafeHomebrew::Enabled;//m_unsafeCheckbox.state();
+	return m_unsafeCheckbox.checked() ? UnsafeHomebrew::Enabled : UnsafeHomebrew::Disabled;
 }
 
 ConfigPage::VersionSpoofing ConfigPage::versionSpoofing(void) const
 {
-	return VersionSpoofing::Enabled;
+	return m_spoofCheckbox.checked() ? VersionSpoofing::Enabled : VersionSpoofing::Disabled;
 }
