@@ -141,6 +141,6 @@ void ResetPage::onEvent(ButtonEvent *event)
 {
 	if (event->buttons() == SCE_CTRL_CROSS)
 	{
-		m_checkbox.setChecked(!m_checkbox.checked());
+		m_checkbox.toggle();
 	}
 }
