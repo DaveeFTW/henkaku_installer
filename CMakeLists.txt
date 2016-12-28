@@ -48,6 +48,7 @@ set(INSTALLER_SOURCES
 	"src/successpage.cpp"
 	"src/failurepage.cpp"
 	"src/menu.cpp"
+	"src/checkbox.cpp"
 )
 
 include_directories(3rdparty/include)
