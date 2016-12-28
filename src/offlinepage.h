@@ -16,8 +16,7 @@
 #include "geometryrenderer.h"
 #include "text.h"
 #include "font.h"
-
-#include <stateless++/state_machine.hpp>
+#include "checkbox.h"
 
 class OfflinePage : public Page
 {
@@ -26,26 +25,20 @@ public:
 
 	bool installOffline(void) const;
 
+	void update(float dt);
 	void draw(SceGxmContext *ctx, const Camera *camera) const final;
 	void onEvent(ButtonEvent *event) final;
 
 private:
-	enum class Trigger
-	{
-		Cross,
-	};
-
-	using StateMachine = stateless::state_machine<bool, Trigger>;
-
-private:
 	void onModelChanged(glm::mat4 model) final;
+	void positionComponents(void);
 
 private:
 	RoundedRectangle<ColouredGeometryVertex> m_rectangle;
 	GeometryRenderer m_renderer, m_textRenderer;
-	Font m_font20, m_font12;
-	Text m_welcomeText, m_nextPageDirection;
-	StateMachine m_stateMachine;
+	Font m_font20, m_font12, m_font8;
+	Text m_titleText, m_description, m_description2, m_description3, m_nextPageDirection, m_checkBoxLabel;
+	CheckBox m_checkbox;
 };
 
 #endif // OFFLINEPAGE_H
