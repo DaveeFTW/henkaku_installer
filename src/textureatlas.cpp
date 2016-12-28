@@ -76,8 +76,8 @@ void TextureAtlas::setRegion(AtlasRegion region, const char *data, std::size_t s
 {
 	auto x = region.x;
 	auto y = region.y;
-	auto width = region.z;
-	auto height = region.w;
+	auto width = region.z-1;
+	auto height = region.w-1;
 	
 	for (auto i = 0; i < height; ++i)
 	{
@@ -90,6 +90,11 @@ TextureAtlas::AtlasRegion TextureAtlas::region(std::size_t width, std::size_t he
 	constexpr auto max_size = std::numeric_limits<std::size_t>::max();
 	std::size_t best_height = max_size;
 	std::size_t best_width = max_size;
+
+	// we want a border around our region
+	width += 1;
+	height += 1;
+
 	auto region = AtlasRegion(0, 0, width, height);
 	auto best_node = m_nodes.end();
 	
