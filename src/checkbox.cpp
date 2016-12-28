@@ -86,10 +86,6 @@ CheckBox::CheckBox(GeometryRenderer *geometryRenderer, GeometryRenderer *textRen
 	{
 		this->m_checked = !this->m_checked;
 	});
-
-	// we do this to ensure that the proper state is set
-	m_checked = true;
-	setChecked(!m_checked);
 }
 
 void CheckBox::setText(Text *text)
