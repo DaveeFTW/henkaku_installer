@@ -27,8 +27,10 @@ public:
 
 	void setChecked(bool checked);
 	bool checked(void) const;
+	void toggle(void);
 
-	void setWidth(float width);
+	float width(void) const;
+	float height(void) const;
 
 	void update(float dt);
 	void draw(SceGxmContext *ctx, const Camera *camera) const;

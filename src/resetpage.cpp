@@ -110,7 +110,6 @@ void ResetPage::positionComponents(void)
 	auto ytop = boxOffsetY-seperationPadding;
 	auto ybottom = (544.f - m_rectangle.height())/2.f+m_nextPageDirection.height()+seperationPadding;
 	auto height = ytop - ybottom;
-	m_checkbox.setWidth(m_rectangle.width());
 	m_checkbox.setTranslation(boxOffsetX, boxOffsetY-height/2.f+m_checkBoxLabel.height()/2.f);
 
 	// centre within bottom box

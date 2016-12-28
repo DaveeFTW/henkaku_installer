@@ -113,10 +113,25 @@ bool CheckBox::checked(void) const
 	return m_checked;
 }
 
-void CheckBox::setWidth(float width)
+void CheckBox::toggle(void)
 {
-	m_width = width;
-	positionComponents();
+	setChecked(!m_checked);
+}
+
+float CheckBox::width(void) const
+{
+	if (!m_text)
+		return 0;
+
+	return m_checkboxSelected.width()+((2.f * 960.f)/100.f) + m_text->width();
+}
+
+float CheckBox::height(void) const
+{
+	if (!m_text)
+		return 0;
+
+	return m_text->height();
 }
 
 void CheckBox::onModelChanged(glm::mat4 model)
