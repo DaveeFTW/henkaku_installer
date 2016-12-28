@@ -55,7 +55,7 @@ struct ColouredGeometryVertex
 	}
 };
 
-struct ColouredTextVertex
+struct ColouredTextureVertex
 {
 	glm::vec3 position;
 	glm::vec2 texCoord;
@@ -65,19 +65,19 @@ struct ColouredTextVertex
 	{
 		std::vector<SceGxmVertexAttribute> attributes(3);
 		attributes[0].streamIndex = 0;
-		attributes[0].offset = offsetof(ColouredTextVertex, position);
+		attributes[0].offset = offsetof(ColouredTextureVertex, position);
 		attributes[0].format = SCE_GXM_ATTRIBUTE_FORMAT_F32;
 		attributes[0].componentCount = 3;
 		attributes[0].regIndex = sceGxmProgramParameterGetResourceIndex(vertexShader->attributeIndex("position"));
 
 		attributes[1].streamIndex = 0;
-		attributes[1].offset = offsetof(ColouredTextVertex, texCoord);
+		attributes[1].offset = offsetof(ColouredTextureVertex, texCoord);
 		attributes[1].format = SCE_GXM_ATTRIBUTE_FORMAT_F32;
 		attributes[1].componentCount = 2;
 		attributes[1].regIndex = sceGxmProgramParameterGetResourceIndex(vertexShader->attributeIndex("texCoord"));
 
 		attributes[2].streamIndex = 0;
-		attributes[2].offset = offsetof(ColouredTextVertex, colour);
+		attributes[2].offset = offsetof(ColouredTextureVertex, colour);
 		attributes[2].format = SCE_GXM_ATTRIBUTE_FORMAT_F32;
 		attributes[2].componentCount = 4;
 		attributes[2].regIndex = sceGxmProgramParameterGetResourceIndex(vertexShader->attributeIndex("colour"));
@@ -87,7 +87,7 @@ struct ColouredTextVertex
 	static std::vector<SceGxmVertexStream> streams(void)
 	{
 		std::vector<SceGxmVertexStream> streams(1);
-		streams[0].stride = sizeof(ColouredTextVertex);
+		streams[0].stride = sizeof(ColouredTextureVertex);
 		streams[0].indexSource = SCE_GXM_INDEX_SOURCE_INDEX_16BIT;
 		return streams;
 	}

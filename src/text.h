@@ -55,7 +55,7 @@ private:
 	Font *m_font{nullptr};
 	std::string m_text;
 	glm::vec2 m_boundingBox;
-	std::unique_ptr<GpuMemoryBlock<ColouredTextVertex>> m_vertices;
+	std::unique_ptr<GpuMemoryBlock<ColouredTextureVertex>> m_vertices;
 	std::unique_ptr<GpuMemoryBlock<uint16_t>> m_indices;
 };
 

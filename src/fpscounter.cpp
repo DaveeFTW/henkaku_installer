@@ -17,7 +17,7 @@ FpsCounter::FpsCounter(GxmShaderPatcher *patcher)
 	, m_fpsText(&m_font, "FPS: 00.00")
 	, m_renderer(patcher)
 {
-	m_renderer.setShaders<ColouredTextVertex>("rsc:/backgroundtext.vert.cg.gxp", "rsc:/backgroundtext.frag.cg.gxp");
+	m_renderer.setShaders<ColouredTextureVertex>("rsc:/backgroundtext.vert.cg.gxp", "rsc:/backgroundtext.frag.cg.gxp");
 }
 
 void FpsCounter::setModel(glm::mat4 model)

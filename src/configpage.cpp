@@ -52,7 +52,7 @@ ConfigPage::ConfigPage(GxmShaderPatcher *patcher)
 	m_renderer.setShaders<ColouredGeometryVertex>("rsc:/colour.vert.cg.gxp", "rsc:/colour.frag.cg.gxp");
 
 	m_textRenderer.setBlendInfo(&blendInfo);
-	m_textRenderer.setShaders<ColouredTextVertex>("rsc:/text.vert.cg.gxp", "rsc:/text.frag.cg.gxp");
+	m_textRenderer.setShaders<ColouredTextureVertex>("rsc:/text.vert.cg.gxp", "rsc:/text.frag.cg.gxp");
 
 	m_stateMachine.configure(State::UnsafeHomebrew)
 		.permit(Trigger::Up, State::VersionSpoofing)

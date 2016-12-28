@@ -54,7 +54,7 @@ void Text::generateGeometry(void)
 	utf8::iterator<std::string::const_iterator> it(m_text.begin(), m_text.begin(), m_text.end());
 	utf8::iterator<std::string::const_iterator> end(m_text.end(), m_text.begin(), m_text.end());
 
-	m_vertices = std::make_unique<GpuMemoryBlock<ColouredTextVertex>>
+	m_vertices = std::make_unique<GpuMemoryBlock<ColouredTextureVertex>>
 	(
 		utf8::distance(m_text.begin(), m_text.end())*4,
 		SCE_GXM_MEMORY_ATTRIB_READ
