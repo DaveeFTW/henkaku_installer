@@ -103,11 +103,7 @@ void ConfigPage::positionComponents(void)
 	boxOffsetY -= m_titleText.height();
 	m_titleText.setTranslation((960-m_titleText.width())/2.f, boxOffsetY);
 
-	auto ytop = boxOffsetY-seperationPadding;
-	auto ybottom = (544.f - m_rectangle.height())/2.f+m_nextPageDirection.height()+seperationPadding;
-	auto height = ytop - ybottom;
-
-	m_menu.setTranslation(boxOffsetX, boxOffsetY-height/2.f+m_menu.height()/2.f);
+	m_menu.setTranslation(boxOffsetX, boxOffsetY-seperationPadding);
 	m_nextPageDirection.setTranslation((960-m_nextPageDirection.width())/2.f, (544.f - m_rectangle.height())/2.f);
 }
 
