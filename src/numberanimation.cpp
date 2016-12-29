@@ -33,7 +33,7 @@ void NumberAnimation::setStart(float start)
 	m_start = start;
 }
 
-float NumberAnimation::start(void) const
+float NumberAnimation::getStart(void) const
 {
 	return m_start;
 }

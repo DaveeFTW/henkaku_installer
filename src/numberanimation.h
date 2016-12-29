@@ -26,7 +26,7 @@ public:
 	void setEasing(EasingTransform easing);
 
 	void setStart(float start);
-	float start(void) const;
+	float getStart(void) const;
 
 	void setEnd(float end);
 	float end(void) const;
