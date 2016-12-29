@@ -137,6 +137,12 @@ AnimatedBackground::AnimatedBackground(GxmShaderPatcher *patcher)
 	m_textures[2].dispRate = glm::vec2(-31.f, -64.f);
 	m_textures[3].dispRate = glm::vec2(12.f, -47.f);
 	m_textures[4].dispRate = glm::vec2(22, -72.f);
+
+	m_textures[0].dispModifier = glm::vec2(1, 1);
+	m_textures[1].dispModifier = glm::vec2(1, 1);
+	m_textures[2].dispModifier = glm::vec2(1, 1);
+	m_textures[3].dispModifier = glm::vec2(1, 1);
+	m_textures[4].dispModifier = glm::vec2(1, 1);
 }
 
 void AnimatedBackground::loadTexture(GxmTexture *texture, const char *file)
@@ -187,7 +193,7 @@ void AnimatedBackground::update(float dt)
 	for (auto i = 0; i < 5; ++i)
 	{
 		auto tex = &m_textures[i];
-		tex->position = tex->position + tex->dispRate*dt;
+		tex->position = tex->position + tex->dispRate*tex->dispModifier*dt;
 
 		// dont lose precision
 		tex->position.x = std::fmod(tex->position.x, 512.f);
@@ -215,9 +221,30 @@ void AnimatedBackground::draw(SceGxmContext *ctx, const Camera *camera)
 void AnimatedBackground::setColour(glm::vec4 topLeft, glm::vec4 bottomRight)
 {
 	auto interp = 0.5f*topLeft + 0.5f*bottomRight;
-
+	m_topLeftColour = topLeft;
+	m_bottomRightColour = bottomRight;
 	m_rectangle.setBottomLeftColour(interp);
 	m_rectangle.setBottomRightColour(bottomRight);
 	m_rectangle.setTopLeftColour(topLeft);
 	m_rectangle.setTopRightColour(interp);
+}
+
+glm::vec4 AnimatedBackground::topLeftColour(void) const
+{
+	return m_topLeftColour;
+}
+
+glm::vec4 AnimatedBackground::bottomRightColour(void) const
+{
+	return m_bottomRightColour;
+}
+
+void AnimatedBackground::setDisplacementModifier(int texId, float dx, float dy)
+{
+	m_textures[texId].dispModifier = glm::vec2(dx, dy);
+}
+
+glm::vec2 AnimatedBackground::displacementRate(int texId) const
+{
+	return m_textures[texId].dispRate;
 }

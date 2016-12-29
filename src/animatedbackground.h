@@ -29,6 +29,11 @@ public:
 	void draw(SceGxmContext *ctx, const Camera *camera);
 
 	void setColour(glm::vec4 topleft, glm::vec4 bottomRight);
+	glm::vec4 topLeftColour(void) const;
+	glm::vec4 bottomRightColour(void) const;
+
+	void setDisplacementModifier(int texId, float dx, float dy);
+	glm::vec2 displacementRate(int texId) const;
 
 private:
 	struct TextureCoordVertex
@@ -41,6 +46,7 @@ private:
 		GxmTexture texture;
 		glm::vec2 position;
 		glm::vec2 dispRate;
+		glm::vec2 dispModifier;
 	};
 
 private:
@@ -53,6 +59,8 @@ private:
 	
 	BgTexture m_textures[5];
 	std::unique_ptr<GpuMemoryBlock<TextureCoordVertex>> m_texCoords;
+
+	glm::vec4 m_bottomRightColour, m_topLeftColour;
 };
 
 #endif // ANIMATEDBACKGROUND_H
