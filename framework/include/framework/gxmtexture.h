@@ -54,6 +54,7 @@ public:
 	enum TextureFormat
 	{
 		ARGB8,
+		ABGR8,
 		U8_R111 // set U8 as alpha channel and BGR to 111
 	};
 

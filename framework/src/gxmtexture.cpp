@@ -71,6 +71,8 @@ namespace
 		default:
 		case GxmTexture::ARGB8:
 			return SCE_GXM_TEXTURE_FORMAT_A8R8G8B8;
+		case GxmTexture::ABGR8:
+			return SCE_GXM_TEXTURE_FORMAT_U8U8U8U8_ABGR;
 		case GxmTexture::U8_R111:
 			return SCE_GXM_TEXTURE_FORMAT_U8_R111;
 		}
@@ -82,6 +84,7 @@ namespace
 		{
 		default:
 		case GxmTexture::ARGB8:
+		case GxmTexture::ABGR8:
 			return 4;
 		case GxmTexture::U8_R111:
 			return 1;
@@ -138,8 +141,8 @@ void GxmTexture::setData(const void *data)
 
 	auto res = sceGxmTextureInitLinear
 	(
-		m_texture.get(), 
-		m_storage->address(), 
+		m_texture.get(),
+		m_storage->address(),
 		convertTextureFormat(m_format),
 		m_width,
 		m_height,

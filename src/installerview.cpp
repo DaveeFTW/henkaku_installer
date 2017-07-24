@@ -10,6 +10,7 @@
 #include "installerview.h"
 #include "camera.h"
 #include "animatedbackground.h"
+#include "staticbackground.h"
 #include "fpscounter.h"
 #include "welcomepage.h"
 #include "installoptionpage.h"
@@ -60,6 +61,7 @@ namespace
 
 InstallerView::InstallerView(void)
 	: m_animatedBackground(new AnimatedBackground(&m_patcher))
+	, m_staticBackground(new StaticBackground(&m_patcher))
 	, m_fpsCounter(new FpsCounter(&m_patcher))
 	, m_camera(new Camera)
 	, m_stateMachine(State::Init)
@@ -125,6 +127,7 @@ InstallerView::~InstallerView(void)
 
 	delete m_camera;
 	delete m_animatedBackground;
+	delete m_staticBackground;
 }
 
 void InstallerView::onEvent(Event *event)
@@ -132,7 +135,7 @@ void InstallerView::onEvent(Event *event)
 	if (event->type() == Event::Button)
 	{
 		ButtonEvent button = m_buttonFilter.filter(reinterpret_cast<ButtonEvent *>(event));
-		
+
 		auto trigger = buttonToTrigger<Trigger>(button.buttons());
 
 		// check if this input will trigger a state change
@@ -166,7 +169,7 @@ void InstallerView::update(float dt)
 
 void InstallerView::render(SceGxmContext *ctx)
 {
-	m_animatedBackground->draw(ctx, m_camera);
+	m_staticBackground->draw(ctx, m_camera);
 	m_fpsCounter->draw(ctx, m_camera);
 
 	for (auto& page : m_renderQueue)
@@ -258,7 +261,7 @@ void InstallerView::performPageTransition(const StateTransition& t)
 		if (this->m_pages.count(dest))
 		{
 			this->m_renderQueue.push_back(this->m_pages.at(dest));
-			
+
 			auto destPosition = this->m_pages.at(dest)->modelMatrix() * glm::vec4(1.f);
 
 			// update camera position
@@ -297,7 +300,7 @@ void InstallerView::performPageTransition(const StateTransition& t)
 bool InstallerView::resetAvailable(void) const
 {
 	// check if henkaku config exists
-	struct stat buffer;   
+	struct stat buffer;
 	auto henkakuConfigExists = stat("ux0:temp/app_work/MLCL00001/rec/config.bin", &buffer) == 0;
 	auto taihenConfigExists = stat("ux0:tai/config.txt", &buffer) == 0;
 	return henkakuConfigExists || taihenConfigExists;

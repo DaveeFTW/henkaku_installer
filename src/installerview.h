@@ -23,6 +23,7 @@
 #include <unordered_map>
 
 class AnimatedBackground;
+class StaticBackground;
 class Camera;
 class FpsCounter;
 class Page;
@@ -102,6 +103,7 @@ private:
 	TaskPtr m_simulationTasks;
 	GxmShaderPatcher m_patcher;
 	AnimatedBackground *m_animatedBackground;
+	StaticBackground *m_staticBackground;
 	FpsCounter *m_fpsCounter;
 	Camera *m_camera;
 	float m_dt;
