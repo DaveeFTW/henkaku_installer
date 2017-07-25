@@ -93,7 +93,7 @@ InstallerView::InstallerView(void)
 	};
 
 	// setup pages and states
-	setupWelcomePage(-3, 0);
+	setupWelcomePage(0, 0);
 	setupInstallOptionPage(-2, 0);
 	setupResetPage(-1, 0);
 	setupConfigPage(0, 0);
@@ -316,7 +316,20 @@ void InstallerView::setupWelcomePage(int x, int y)
 
 	// setup our state transitions
 	m_stateMachine.configure(State::Welcome)
-		.permit_if(Trigger::Right, State::SelectInstallOption, m_transitionGuard);
+		.permit_if(Trigger::TaskComplete, State::SelectInstallOption, m_transitionGuard)
+		.on_entry([this, page](auto s)
+		{
+			page->fadeIn();
+		})
+		.on_exit([this, page](auto s)
+		{
+			page->fadeOut();
+		});
+
+	page->setExitTrigger([this]()
+	{
+		this->m_stateMachine.fire(Trigger::TaskComplete);
+	});
 }
 
 void InstallerView::setupInstallOptionPage(int x, int y)

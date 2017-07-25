@@ -8,29 +8,17 @@
  */
 
 #include "welcomepage.h"
+#include "easingcurves.h"
 
 WelcomePage::WelcomePage(GxmShaderPatcher *patcher)
-	: m_rectangle((960-200), 200, 20)
-	, m_renderer(patcher)
-	, m_textRenderer(patcher)
-	, m_font20("rsc:/fonts/DroidSans.ttf")
-	, m_font12("rsc:/fonts/DroidSans.ttf")
+	: m_textRenderer(patcher)
+	, m_font28("rsc:/fonts/DroidSans.ttf")
 {
-	m_font20.setPointSize(20.f);
-	m_font12.setPointSize(12.f);
-	
-	m_rectangle.setColour(glm::vec4(0.f, 0.f, 0.f, 0.5f));
+	m_font28.setPointSize(28.f);
 
-	m_welcomeText.setText("Welcome to HENkaku!");
-	m_welcomeText.setFont(&m_font20);
-	m_welcomeText.setColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
-
-	m_nextPageDirection.setText("Press right to continue.");
-	m_nextPageDirection.setFont(&m_font12);
-	m_nextPageDirection.setColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
-
-	// set models
-	//setModel(glm::mat4(1));
+	m_welcomeText.setText("Welcome");
+	m_welcomeText.setFont(&m_font28);
+	m_welcomeText.setColour(glm::vec4(1.f, 1.f, 1.f, 0.f));
 
 	SceGxmBlendInfo blendInfo;
 	blendInfo.colorFunc = SCE_GXM_BLEND_FUNC_ADD;
@@ -41,42 +29,100 @@ WelcomePage::WelcomePage(GxmShaderPatcher *patcher)
 	blendInfo.alphaDst = SCE_GXM_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
 	blendInfo.colorMask = SCE_GXM_COLOR_MASK_ALL;
 
-	m_renderer.setBlendInfo(&blendInfo);
-	m_renderer.setShaders<ColouredGeometryVertex>("rsc:/colour.vert.cg.gxp", "rsc:/colour.frag.cg.gxp");
-
 	m_textRenderer.setBlendInfo(&blendInfo);
 	m_textRenderer.setShaders<ColouredTextureVertex>("rsc:/text.vert.cg.gxp", "rsc:/text.frag.cg.gxp");
 
 	positionComponents();
+
+	// fade in text
+	m_fadeIn.setStart(0.f);
+	m_fadeIn.setEnd(1.f);
+	m_fadeIn.setEasing([](float t, float b, float c, float d)
+	{
+		return easing::quad::in(t, b, c, d);
+	});
+
+	m_fadeIn.setStepHandler([this](float step)
+	{
+		this->m_welcomeText.setColour(glm::vec4(1.0, 1.0, 1.0, step));
+	});
+
+	m_fadeIn.setDuration(1500);
+	m_fadeIn.setCompletionHandler([this]()
+	{
+		this->m_pauseAnimation.start();
+	});
+
+	// pause duration
+	this->m_pauseAnimation.setStart(0.f);
+	this->m_pauseAnimation.setEnd(0.f);
+	this->m_pauseAnimation.setDuration(3000);
+	this->m_pauseAnimation.setCompletionHandler([this]()
+	{
+		this->m_fadeOut.start();
+	});
+
+	// fade out text
+	m_fadeOut.setStart(0.f);
+	m_fadeOut.setEnd(1.f);
+	m_fadeOut.setEasing([](float t, float b, float c, float d)
+	{
+		return easing::quad::out(t, b, c, d);
+	});
+
+	m_fadeOut.setStepHandler([this](float step)
+	{
+		this->m_welcomeText.setColour(glm::vec4(1.0, 1.0, 1.0, 1.0-step));
+	});
+
+	m_fadeOut.setDuration(500);
+	m_fadeOut.setCompletionHandler([this]()
+	{
+		if (this->m_exitCallback)
+			this->m_exitCallback();
+	});
+}
+
+void WelcomePage::update(float dt)
+{
+	if (!m_fadeIn.complete())
+		m_fadeIn.update(dt);
+
+	if (!m_pauseAnimation.complete())
+		m_pauseAnimation.update(dt);
+
+	if (!m_fadeOut.complete())
+		m_fadeOut.update(dt);
 }
 
 void WelcomePage::onModelChanged(glm::mat4 model)
 {
-	m_rectangle.setWorldMatrix(model);
 	m_welcomeText.setWorldMatrix(model);
-	m_nextPageDirection.setWorldMatrix(model);
-	//m_rectangle.setModel(model * glm::translate(glm::mat4(1), );
-
-	// welcome text
-	//m_welcomeText.setModel(model * glm::translate(glm::mat4(1), ));
-	//m_nextPageDirection.setModel(model * glm::translate(glm::mat4(1), glm::vec3((960-m_nextPageDirection.width())/2.f, (544/2.f)+m_nextPageDirection.height()/2.f-m_welcomeText.height()-m_rectangle.radius(), 0)));
 }
 
 void WelcomePage::draw(SceGxmContext *ctx, const Camera *camera) const
 {
-	m_renderer.draw(ctx, camera, &m_rectangle);
 	m_textRenderer.draw(ctx, camera, &m_welcomeText);
-	m_textRenderer.draw(ctx, camera, &m_nextPageDirection);
+}
+
+void WelcomePage::fadeIn()
+{
+	m_fadeIn.start();
+}
+
+void WelcomePage::fadeOut()
+{
+
+}
+
+void WelcomePage::setExitTrigger(std::function<void ()> callback)
+{
+	m_exitCallback = callback;
 }
 
 void WelcomePage::positionComponents(void)
 {
 	// set world matrices
-	m_rectangle.setWorldMatrix(modelMatrix());
 	m_welcomeText.setWorldMatrix(modelMatrix());
-	m_nextPageDirection.setWorldMatrix(modelMatrix());
-
-	m_rectangle.setTranslation(glm::vec3((960-m_rectangle.width())/2.f-m_rectangle.radius(), (544-m_rectangle.height())/2.f-m_rectangle.radius(), 0));
-	m_welcomeText.setTranslation(glm::vec3((960-m_welcomeText.width())/2.f, (544/2.f)+m_welcomeText.height()/2.f+m_nextPageDirection.height()-m_rectangle.radius(), 0));
-	m_nextPageDirection.setTranslation(glm::vec3((960-m_nextPageDirection.width())/2.f, (544/2.f)+m_nextPageDirection.height()/2.f-m_welcomeText.height()-m_rectangle.radius(), 0));
+	m_welcomeText.setTranslation(glm::vec3((960-m_welcomeText.width())/2.f, (544/2.f)-m_welcomeText.height()/3.f, 0));
 }

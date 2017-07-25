@@ -75,6 +75,7 @@ private:
 		Up,
 		Down,
 		Cross,
+		TaskComplete,
 		None
 	};
 
