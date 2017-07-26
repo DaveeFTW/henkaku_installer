@@ -12,6 +12,7 @@
 #include "animatedbackground.h"
 #include "staticbackground.h"
 #include "fpscounter.h"
+#include "intropage.h"
 #include "welcomepage.h"
 #include "installoptionpage.h"
 #include "resetpage.h"
@@ -21,6 +22,7 @@
 #include "installpage.h"
 #include "successpage.h"
 #include "failurepage.h"
+#include "focusinevent.h"
 #include "easingcurves.h"
 
 #include <framework/task.h>
@@ -93,7 +95,8 @@ InstallerView::InstallerView(void)
 	};
 
 	// setup pages and states
-	setupWelcomePage(0, 0);
+	setupIntroPage(0, 0);
+	setupWelcomePage(-1, 0);
 	setupInstallOptionPage(-2, 0);
 	setupResetPage(-1, 0);
 	setupConfigPage(0, 0);
@@ -105,7 +108,7 @@ InstallerView::InstallerView(void)
 
 	// setup state machine
 	m_stateMachine.configure(State::Init)
-		.permit(Trigger::Start, State::Welcome);
+		.permit(Trigger::Start, State::Intro);
 
 	m_stateMachine.configure(State::Exit)
 		.on_entry(std::bind(&GuiApplication::exit));
@@ -198,8 +201,8 @@ void InstallerView::setupCamera(void)
 
 void InstallerView::setupTransitionPan(void)
 {
-	m_cameraPanX.setDuration(300);
-	m_cameraPanY.setDuration(300);
+	m_cameraPanX.setDuration(1000);
+	m_cameraPanY.setDuration(1000);
 
 	// set step handlers
 	m_cameraPanX.setStepHandler([this](auto step)
@@ -240,6 +243,8 @@ void InstallerView::setupTransitionPan(void)
 	{
 		this->m_renderQueue.pop_front();
 		m_isTransitioning = false;
+		FocusInEvent focusIn;
+		this->m_pages.at(this->m_stateMachine.state())->onEvent(&focusIn);
 	});
 
 	m_stateMachine.on_transition([this](auto& transition)
@@ -271,6 +276,10 @@ void InstallerView::performPageTransition(const StateTransition& t)
 			// update camera view
 			auto view = this->m_camera->viewCenter() + glm::vec3(destPosition.x, destPosition.y, 0.f);
 			this->m_camera->setViewCenter(view);
+
+			// tell the page that it has focus
+			FocusInEvent focusIn;
+			this->m_pages.at(dest)->onEvent(&focusIn);
 		}
 
 		return;
@@ -306,25 +315,35 @@ bool InstallerView::resetAvailable(void) const
 	return henkakuConfigExists || taihenConfigExists;
 }
 
+void InstallerView::setupIntroPage(int x, int y)
+{
+	auto page = new IntroPage(&m_patcher);
+	page->setTranslation((960-960/2)*x, (960-960/2)*y);
+
+	// add page to map
+	m_pages.insert({ State::Intro, page });
+
+	// setup our state transitions
+	m_stateMachine.configure(State::Intro)
+		.permit_if(Trigger::TaskComplete, State::Welcome, m_transitionGuard);
+
+	page->setExitTrigger([this]()
+	{
+		this->m_stateMachine.fire(Trigger::TaskComplete);
+	});
+}
+
 void InstallerView::setupWelcomePage(int x, int y)
 {
 	auto page = new WelcomePage(&m_patcher);
-	page->setTranslation(960.f*1.5f*x, 544.f*1.5f*y);
+	page->setTranslation((960-960/2)*x, (960-960/2)*y);
 
 	// add page to map
 	m_pages.insert({ State::Welcome, page });
 
 	// setup our state transitions
 	m_stateMachine.configure(State::Welcome)
-		.permit_if(Trigger::TaskComplete, State::SelectInstallOption, m_transitionGuard)
-		.on_entry([this, page](auto s)
-		{
-			page->fadeIn();
-		})
-		.on_exit([this, page](auto s)
-		{
-			page->fadeOut();
-		});
+		.permit_if(Trigger::TaskComplete, State::SelectInstallOption, m_transitionGuard);
 
 	page->setExitTrigger([this]()
 	{

@@ -51,6 +51,7 @@ set(INSTALLER_SOURCES
 	"src/fpscounter.cpp"
 	"src/numberanimation.cpp"
 	"src/buttoneventfilter.cpp"
+	"src/intropage.cpp"
 	"src/welcomepage.cpp"
 	"src/installoptionpage.cpp"
 	"src/resetpage.cpp"

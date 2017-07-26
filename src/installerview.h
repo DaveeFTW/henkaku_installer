@@ -53,6 +53,7 @@ private:
 	enum class State
 	{
 		Init,
+		Intro,
 		Welcome,
 		SelectInstallOption,
 		SimpleInstall,
@@ -90,6 +91,7 @@ private:
 	void setupCamera(void);
 	void setupTransitionPan(void);
 	bool resetAvailable(void) const;
+	void setupIntroPage(int x, int y);
 	void setupWelcomePage(int x, int y);
 	void setupInstallOptionPage(int x, int y);
 	void setupResetPage(int x, int y);

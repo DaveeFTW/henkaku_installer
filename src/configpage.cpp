@@ -27,7 +27,7 @@ ConfigPage::ConfigPage(GxmShaderPatcher *patcher)
 	m_font20.setPointSize(20.f);
 	m_font10.setPointSize(10.f);
 	m_font8.setPointSize(8.f);
-	
+
 	m_rectangle.setColour(glm::vec4(0.f, 0.f, 0.f, 0.5f));
 
 	m_titleText.setText("Configuration");
@@ -115,25 +115,30 @@ void ConfigPage::update(float dt)
 
 void ConfigPage::draw(SceGxmContext *ctx, const Camera *camera) const
 {
-	m_renderer.draw(ctx, camera, &m_rectangle);
+	//m_renderer.draw(ctx, camera, &m_rectangle);
 	m_textRenderer.draw(ctx, camera, &m_titleText);
 	m_textRenderer.draw(ctx, camera, &m_nextPageDirection);
 	m_menu.draw(ctx, camera);
 }
 
-void ConfigPage::onEvent(ButtonEvent *event)
+void ConfigPage::onEvent(Event *event)
 {
-	if (event->buttons() == SCE_CTRL_UP)
+	if (event->type() == Event::Button)
 	{
-		m_menu.up();
-	}
-	else if (event->buttons() == SCE_CTRL_DOWN)
-	{
-		m_menu.down();
-	}
-	else if (event->buttons() == SCE_CTRL_CROSS)
-	{
-		m_menu.toggle();
+		ButtonEvent *buttonEvent = reinterpret_cast<ButtonEvent *>(event);
+
+		if (buttonEvent->buttons() == SCE_CTRL_UP)
+		{
+			m_menu.up();
+		}
+		else if (buttonEvent->buttons() == SCE_CTRL_DOWN)
+		{
+			m_menu.down();
+		}
+		else if (buttonEvent->buttons() == SCE_CTRL_CROSS)
+		{
+			m_menu.toggle();
+		}
 	}
 }
 

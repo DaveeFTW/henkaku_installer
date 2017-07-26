@@ -8,6 +8,7 @@
  */
 
 #include "welcomepage.h"
+#include "focusinevent.h"
 #include "easingcurves.h"
 
 WelcomePage::WelcomePage(GxmShaderPatcher *patcher)
@@ -105,16 +106,6 @@ void WelcomePage::draw(SceGxmContext *ctx, const Camera *camera) const
 	m_textRenderer.draw(ctx, camera, &m_welcomeText);
 }
 
-void WelcomePage::fadeIn()
-{
-	m_fadeIn.start();
-}
-
-void WelcomePage::fadeOut()
-{
-
-}
-
 void WelcomePage::setExitTrigger(std::function<void ()> callback)
 {
 	m_exitCallback = callback;
@@ -125,4 +116,12 @@ void WelcomePage::positionComponents(void)
 	// set world matrices
 	m_welcomeText.setWorldMatrix(modelMatrix());
 	m_welcomeText.setTranslation(glm::vec3((960-m_welcomeText.width())/2.f, (544/2.f)-m_welcomeText.height()/3.f, 0));
+}
+
+void WelcomePage::onEvent(Event *event)
+{
+	if (event->type() == Event::FocusIn)
+	{
+		m_fadeIn.start();
+	}
 }

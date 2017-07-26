@@ -26,8 +26,7 @@ public:
 	void update(float dt) final;
 	void draw(SceGxmContext *ctx, const Camera *camera) const final;
 
-	void fadeIn();
-	void fadeOut();
+	void onEvent(Event *event) final;
 
 	// TODO: no more hacks please
 	void setExitTrigger(std::function<void()> callback);

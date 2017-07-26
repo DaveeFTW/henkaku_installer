@@ -75,7 +75,7 @@ StaticBackground::StaticBackground(GxmShaderPatcher *patcher)
 	m_rectangle.setWidth(1920);
 	m_rectangle.setHeight(544);
 	//m_rectangle.setTranslation(-1920*2, -1920*2, -256);
-	m_rectangle.setTranslation(0, 0, -1);
+	m_rectangle.setTranslation(-(960-960/2), 0, -1);
 
 	auto bottomRightRgb = glm::vec4(1.f, 1.f, 1.f, 1.f);
 	auto topLeftRgb = glm::vec4(1.f, 1.f, 1.f, 1.f);

@@ -14,7 +14,7 @@
 
 struct SceGxmContext;
 class Camera;
-class ButtonEvent;
+class Event;
 
 class Page : public WorldEntity
 {
@@ -24,7 +24,7 @@ public:
 	virtual void update(float dt) { }
 	virtual void draw(SceGxmContext *ctx, const Camera *camera) const = 0;
 
-	virtual void onEvent(ButtonEvent *event) { }
+	virtual void onEvent(Event *event) { }
 };
 
 #endif // PAGE_H

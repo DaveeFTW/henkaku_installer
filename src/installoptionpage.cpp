@@ -27,7 +27,7 @@ InstallOptionPage::InstallOptionPage(GxmShaderPatcher *patcher)
 	m_font18.setPointSize(18.f);
 	m_font16.setPointSize(12.f);
 	m_font8.setPointSize(8.f);
-	
+
 	m_rectangle.setColour(glm::vec4(0.f, 0.f, 0.f, 0.5f));
 	m_selectionBox.setColour(glm::vec4(0.3f, 1.f, 0.2f, 0.2f));
 
@@ -62,7 +62,7 @@ InstallOptionPage::InstallOptionPage(GxmShaderPatcher *patcher)
 	// map these ids to an enum
 	m_selectionMap.insert({simpleId, Selection::Simple});
 	m_selectionMap.insert({customId, Selection::Custom});
-	
+
 	m_selectionBox.setHeight(m_simpleInstallationText.height()+m_simpleInstallationDesc.height()+(544.f * (5.f/100.f))*3.f);
 
 	// position our components
@@ -127,14 +127,19 @@ InstallOptionPage::Selection InstallOptionPage::selection(void) const
 	return m_selectionMap.at(m_menu.selection());
 }
 
-void InstallOptionPage::onEvent(ButtonEvent *event)
+void InstallOptionPage::onEvent(Event *event)
 {
-	if (event->buttons() == SCE_CTRL_UP)
+	if (event->type() == Event::Button)
 	{
-		m_menu.up();
-	}
-	else if (event->buttons() == SCE_CTRL_DOWN)
-	{
-		m_menu.down();
+		ButtonEvent *buttonEvent = reinterpret_cast<ButtonEvent *>(event);
+
+		if (buttonEvent->buttons() == SCE_CTRL_UP)
+		{
+			m_menu.up();
+		}
+		else if (buttonEvent->buttons() == SCE_CTRL_DOWN)
+		{
+			m_menu.down();
+		}
 	}
 }

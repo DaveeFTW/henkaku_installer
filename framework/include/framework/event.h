@@ -17,6 +17,7 @@ public:
 	{
 		None,
 		Button,
+		FocusIn
 	};
 
 public:

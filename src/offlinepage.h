@@ -27,7 +27,7 @@ public:
 
 	void update(float dt);
 	void draw(SceGxmContext *ctx, const Camera *camera) const final;
-	void onEvent(ButtonEvent *event) final;
+	void onEvent(Event *event) final;
 
 private:
 	void onModelChanged(glm::mat4 model) final;

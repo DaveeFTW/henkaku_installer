@@ -25,7 +25,7 @@ ResetPage::ResetPage(GxmShaderPatcher *patcher)
 	m_font20.setPointSize(20.f);
 	m_font12.setPointSize(10.f);
 	m_font8.setPointSize(8.f);
-	
+
 	m_rectangle.setColour(glm::vec4(0.f, 0.f, 0.f, 0.5f));
 
 	m_titleText.setText("Reset");
@@ -137,10 +137,15 @@ bool ResetPage::reset(void) const
 	return m_checkbox.checked();
 }
 
-void ResetPage::onEvent(ButtonEvent *event)
+void ResetPage::onEvent(Event *event)
 {
-	if (event->buttons() == SCE_CTRL_CROSS)
+	if (event->type() == Event::Button)
 	{
-		m_checkbox.toggle();
+		ButtonEvent *buttonEvent = reinterpret_cast<ButtonEvent *>(event);
+
+		if (buttonEvent->buttons() == SCE_CTRL_CROSS)
+		{
+			m_checkbox.toggle();
+		}
 	}
 }
