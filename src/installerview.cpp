@@ -135,6 +135,9 @@ InstallerView::InstallerView(void)
 	m_stateMachine.configure(State::Init)
 		.permit(Trigger::Start, State::Intro);
 
+	// quickly exit by using sceKernelExitProcess
+	// ideally we would GuiApplication::exit, but the time it takes to deallocate
+	// just isnt worth it
 	m_stateMachine.configure(State::Exit)
 		.on_entry(std::bind(&sceKernelExitProcess, 0));
 
@@ -541,6 +544,10 @@ void InstallerView::setupFailurePage(int x, int y)
 	// add page to map
 	m_pages.insert({ State::Failure, page });
 	m_pages.insert({ State::DisableSafeModeError, page });
+	m_pages.insert({ State::UpdateHenkakuError, page });
+	m_pages.insert({ State::UnknownDataError, page });
+	m_pages.insert({ State::InstallationError, page });
+	m_pages.insert({ State::UninstallationError, page });
 
 	// setup our state transitions
 	m_stateMachine.configure(State::Failure)
@@ -554,6 +561,51 @@ void InstallerView::setupFailurePage(int x, int y)
 			{
 				"Please disable HENkaku Safe Mode from Settings",
 				"before running this installer."
+			});
+		});
+
+	m_stateMachine.configure(State::UpdateHenkakuError)
+		.sub_state_of(State::Failure)
+		.on_entry([this, page](auto s)
+		{
+			page->setMessage(
+			{
+				"Your HENkaku version is too old! Please install",
+				"R10 from https://henkaku.xyz/go (not the offline",
+				"installer!)"
+			});
+		});
+
+	m_stateMachine.configure(State::UnknownDataError)
+		.sub_state_of(State::Failure)
+		.on_entry([this, page](auto s)
+		{
+			page->setMessage(
+			{
+				"Unknown data was found and Ensō cannot be safely installed.",
+				"A dump was created at %s."
+			});
+		});
+
+	m_stateMachine.configure(State::InstallationError)
+		.sub_state_of(State::Failure)
+		.on_entry([this, page](auto s)
+		{
+			page->setMessage(
+			{
+				"An error has occured (err code), the log has been",
+				"written to %s"
+			});
+		});
+
+	m_stateMachine.configure(State::UninstallationError)
+		.sub_state_of(State::Failure)
+		.on_entry([this, page](auto s)
+		{
+			page->setMessage(
+			{
+				"An error has occured (err code), the log has been",
+				"written to %s"
 			});
 		});
 }
