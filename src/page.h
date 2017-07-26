@@ -25,6 +25,7 @@ public:
 	virtual void draw(SceGxmContext *ctx, const Camera *camera) const = 0;
 
 	virtual void onEvent(Event *event) { }
+	virtual bool transitionGuard() const { return true; }
 };
 
 #endif // PAGE_H

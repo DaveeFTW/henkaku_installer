@@ -65,6 +65,7 @@ set(INSTALLER_SOURCES
 	"src/checkbox.cpp"
 	"src/checkboxmenu.cpp"
 	"src/staticbackground.cpp"
+	"src/warningpage.cpp"
 )
 
 include_directories(3rdparty/include)

@@ -14,6 +14,7 @@
 #include "fpscounter.h"
 #include "intropage.h"
 #include "welcomepage.h"
+#include "warningpage.h"
 #include "installoptionpage.h"
 #include "resetpage.h"
 #include "configpage.h"
@@ -45,16 +46,38 @@ namespace
 	{
 		switch (buttons)
 		{
-		case SCE_CTRL_LEFT:
-			return T::Left;
-		case SCE_CTRL_RIGHT:
-			return T::Right;
+		case SCE_CTRL_SELECT:
+			return T::Select;
+		case SCE_CTRL_L3:
+			return T::L3;
+		case SCE_CTRL_R3:
+			return T::R3;
+		case SCE_CTRL_START:
+			return T::Start;
 		case SCE_CTRL_UP:
 			return T::Up;
+		case SCE_CTRL_RIGHT:
+			return T::Right;
 		case SCE_CTRL_DOWN:
 			return T::Down;
+		case SCE_CTRL_LEFT:
+			return T::Left;
+		case SCE_CTRL_LTRIGGER:
+			return T::LTrigger;
+		case SCE_CTRL_RTRIGGER:
+			return T::RTrigger;
+		case SCE_CTRL_L1:
+			return T::L1;
+		case SCE_CTRL_R1:
+			return T::R1;
+		case SCE_CTRL_TRIANGLE:
+			return T::Triangle;
+		case SCE_CTRL_CIRCLE:
+			return T::Circle;
 		case SCE_CTRL_CROSS:
 			return T::Cross;
+		case SCE_CTRL_SQUARE:
+			return T::Square;
 		default:
 			return T::None;
 		}
@@ -97,6 +120,7 @@ InstallerView::InstallerView(void)
 	// setup pages and states
 	setupIntroPage(0, 0);
 	setupWelcomePage(-1, 0);
+	setupWarningPage(-1, 0);
 	setupInstallOptionPage(-2, 0);
 	setupResetPage(-1, 0);
 	setupConfigPage(0, 0);
@@ -145,6 +169,10 @@ void InstallerView::onEvent(Event *event)
 		if (m_stateMachine.can_fire(trigger))
 		{
 			m_stateMachine.fire(trigger);
+		}
+		else if (trigger != Trigger::None && m_stateMachine.can_fire(Trigger::OtherButtonPress))
+		{
+			m_stateMachine.fire(Trigger::OtherButtonPress);
 		}
 		else if (m_pages.count(m_stateMachine.state()))
 		{
@@ -343,12 +371,29 @@ void InstallerView::setupWelcomePage(int x, int y)
 
 	// setup our state transitions
 	m_stateMachine.configure(State::Welcome)
-		.permit_if(Trigger::TaskComplete, State::SelectInstallOption, m_transitionGuard);
+		.permit_if(Trigger::TaskComplete, State::WarningMessage, m_transitionGuard);
 
 	page->setExitTrigger([this]()
 	{
 		this->m_stateMachine.fire(Trigger::TaskComplete);
 	});
+}
+
+void InstallerView::setupWarningPage(int x, int y)
+{
+	auto page = new WarningPage(&m_patcher);
+	page->setTranslation((960-960/2)*x, (960-960/2)*y);
+
+	// add page to map
+	m_pages.insert({ State::WarningMessage, page });
+
+	// setup our state transitions
+	m_stateMachine.configure(State::WarningMessage)
+		.permit_if(Trigger::Circle, State::SelectInstallOption, [this, page](void)
+		{
+			return this->m_transitionGuard() && page->transitionGuard();
+		})
+		.permit_if(Trigger::OtherButtonPress, State::Exit, m_transitionGuard);
 }
 
 void InstallerView::setupInstallOptionPage(int x, int y)

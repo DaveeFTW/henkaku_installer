@@ -55,6 +55,7 @@ private:
 		Init,
 		Intro,
 		Welcome,
+		WarningMessage,
 		SelectInstallOption,
 		SimpleInstall,
 		CustomInstall,
@@ -70,12 +71,23 @@ private:
 
 	enum class Trigger
 	{
+		Select,
+		L3,
+		R3,
 		Start,
-		Left,
-		Right,
 		Up,
+		Right,
 		Down,
+		Left,
+		LTrigger,
+		RTrigger,
+		L1,
+		R1,
+		Triangle,
+		Circle,
 		Cross,
+		Square,
+		OtherButtonPress,
 		TaskComplete,
 		None
 	};
@@ -93,6 +105,7 @@ private:
 	bool resetAvailable(void) const;
 	void setupIntroPage(int x, int y);
 	void setupWelcomePage(int x, int y);
+	void setupWarningPage(int x, int y);
 	void setupInstallOptionPage(int x, int y);
 	void setupResetPage(int x, int y);
 	void setupConfigPage(int x, int y);
