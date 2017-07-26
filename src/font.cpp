@@ -42,6 +42,52 @@ namespace
 
 		FT_Library m_library;
 	};
+
+#ifdef ENABLE_GLYPH_CACHING
+	void cacheGlyphs(CharacterAtlas *atlas, FT_FaceRec_ *face)
+	{
+		char commonPunctuation[] =
+		{
+			'.', ',', '!', '"', '/', '-', '(', ')'
+		};
+
+		for (char i = 'a'; i <= 'z'; i++)
+		{
+			auto glyphIndex = FT_Get_Char_Index(face, i);
+			FT_Load_Glyph(face, glyphIndex, FT_LOAD_DEFAULT);
+			// TODO: check errors
+			FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
+			atlas->addGlyph(i, face->glyph);
+		}
+
+		for (char i = 'A'; i <= 'Z'; i++)
+		{
+			auto glyphIndex = FT_Get_Char_Index(face, i);
+			FT_Load_Glyph(face, glyphIndex, FT_LOAD_DEFAULT);
+			// TODO: check errors
+			FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
+			atlas->addGlyph(i, face->glyph);
+		}
+
+		for (char i = '0'; i <= '9'; i++)
+		{
+			auto glyphIndex = FT_Get_Char_Index(face, i);
+			FT_Load_Glyph(face, glyphIndex, FT_LOAD_DEFAULT);
+			// TODO: check errors
+			FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
+			atlas->addGlyph(i, face->glyph);
+		}
+
+		for (char i : commonPunctuation)
+		{
+			auto glyphIndex = FT_Get_Char_Index(face, i);
+			FT_Load_Glyph(face, glyphIndex, FT_LOAD_DEFAULT);
+			// TODO: check errors
+			FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
+			atlas->addGlyph(i, face->glyph);
+		}
+	}
+#endif // ENABLE_GLYPH_CACHING
 }
 
 Font::Font(void)
@@ -75,7 +121,7 @@ bool Font::setFont(const std::string& file)
 	m_atlas = new CharacterAtlas;
 
 	auto fileData = Resource::read(file);
-	
+
 	if (!fileData.good)
 		return false;
 
@@ -83,6 +129,11 @@ bool Font::setFont(const std::string& file)
 
 	FT_New_Memory_Face(FreeType::library(), reinterpret_cast<FT_Byte *>(m_fontData.data()), m_fontData.size(), 0, &m_face);
 	FT_Set_Char_Size(m_face, 0, 16*64, 960/4.357877685622746f, 544/2.451306198162795);
+
+#ifdef ENABLE_GLYPH_CACHING
+	cacheGlyphs(m_atlas, m_face);
+#endif // ENABLE_GLYPH_CACHING
+
 	return true;
 }
 
@@ -97,6 +148,9 @@ void Font::setPointSize(float size)
 	}
 
 	m_atlas = new CharacterAtlas;
+#ifdef ENABLE_GLYPH_CACHING
+	cacheGlyphs(m_atlas, m_face);
+#endif // ENABLE_GLYPH_CACHING
 }
 
 bool Font::kerning(void) const

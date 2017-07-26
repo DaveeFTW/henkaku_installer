@@ -46,7 +46,7 @@
 
 TextureAtlas::TextureAtlas(void)
 {
-	
+
 }
 
 TextureAtlas::TextureAtlas(std::size_t width, std::size_t height)
@@ -78,7 +78,7 @@ void TextureAtlas::setRegion(AtlasRegion region, const char *data, std::size_t s
 	auto y = region.y;
 	auto width = region.z-1;
 	auto height = region.w-1;
-	
+
 	for (auto i = 0; i < height; ++i)
 	{
 		std::memcpy(storage() + ((y+i)*this->width() + x), data + (i*stride), width);
@@ -97,15 +97,15 @@ TextureAtlas::AtlasRegion TextureAtlas::region(std::size_t width, std::size_t he
 
 	auto region = AtlasRegion(0, 0, width, height);
 	auto best_node = m_nodes.end();
-	
+
 	for (auto it = m_nodes.begin(); it != m_nodes.end(); ++it)
 	{
 		auto y = fit(it, width, height);
-		
+
 		if (y >= 0)
 		{
 			auto node = *it;
-			
+
 			if (((y + height) < best_height)
 				|| (((y + height) == best_height) && (node.z > 0 && static_cast<std::size_t>(node.z) < best_width)))
 			{
@@ -132,13 +132,13 @@ TextureAtlas::AtlasRegion TextureAtlas::region(std::size_t width, std::size_t he
 	{
 		auto node = it;
 		auto prev = std::prev(it);
-		
+
 		if (node->x < (prev->x + prev->z))
 		{
 			int shrink = prev->x + prev->z - node->x;
 			node->x += shrink;
 			node->z -= shrink;
-			
+
 			if (node->z <= 0)
 			{
 				it = m_nodes.erase(it);
@@ -155,7 +155,7 @@ TextureAtlas::AtlasRegion TextureAtlas::region(std::size_t width, std::size_t he
 			break;
 		}
 	}
-	
+
 	merge();
 	return region;
 }
@@ -166,12 +166,12 @@ TextureAtlas::Quad TextureAtlas::toQuad(AtlasRegion region)
 
 	auto x = static_cast<float>(region.x);
 	auto y = static_cast<float>(region.y);
-	auto width = static_cast<float>(region.z);
-	auto height = static_cast<float>(region.w);
+	auto width = static_cast<float>(region.z)-1;
+	auto height = static_cast<float>(region.w)-1;
 	auto texWidth = static_cast<float>(this->width());
 	auto texHeight = static_cast<float>(this->height());
 	auto glyph = glm::vec4(x/texWidth, y/texHeight, width/texWidth, height/texHeight);
-	
+
 	quad.tl = glm::vec2(glyph.x, glyph.y);
 	quad.tr = glm::vec2(glyph.x+glyph.z, glyph.y);
 	quad.bl = glm::vec2(glyph.x, glyph.y+glyph.w);
@@ -195,12 +195,12 @@ int TextureAtlas::fit(NodeList::iterator it, std::size_t width, std::size_t heig
 	while (width_left > 0)
 	{
 		node = *it;
-		
+
 		if (node.y > y)
 		{
 			y = node.y;
 		}
-		
+
 		if ((y + height) > this->height()-1)
 		{
 			return -1;
