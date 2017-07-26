@@ -128,7 +128,7 @@ InstallerView::InstallerView(void)
 	setupConfirmPage(2, 0);
 	setupInstallPage(3, 0);
 	setupSuccessPage(4, 0);
-	setupFailurePage(4, 0);
+	setupFailurePage(1, 0);
 
 	// setup state machine
 	m_stateMachine.configure(State::Init)
@@ -222,8 +222,8 @@ void InstallerView::setupCamera(void)
 	float angle1=fov/2.0;
 	float angle2=180 - (90 + angle1);
 	float Z = 0.5 * 544.f * std::sin(glm::radians(angle2))/std::sin(glm::radians(angle1));
-	m_camera->setPosition(glm::vec3(960.f/2, 544.f/2, Z));
-	m_camera->setViewCenter(glm::vec3(960.f/2, 544.f/2, 0));
+	m_camera->setPosition(glm::vec3(960.f/2 - 1, 544.f/2, Z));
+	m_camera->setViewCenter(glm::vec3(960.f/2 - 1, 544.f/2, 0));
 	m_camera->setUpVector(glm::vec3(0, 1, 0));
 }
 
@@ -389,7 +389,7 @@ void InstallerView::setupWarningPage(int x, int y)
 
 	// setup our state transitions
 	m_stateMachine.configure(State::WarningMessage)
-		.permit_if(Trigger::Circle, State::SelectInstallOption, [this, page](void)
+		.permit_if(Trigger::Circle, State::Failure, [this, page](void)
 		{
 			return this->m_transitionGuard() && page->transitionGuard();
 		})
@@ -533,7 +533,7 @@ void InstallerView::setupSuccessPage(int x, int y)
 void InstallerView::setupFailurePage(int x, int y)
 {
 	auto page = new FailurePage(&m_patcher);
-	page->setTranslation(960.f*1.5f*x, 544.f*1.5f*y);
+	page->setTranslation((960-960/2)*x, (960-960/2)*y);
 
 	// add page to map
 	m_pages.insert({ State::Failure, page });

@@ -72,7 +72,7 @@ StaticBackground::StaticBackground(GxmShaderPatcher *patcher)
 	m_renderer.setShaders<StaticBackgroundVertex<glm::vec2>>("rsc:/text.vert.cg.gxp", "rsc:/text.frag.cg.gxp");
 	m_rectangle.setFragmentTask(std::bind(&StaticBackground::fragmentTask, this, std::placeholders::_1));
 
-	m_rectangle.setWidth(1920);
+	m_rectangle.setWidth(1922);
 	m_rectangle.setHeight(544);
 	//m_rectangle.setTranslation(-1920*2, -1920*2, -256);
 	m_rectangle.setTranslation(-(960-960/2), 0, -1);

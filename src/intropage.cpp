@@ -239,8 +239,8 @@ void IntroPage::positionComponents(void)
 	m_rectangle.setWorldMatrix(modelMatrix());
 	m_ensoRectangle.setWorldMatrix(modelMatrix());
 
-	m_rectangle.setTranslation(glm::vec3(1, 0, 0)); // TODO: investigate an "off-by-one" error
-	m_ensoRectangle.setTranslation(glm::vec3(1, 0, 0)); // TODO: investigate an "off-by-one" error
+	m_rectangle.setTranslation(glm::vec3(0, 0, 0)); // TODO: investigate an "off-by-one" error
+	m_ensoRectangle.setTranslation(glm::vec3(0, 0, 0)); // TODO: investigate an "off-by-one" error
 }
 
 void IntroPage::loadTexture(GxmTexture *texture, const char *file)
