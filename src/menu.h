@@ -50,6 +50,9 @@ public:
 	void update(float dt);
 	void draw(SceGxmContext *ctx, const Camera *camera) const;
 
+	void enableSelection();
+	void disableSelection();
+
 private:
 	enum class Trigger
 	{
@@ -78,6 +81,7 @@ private:
 	float m_selectionBoxOffset;
 	bool m_usingSelectedWidth;
 	bool m_rising;
+	bool m_selectionDisabled;
 };
 
 #endif // MENU_H

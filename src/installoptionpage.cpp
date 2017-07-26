@@ -9,61 +9,83 @@
 
 #include "installoptionpage.h"
 #include "menu.h"
+#include "easingcurves.h"
 
 #include <framework/buttonevent.h>
 #include <psp2/ctrl.h>
 #include <easyloggingpp/easylogging++.h>
 
-InstallOptionPage::InstallOptionPage(GxmShaderPatcher *patcher)
-	: m_rectangle((960-200), 400, 20)
-	, m_selectionBox(m_rectangle.width()+m_rectangle.radius()*2.f, 200)
-	, m_renderer(patcher)
+InstallOptionPage::InstallOptionPage(GxmShaderPatcher *patcher, bool ensoInstalled)
+	: m_renderer(patcher)
 	, m_textRenderer(patcher)
-	, m_font18("rsc:/fonts/DroidSans.ttf")
-	, m_font16("rsc:/fonts/DroidSans.ttf")
+	, m_font12("rsc:/fonts/DroidSans.ttf")
 	, m_font8("rsc:/fonts/DroidSans.ttf")
 	, m_menu(&m_renderer, &m_textRenderer)
 {
-	m_font18.setPointSize(18.f);
-	m_font16.setPointSize(12.f);
+	m_font12.setPointSize(12.f);
 	m_font8.setPointSize(8.f);
 
-	m_rectangle.setColour(glm::vec4(0.f, 0.f, 0.f, 0.5f));
-	m_selectionBox.setColour(glm::vec4(0.3f, 1.f, 0.2f, 0.2f));
-
-	m_titleText.setText("Select an option:");
-	m_titleText.setFont(&m_font18);
-	m_titleText.setColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
-
-	m_nextPageDirection.setText("Press right to continue.");
+	m_nextPageDirection.setText("Press CROSS to select.");
 	m_nextPageDirection.setFont(&m_font8);
-	m_nextPageDirection.setColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
+	m_nextPageDirection.setColour(glm::vec4(1.f, 1.f, 1.f, 0.f));
 
-	m_simpleInstallationText.setText("Simple Installation");
-	m_simpleInstallationText.setFont(&m_font16);
-	m_simpleInstallationText.setColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
+	m_installText.setText("Install");
+	m_installText.setFont(&m_font12);
+	m_installText.setColour(glm::vec4(1.f, 1.f, 1.f, 0.f));
 
-	m_simpleInstallationDesc.setText("Enables homebrews. Advanced features disabled to protect your device.");
-	m_simpleInstallationDesc.setFont(&m_font8);
-	m_simpleInstallationDesc.setColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
+	m_installDesc.setText("Install Ensō to this device.");
+	m_installDesc.setFont(&m_font8);
+	m_installDesc.setColour(glm::vec4(1.f, 1.f, 1.f, 0.f));
 
-	m_customInstallationText.setText("Advanced Installation");
-	m_customInstallationText.setFont(&m_font16);
-	m_customInstallationText.setColour(glm::vec4(1.f, 1.f, 1.f, 1.f));
+	m_reactivateText.setText("Reactivate");
+	m_reactivateText.setFont(&m_font12);
+	m_reactivateText.setColour(glm::vec4(1.f, 1.f, 1.f, 0.f));
 
-	m_customInstallationDesc.setText("Only for advanced users. Enable potentially dangerous options.");
-	m_customInstallationDesc.setFont(&m_font8);
-	m_customInstallationDesc.setColour(glm::vec4(0xf7/255.f, 0xb6/255.f, 0x54/255.f, 1.f));
+	m_reactivateDesc.setText("Reactivate the current Ensō installation on this device.");
+	m_reactivateDesc.setFont(&m_font8);
+	m_reactivateDesc.setColour(glm::vec4(1.f, 1.f, 1.f, 0.f));
 
-	auto simpleId = m_menu.add({&m_simpleInstallationText, &m_simpleInstallationDesc});
-	auto customId = m_menu.add({&m_customInstallationText, &m_customInstallationDesc});
-	m_menu.setSelectionWidth(m_rectangle.width() + m_rectangle.radius()*2.f, -m_rectangle.radius());
+	m_uninstallText.setText("Uninstall");
+	m_uninstallText.setFont(&m_font12);
+	m_uninstallText.setColour(glm::vec4(1.f, 1.f, 1.f, 0.f));
+
+	m_uninstallDesc.setText("Completely remove this Ensō installation.");
+	m_uninstallDesc.setFont(&m_font8);
+	m_uninstallDesc.setColour(glm::vec4(1.f, 1.f, 1.f, 0.f));
+
+	m_exitText.setText("Exit");
+	m_exitText.setFont(&m_font12);
+	m_exitText.setColour(glm::vec4(1.f, 1.f, 1.f, 0.f));
+
+	m_exitDesc.setText("Exit the installer without doing anything.");
+	m_exitDesc.setFont(&m_font8);
+	m_exitDesc.setColour(glm::vec4(1.f, 1.f, 1.f, 0.f));
+
+	if (ensoInstalled)
+	{
+		auto reactivateId = m_menu.add({&m_reactivateText, &m_reactivateDesc});
+		auto uninstallId = m_menu.add({&m_uninstallText, &m_uninstallDesc});
+
+		// map these ids to an enum
+		m_selectionMap.insert({reactivateId, Selection::Reactivate});
+		m_selectionMap.insert({uninstallId, Selection::Uninstall});
+	}
+	else
+	{
+		auto installId = m_menu.add({&m_installText, &m_installDesc});
+
+		// map these ids to an enum
+		m_selectionMap.insert({installId, Selection::Install});
+	}
+
+
+	auto exitId = m_menu.add({&m_exitText, &m_exitDesc});
 
 	// map these ids to an enum
-	m_selectionMap.insert({simpleId, Selection::Simple});
-	m_selectionMap.insert({customId, Selection::Custom});
+	m_selectionMap.insert({exitId, Selection::Exit});
 
-	m_selectionBox.setHeight(m_simpleInstallationText.height()+m_simpleInstallationDesc.height()+(544.f * (5.f/100.f))*3.f);
+	m_menu.setSelectionWidth((960-200) + 20*2.f, -20);
+	m_menu.disableSelection();
 
 	// position our components
 	positionComponents();
@@ -83,41 +105,93 @@ InstallOptionPage::InstallOptionPage(GxmShaderPatcher *patcher)
 
 	m_textRenderer.setBlendInfo(&blendInfo);
 	m_textRenderer.setShaders<ColouredTextureVertex>("rsc:/text.vert.cg.gxp", "rsc:/text.frag.cg.gxp");
+
+	// animation
+	// fade in direction
+	m_fadeInMenu.setStart(0.f);
+	m_fadeInMenu.setEnd(1.0f);
+	m_fadeInMenu.setDuration(750);
+	m_fadeInMenu.setEasing([](float t, float b, float c, float d)
+	{
+		return easing::quad::in(t, b, c, d);
+	});
+
+	m_fadeInMenu.setStepHandler([this](float step)
+	{
+		this->m_installText.setColour(glm::vec4(1.f, 1.f, 1.f, step));
+		this->m_installDesc.setColour(glm::vec4(1.f, 1.f, 1.f, step));
+		this->m_reactivateText.setColour(glm::vec4(1.f, 1.f, 1.f, step));
+		this->m_reactivateDesc.setColour(glm::vec4(1.f, 1.f, 1.f, step));
+		this->m_uninstallText.setColour(glm::vec4(1.f, 1.f, 1.f, step));
+		this->m_uninstallDesc.setColour(glm::vec4(1.f, 1.f, 1.f, step));
+		this->m_exitText.setColour(glm::vec4(1.f, 1.f, 1.f, step));
+		this->m_exitDesc.setColour(glm::vec4(1.f, 1.f, 1.f, step));
+	});
+
+	m_fadeInMenu.setCompletionHandler([this]()
+	{
+		m_fadeInDirection.start();
+	});
+
+	// fade in direction
+	m_fadeInDirection.setStart(0.f);
+	m_fadeInDirection.setEnd(1.0f);
+	m_fadeInDirection.setDuration(750);
+	m_fadeInDirection.setEasing([](float t, float b, float c, float d)
+	{
+		return easing::quad::in(t, b, c, d);
+	});
+
+	m_fadeInDirection.setStepHandler([this](float step)
+	{
+		this->m_nextPageDirection.setColour(glm::vec4(1.0f, 1.f, 1.f, step));
+	});
+
+	m_fadeInDirection.setCompletionHandler([this]()
+	{
+		m_menu.enableSelection();
+	});
 }
 
 void InstallOptionPage::onModelChanged(glm::mat4 model)
 {
-	m_rectangle.setWorldMatrix(model);
-	m_selectionBox.setWorldMatrix(model);
-	m_titleText.setWorldMatrix(model);
 	m_nextPageDirection.setWorldMatrix(model);
 	m_menu.setWorldMatrix(model);
 }
 
 void InstallOptionPage::positionComponents(void)
 {
-	auto boxOffsetX = (960.f - m_rectangle.width())/2.f;
-	auto boxOffsetY = (544.f + m_rectangle.height())/2.f;
+	constexpr auto seperationPadding = 544.f * (2.f/100.f);
+	auto boxOffsetX = (960.f - (960-200))/2.f;
+	auto boxOffsetY = (544.f - 400.f)/2.f;
 
-	// centre within view
-	m_rectangle.setTranslation((960-m_rectangle.width())/2.f-m_rectangle.radius(), (544-m_rectangle.height())/2.f-m_rectangle.radius());
+	//auto menuHeightOffset = m_menu.height()/2.f;
 
-	// pin title centred within box
-	boxOffsetY -= m_titleText.height();
-	m_titleText.setTranslation((960-m_titleText.width())/2.f, boxOffsetY);
-	m_menu.setTranslation(boxOffsetX, boxOffsetY);
-	m_nextPageDirection.setTranslation((960-m_nextPageDirection.width())/2.f, (544.f - m_rectangle.height())/2.f);
+	auto directionTop = boxOffsetY+m_nextPageDirection.height()+3*seperationPadding;
+	auto offset = 0.f;
+
+	if (m_menu.height() < 544.f - directionTop)
+	{
+		offset = ((544.f - directionTop) - m_menu.height())/2.f;
+	}
+
+	m_menu.setTranslation(boxOffsetX, directionTop+offset+m_menu.height());
+	m_nextPageDirection.setTranslation((960-m_nextPageDirection.width())/2.f, (544.f - 400.f)/2.f);
 }
 
 void InstallOptionPage::update(float dt)
 {
+	if (!m_fadeInMenu.complete())
+		m_fadeInMenu.update(dt);
+
+	if (!m_fadeInDirection.complete())
+		m_fadeInDirection.update(dt);
+
 	m_menu.update(dt);
 }
 
 void InstallOptionPage::draw(SceGxmContext *ctx, const Camera *camera) const
 {
-	m_renderer.draw(ctx, camera, &m_rectangle);
-	m_textRenderer.draw(ctx, camera, &m_titleText);
 	m_textRenderer.draw(ctx, camera, &m_nextPageDirection);
 	m_menu.draw(ctx, camera);
 }
@@ -141,5 +215,11 @@ void InstallOptionPage::onEvent(Event *event)
 		{
 			m_menu.down();
 		}
+	}
+
+	if (event->type() == Event::FocusIn)
+	{
+		m_menu.disableSelection();
+		m_fadeInMenu.start();
 	}
 }

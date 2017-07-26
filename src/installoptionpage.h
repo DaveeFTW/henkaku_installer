@@ -11,13 +11,12 @@
 #define INSTALLOPTIONPAGE_H
 
 #include "page.h"
-#include "rectangle.h"
-#include "roundedrectangle.h"
 #include "vertextypes.h"
 #include "geometryrenderer.h"
 #include "text.h"
 #include "font.h"
 #include "menu.h"
+#include "numberanimation.h"
 
 #include <unordered_map>
 
@@ -26,12 +25,14 @@ class InstallOptionPage : public Page
 public:
 	enum class Selection
 	{
-		Simple,
-		Custom
+		Install,
+		Reactivate,
+		Uninstall,
+		Exit
 	};
 
 public:
-	InstallOptionPage(GxmShaderPatcher *patcher);
+	InstallOptionPage(GxmShaderPatcher *patcher, bool ensoInstalled=false);
 
 	Selection selection(void) const;
 
@@ -45,13 +46,13 @@ private:
 	void positionComponents(void);
 
 private:
-	RoundedRectangle<ColouredGeometryVertex> m_rectangle;
-	Rectangle<ColouredGeometryVertex> m_selectionBox;
 	GeometryRenderer m_renderer, m_textRenderer;
-	Font m_font18, m_font16, m_font8;
-	Text m_titleText, m_simpleInstallationText, m_simpleInstallationDesc, m_customInstallationText, m_customInstallationDesc, m_nextPageDirection;
+	Font m_font12, m_font8;
+	Text m_nextPageDirection;
+	Text m_installText, m_installDesc, m_reactivateText, m_reactivateDesc, m_uninstallText, m_uninstallDesc, m_exitText, m_exitDesc;
 	Menu m_menu;
 	std::unordered_map<int, Selection> m_selectionMap;
+	NumberAnimation m_fadeInMenu, m_fadeInDirection;
 };
 
 #endif // INSTALLOPTIONPAGE_H

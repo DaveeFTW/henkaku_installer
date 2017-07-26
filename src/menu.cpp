@@ -18,6 +18,7 @@ Menu::Menu(GeometryRenderer *geometryRenderer, GeometryRenderer *textRenderer)
 	, m_stateMachine(-1)
 	, m_selectionBoxOffset(0)
 	, m_usingSelectedWidth(false)
+	, m_selectionDisabled(false)
 {
 	onModelChanged(modelMatrix());
 
@@ -199,12 +200,29 @@ void Menu::update(float dt)
 
 void Menu::draw(SceGxmContext *ctx, const Camera *camera) const
 {
-	if (m_items.size())
-		m_geometryRenderer->draw(ctx, camera, &m_selectionBox);
+	if (!m_selectionDisabled)
+	{
+		if (m_items.size())
+			m_geometryRenderer->draw(ctx, camera, &m_selectionBox);
+	}
 
 	for (auto& item : m_items)
 	{
 		m_textRenderer->draw(ctx, camera, item.title);
 		m_textRenderer->draw(ctx, camera, item.desc);
 	}
+}
+
+void Menu::enableSelection()
+{
+	m_selectionDisabled = false;
+	m_rising = true;
+	m_selectionGlow.setStart((m_rising) ? (0.0f) : (0.3f));
+	m_selectionGlow.setEnd((m_rising) ? (0.3f) : (-0.3f));
+	m_selectionGlow.start();
+}
+
+void Menu::disableSelection()
+{
+	m_selectionDisabled = true;
 }

@@ -122,7 +122,7 @@ InstallerView::InstallerView(void)
 	setupIntroPage(0, 0);
 	setupWelcomePage(-1, 0);
 	setupWarningPage(-1, 0);
-	setupInstallOptionPage(-2, 0);
+	setupInstallOptionPage(0, 0);
 	setupResetPage(-1, 0);
 	setupConfigPage(0, 0);
 	setupOfflinePage(1, 0);
@@ -357,7 +357,7 @@ void InstallerView::setupIntroPage(int x, int y)
 
 	// setup our state transitions
 	m_stateMachine.configure(State::Intro)
-		.permit_if(Trigger::TaskComplete, State::Welcome, m_transitionGuard);
+		.permit_if(Trigger::TaskComplete, State::SelectInstallOption, m_transitionGuard);
 
 	page->setExitTrigger([this]()
 	{
@@ -398,14 +398,14 @@ void InstallerView::setupWarningPage(int x, int y)
 
 	// setup our state transitions
 	m_stateMachine.configure(State::WarningMessage)
-		.permit_if(Trigger::Circle, State::DisableSafeModeError, warningPageTransitionGuard)
+		.permit_if(Trigger::Circle, State::SelectInstallOption, warningPageTransitionGuard)
 		.permit_if(Trigger::OtherButtonPress, State::Exit, warningPageTransitionGuard);
 }
 
 void InstallerView::setupInstallOptionPage(int x, int y)
 {
 	auto page = new InstallOptionPage(&m_patcher);
-	page->setTranslation(960.f*1.5f*x, 544.f*1.5f*y);
+	page->setTranslation((960-960/2)*x, (960-960/2)*y);
 
 	// add page to map
 	m_pages.insert({ State::SelectInstallOption, page });
@@ -415,7 +415,7 @@ void InstallerView::setupInstallOptionPage(int x, int y)
 		.permit_if(Trigger::Left, State::Welcome, m_transitionGuard)
 		.permit_dynamic_if(Trigger::Right, m_transitionGuard, [this, page](auto& source)
 		{
-			if (page->selection() == InstallOptionPage::Selection::Simple)
+			//if (page->selection() == InstallOptionPage::Selection::Simple)
 			{
 				// set default options
 				this->m_henkakuOptions.unsafeHomebrew = true;
