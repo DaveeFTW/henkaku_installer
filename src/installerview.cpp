@@ -36,6 +36,7 @@
 #include <glm/gtx/transform.hpp>
 
 #include <psp2/ctrl.h>
+#include <psp2/kernel/processmgr.h>
 
 #include <easyloggingpp/easylogging++.h>
 
@@ -135,7 +136,7 @@ InstallerView::InstallerView(void)
 		.permit(Trigger::Start, State::Intro);
 
 	m_stateMachine.configure(State::Exit)
-		.on_entry(std::bind(&GuiApplication::exit));
+		.on_entry(std::bind(&sceKernelExitProcess, 0));
 
 	setupTransitionPan();
 
@@ -387,13 +388,15 @@ void InstallerView::setupWarningPage(int x, int y)
 	// add page to map
 	m_pages.insert({ State::WarningMessage, page });
 
+	auto warningPageTransitionGuard = [this, page](void)
+	{
+		return this->m_transitionGuard() && page->transitionGuard();
+	};
+
 	// setup our state transitions
 	m_stateMachine.configure(State::WarningMessage)
-		.permit_if(Trigger::Circle, State::Failure, [this, page](void)
-		{
-			return this->m_transitionGuard() && page->transitionGuard();
-		})
-		.permit_if(Trigger::OtherButtonPress, State::Exit, m_transitionGuard);
+		.permit_if(Trigger::Circle, State::DisableSafeModeError, warningPageTransitionGuard)
+		.permit_if(Trigger::OtherButtonPress, State::Exit, warningPageTransitionGuard);
 }
 
 void InstallerView::setupInstallOptionPage(int x, int y)
@@ -537,8 +540,20 @@ void InstallerView::setupFailurePage(int x, int y)
 
 	// add page to map
 	m_pages.insert({ State::Failure, page });
+	m_pages.insert({ State::DisableSafeModeError, page });
 
 	// setup our state transitions
 	m_stateMachine.configure(State::Failure)
-		.permit_if(Trigger::Cross, State::Exit, m_transitionGuard);
+		.permit_if(Trigger::OtherButtonPress, State::Exit, m_transitionGuard);
+
+	m_stateMachine.configure(State::DisableSafeModeError)
+		.sub_state_of(State::Failure)
+		.on_entry([this, page](auto s)
+		{
+			page->setMessage(
+			{
+				"Please disable HENkaku Safe Mode from Settings",
+				"before running this installer."
+			});
+		});
 }

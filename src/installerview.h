@@ -56,6 +56,7 @@ private:
 		Intro,
 		Welcome,
 		WarningMessage,
+		DisableSafeModeError,
 		SelectInstallOption,
 		SimpleInstall,
 		CustomInstall,
